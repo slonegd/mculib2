@@ -1,3 +1,4 @@
+
 /**
  * RAL над регистрами системы тактирования
  * class RCC_t можно использовать для управления 
@@ -124,7 +125,7 @@ namespace RCC_ral {
             CS_HSE		= 0b01,
             CS_PLL		= 0b10
         };
-        struct Bits_t {
+        struct Bits {
             // Bits 1:0 SW: System clock switch
             volatile SystemClockSwitch SW		:2;
             // Bits 3:2 SWS: System clock switch status
@@ -168,7 +169,7 @@ namespace RCC_ral {
             volatile uint32_t MCO2	:2;
         };
         union {
-                volatile Bits_t bits;
+                volatile Bits bits;
                 volatile uint32_t reg;
         };
     };
