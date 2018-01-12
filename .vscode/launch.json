@@ -1,0 +1,25 @@
+{
+	
+	"version": "0.2.0",
+	"configurations": [
+		{ 
+			"name": "(gdb) Attach",
+			"type": "cppdbg",
+			"request": "launch",
+		 // slonegd note
+		 // "miDebuggerPath": "/home/slonegd/opt/gcc-arm-none-eabi-6-2017-q1-update/bin/arm-none-eabi-gdb",
+         // phobos
+            "miDebuggerPath": "/home/dvk/code/gcc-arm-none-eabi-6-2017-q1-update/bin/arm-none-eabi-gdb",
+		 // work note
+         //	"miDebuggerPath": "/home/ap/Code/gcc-arm-none-eabi-6-2017-q2-update/bin/arm-none-eabi-gdb",
+		 // home
+		 //	"miDebuggerPath": "/home/slonegd/Code/gcc-arm-none-eabi-6-2017-q2-update/bin/arm-none-eabi-gdb",
+			"program": "${workspaceRoot}/build/STM32F4_DISCOVERY.elf",
+			"miDebuggerServerAddress": "localhost:4242",
+		   
+			"MIMode": "gdb",
+			"cwd": "${workspaceRoot}"
+		}
+	]
+
+}

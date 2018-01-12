@@ -1,0 +1,22 @@
+// Поместите параметры в этот файл, чтобы перезаписать параметры по умолчанию и пользовательские параметры.
+{
+    "files.associations": {
+        "stm32f4xx.h": "c",
+        "stm32f4_bf.h": "c",
+        "type_traits": "cpp",
+        "initializer_list": "cpp"
+    },
+	// Compiler options for C (e.g. ["-std=c99"])
+	"clang.cflags": [
+        "-I./inc/",
+		"-I./inc/CMSIS/",
+		"-I./src/",
+		"-I./src/usrlib/",
+		"-I/usr/lib/arm-none-eabi/include/"
+	],
+    // Показывать значения переменных в редакторе во время отладки
+    "debug.inlineValues": true,
+    
+    "C_Cpp.intelliSenseEngine": "Default"
+
+}
