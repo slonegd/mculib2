@@ -1,4 +1,5 @@
 библиотеки для работы с микроконтроллерами
+https://portal.office.alexplus.ru:3000/slonegd/usrlib1
 
 готово:
 
