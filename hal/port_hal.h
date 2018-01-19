@@ -10,17 +10,22 @@ class Port_t : protected GPIO_t
     using OutType = OTYPER_t::OutType_t;
     using OutSpeed = OSPEEDR_t::OutSpeed_t;
     using PullResistor = PUPDR_t::PullResistor_t;*/
-protected:
-    static volatile MODER_t   &mode()   { return (MODER_t &)  (*(GPIO_TypeDef*)PortPtr).MODER;   }
-    static volatile OTYPER_t  &otype()  { return (OTYPER_t &) (*(GPIO_TypeDef*)PortPtr).OTYPER;  }
-    static volatile OSPEEDR_t &ospeed() { return (OSPEEDR_t &)(*(GPIO_TypeDef*)PortPtr).OSPEEDR; }
-    static volatile PUPDR_t   &pupd()   { return (PUPDR_t &)  (*(GPIO_TypeDef*)PortPtr).PUPDR;   }
-    static volatile ODR_t     &od()     { return (ODR_t &)    (*(GPIO_TypeDef*)PortPtr).ODR;     }
-    static volatile IDR_t     &id()     { return (IDR_t &)    (*(GPIO_TypeDef*)PortPtr).IDR;     }
-    static volatile BSRR_t    &bsr()    { return (BSRR_t &)   (*(GPIO_TypeDef*)PortPtr).BSRR;    }
-    static volatile AFR_t     &af()     { return (AFR_t &)    (*(GPIO_TypeDef*)PortPtr).AFR[0];  }
 public:
     static void ClockEnable (void)          { RCC->AHB1ENR |= ClkEnMask; }
+/*
+    template<PinConf_t pinConf, uint8_t pin>
+    static void Configure()
+    {
+        mode().reg    &= ~((uint32_t)0b11 << pin*2);
+        mode().reg    |=  (uint32_t)pinConf.mode  << pin*2;
+        otype().reg   &= ~((uint32_t)0b1  << pin);
+        otype().reg   |=  (uint32_t)pinConf.outType  << pin;
+        ospeed().reg  &= ~((uint32_t)0b11 << pin*2);
+        ospeed().reg  |=  (uint32_t)pinConf.outSpeed << pin*2;
+        pupd().reg    &= ~((uint32_t)0b1  << pin);
+        pupd().reg    |=  (uint32_t)pinConf.pullResistor << pin;
+    }
+*/
 
     static uint16_t Read()                  { return od().reg; }  
     static void Write (uint16_t val)        { od().reg = val; }
@@ -49,6 +54,16 @@ public:
     template<uint16_t val> static void Clear()  { bsr().reg = val << 16; }
 
     enum { Id = ID };
+
+protected:
+    static volatile MODER_t   &mode()   { return (MODER_t &)  (*(GPIO_TypeDef*)PortPtr).MODER;   }
+    static volatile OTYPER_t  &otype()  { return (OTYPER_t &) (*(GPIO_TypeDef*)PortPtr).OTYPER;  }
+    static volatile OSPEEDR_t &ospeed() { return (OSPEEDR_t &)(*(GPIO_TypeDef*)PortPtr).OSPEEDR; }
+    static volatile PUPDR_t   &pupd()   { return (PUPDR_t &)  (*(GPIO_TypeDef*)PortPtr).PUPDR;   }
+    static volatile ODR_t     &od()     { return (ODR_t &)    (*(GPIO_TypeDef*)PortPtr).ODR;     }
+    static volatile IDR_t     &id()     { return (IDR_t &)    (*(GPIO_TypeDef*)PortPtr).IDR;     }
+    static volatile BSRR_t    &bsr()    { return (BSRR_t &)   (*(GPIO_TypeDef*)PortPtr).BSRR;    }
+    static volatile AFR_t     &af()     { return (AFR_t &)    (*(GPIO_TypeDef*)PortPtr).AFR[0];  }
 
 };
 

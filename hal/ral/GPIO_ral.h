@@ -13,10 +13,10 @@
 struct MODER_t
 {
     enum Mode_t {
-        InputMode		= 0b00,
-        OutputMode		= 0b01,
-        AlternateMode	= 0b10,
-        AnalogMode		= 0b11
+        Input     = 0b00,
+        Output    = 0b01,
+        Alternate = 0b10,
+        Analog    = 0b11
     };
     struct Bits {
         volatile Mode_t MODER0	:2;
@@ -221,4 +221,15 @@ class GPIO_t : public MODER_t,
 };
 
 
-
+struct PinConf_t {
+    using Mode_t = MODER_t::Mode_t;
+    using OutType_t = OTYPER_t::OutType_t;
+    using OutSpeed_t = OSPEEDR_t::OutSpeed_t;
+    using PullResistor_t = PUPDR_t::PullResistor_t;
+    using AF = AFR_t::AF;
+    Mode_t mode;
+    OutType_t outType;
+    OutSpeed_t outSpeed;
+    PullResistor_t pullResistor;
+    AF alternateFunc;
+};

@@ -88,7 +88,7 @@ void USART<USART_, bufSize, RX, TX, RTS, LED>::init (Settings set)
     // пины
     RX::Port::ClockEnable();
     RX::Configure (
-        RX::Mode::AlternateMode,
+        RX::Mode::Alternate,
         RX::OutType::PushPull,
         RX::OutSpeed::High,
         RX::PullResistor::No
@@ -97,7 +97,7 @@ void USART<USART_, bufSize, RX, TX, RTS, LED>::init (Settings set)
 
     TX::Port::ClockEnable();
     TX::Configure (
-        TX::Mode::AlternateMode,
+        TX::Mode::Alternate,
         TX::OutType::PushPull,
         TX::OutSpeed::High,
         TX::PullResistor::No
@@ -106,7 +106,7 @@ void USART<USART_, bufSize, RX, TX, RTS, LED>::init (Settings set)
 
     RTS::Port::ClockEnable();
     RTS::Configure (
-        RTS::Mode::AlternateMode,
+        RTS::Mode::Alternate,
         RTS::OutType::PushPull,
         RTS::OutSpeed::High,
         RTS::PullResistor::No
@@ -115,7 +115,7 @@ void USART<USART_, bufSize, RX, TX, RTS, LED>::init (Settings set)
 
     LED::Port::ClockEnable();
     LED::Configure (
-        LED::Mode::OutputMode,
+        LED::Mode::Output,
         LED::OutType::PushPull,
         LED::OutSpeed::Low,
         LED::PullResistor::No

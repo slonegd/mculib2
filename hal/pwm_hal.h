@@ -113,7 +113,7 @@ public:
         Pin::Port::ClockEnable();
         Timer::ClockEnable();
 
-        Pin::Configure ( Pin::Mode::AlternateMode,
+        Pin::Configure ( Pin::Mode::Alternate,
                          Pin::OutType::PushPull,
                          Pin::OutSpeed::High,
                          Pin::PullResistor::No);

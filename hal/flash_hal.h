@@ -25,6 +25,7 @@ using SizeDef = ConstDef<int32_t>;
 template<uint8_t sector> constexpr ConstDef<uint32_t> Addres() { return {0, false}; }
 template<uint8_t sector> constexpr ConstDef<int32_t>  Size()   { return {0, false}; }
 
+#if defined(STM32F405xx)
 template<> constexpr AddresDef Addres<1>() { return {0x08004000, true}; }
 template<> constexpr SizeDef Size<1>()     { return {16*1024, true};    }
 
@@ -58,9 +59,57 @@ template<> constexpr SizeDef Size<10>()     { return {128*1024, true};   }
 template<> constexpr AddresDef Addres<11>() { return {0x080E0000, true}; }
 template<> constexpr SizeDef Size<11>()     { return {128*1024, true};   }
 
+#elif defined(STM32F030x6)
+template<> constexpr AddresDef Addres<1>() { return {0x08000400, true}; }
+template<> constexpr SizeDef Size<1>()     { return {1024, true};       }
+
+template<> constexpr AddresDef Addres<2>() { return {0x08000800, true}; }
+template<> constexpr SizeDef Size<2>()     { return {1024, true};       }
+
+template<> constexpr AddresDef Addres<3>() { return {0x08000C00, true}; }
+template<> constexpr SizeDef Size<3>()     { return {1024, true};       }
+
+template<> constexpr AddresDef Addres<4>() { return {0x08001000, true}; }
+template<> constexpr SizeDef Size<4>()     { return {1024, true};       }
+
+template<> constexpr AddresDef Addres<5>() { return {0x08001400, true}; }
+template<> constexpr SizeDef Size<5>()     { return {1024, true};       }
+
+template<> constexpr AddresDef Addres<6>() { return {0x08001800, true}; }
+template<> constexpr SizeDef Size<6>()     { return {1024, true};       }
+
+template<> constexpr AddresDef Addres<7>() { return {0x08001C00, true}; }
+template<> constexpr SizeDef Size<7>()     { return {1024, true};       }
+
+template<> constexpr AddresDef Addres<8>() { return {0x08002000, true}; }
+template<> constexpr SizeDef Size<8>()     { return {1024, true};       }
+
+template<> constexpr AddresDef Addres<9>() { return {0x08002400, true}; }
+template<> constexpr SizeDef Size<9>()     { return {1024, true};       }
+
+template<> constexpr AddresDef Addres<10>() { return {0x08002800, true}; }
+template<> constexpr SizeDef Size<10>()     { return {1024, true};       }
+
+template<> constexpr AddresDef Addres<11>() { return {0x08002C00, true}; }
+template<> constexpr SizeDef Size<11>()     { return {1024, true};       }
+
+template<> constexpr AddresDef Addres<12>() { return {0x08003000, true}; }
+template<> constexpr SizeDef Size<12>()     { return {1024, true};       }
+
+template<> constexpr AddresDef Addres<13>() { return {0x08003400, true}; }
+template<> constexpr SizeDef Size<13>()     { return {1024, true};       }
+
+template<> constexpr AddresDef Addres<14>() { return {0x08003800, true}; }
+template<> constexpr SizeDef Size<14>()     { return {1024, true};       }
+
+template<> constexpr AddresDef Addres<15>() { return {0x08003C00, true}; }
+template<> constexpr SizeDef Size<15>()     { return {1024, true};       }
+// тут надопродолжить до Addres<31>
+#endif
 
 
 
+// для STM32F0 sector на самом деле page из refmanual
 template <class DATA, uint8_t sector>
 class Flash 
 {

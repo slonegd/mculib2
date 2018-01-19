@@ -121,11 +121,11 @@ inline void PortsInit (void)
 {
 	LedPort::ClockEnable();
 
-    Bled::Configure (Bled::Mode::OutputMode,
+    Bled::Configure (Bled::Mode::Output,
                      Bled::OutType::PushPull,
                      Bled::OutSpeed::High,
                      Bled::PullResistor::No);
-    Oled::Configure (Oled::Mode::OutputMode,
+    Oled::Configure (Oled::Mode::Output,
                      Oled::OutType::PushPull,
                      Oled::OutSpeed::High,
                      Oled::PullResistor::No);

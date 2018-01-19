@@ -69,39 +69,39 @@ private:
     {
         // OpenDrain - для слвемстимости с 5 В
         RS::Port::ClockEnable();
-        RS::Configure ( RS::Mode::OutputMode,
+        RS::Configure ( RS::Mode::Output,
                         RS::OutType::OpenDrain,
                         RS::OutSpeed::Low,
                         RS::PullResistor::No
         );
         RW::Port::ClockEnable();
-        RW::Configure ( RW::Mode::OutputMode,
+        RW::Configure ( RW::Mode::Output,
                         RW::OutType::OpenDrain,
                         RW::OutSpeed::Low,
                         RW::PullResistor::No
         );
-        E::Configure ( E::Mode::OutputMode,
+        E::Configure ( E::Mode::Output,
                        E::OutType::OpenDrain, 
                        E::OutSpeed::Low,
                        E::PullResistor::No
         );
         D4::Port::ClockEnable();
-        D4::Configure ( D4::Mode::OutputMode,
+        D4::Configure ( D4::Mode::Output,
                         D4::OutType::OpenDrain, 
                         D4::OutSpeed::Low,
                         D4::PullResistor::No
         );
-        D5::Configure ( D5::Mode::OutputMode,
+        D5::Configure ( D5::Mode::Output,
                         D5::OutType::OpenDrain,
                         D5::OutSpeed::Low,
                         D5::PullResistor::No
         );
-        D6::Configure ( D6::Mode::OutputMode,
+        D6::Configure ( D6::Mode::Output,
                         D6::OutType::OpenDrain,
                         D6::OutSpeed::Low,
                         D6::PullResistor::No
         );
-        D7::Configure ( D7::Mode::OutputMode,
+        D7::Configure ( D7::Mode::Output,
                         D7::OutType::OpenDrain,
                         D7::OutSpeed::Low,
                         D7::PullResistor::No

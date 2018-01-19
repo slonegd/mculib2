@@ -46,6 +46,9 @@ public:
         PORT::pupd().reg    &= ~((uint32_t)0b1  << pin);
         PORT::pupd().reg    |=  (uint32_t)res   << pin;
     }
+/*    template<PinConf_t pinConf>
+    static void Configure() { Port::template Configure<pinConf, pin>(); }
+*/
     template <AF func> static void SetAltFunc()
     {
         constexpr uint8_t reg = pin / 8;
