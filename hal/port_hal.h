@@ -22,8 +22,8 @@ protected:
 public:
     static void ClockEnable (void)          { RCC->AHB1ENR |= ClkEnMask; }
 
-    static uint16_t Read()                  { return od.reg; }  
-    static void Write (uint16_t val)        { od.reg = val; }
+    static uint16_t Read()                  { return od().reg; }  
+    static void Write (uint16_t val)        { od().reg = val; }
     static void Set (uint16_t val)          { bsr().reg = val; }
     static void Clear (uint16_t val)        { bsr().reg = val << 16; }
     static void ClearAndSet (uint16_t clearMask, uint16_t val)

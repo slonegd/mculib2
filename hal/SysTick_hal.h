@@ -2,7 +2,12 @@
 
 #include <stdint.h>
 #include "defines.h"
-#include "stm32f4xx.h"
+#if defined(STM32F405xx)
+    #include "stm32f4xx.h"
+#elif defined(STM32F030x6)
+    #include "stm32f0xx.h"
+#endif
+
 
 template <uint16_t ms>
 inline void InitSysTimerInt (void)

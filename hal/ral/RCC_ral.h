@@ -252,9 +252,26 @@ namespace RCC_ral {
 
 #elif defined(STM32F030x6)
     struct CFGR_t {
-        enum PLLNOdiv {
+        enum PLLdivMCO {
             PLLdiv1 = 0b0,
             PLLdiv2 = 0b1    
+        };
+        enum PLLmultiplier {
+            PLLmul2 = 0b0000,
+            PLLmul3 = 0b0001,
+            PLLmul4 = 0b0010,
+            PLLmul5 = 0b0011,
+            PLLmul6 = 0b0100,
+            PLLmul7 = 0b0101,
+            PLLmul8 = 0b0110,
+            PLLmul9 = 0b0111,
+            PLLmul10 = 0b1000,
+            PLLmul11 = 0b1001,
+            PLLmul12 = 0b1010,
+            PLLmul13 = 0b1011,
+            PLLmul14 = 0b1100,
+            PLLmul15 = 0b1101,
+            PLLmul16 = 0b1111,
         };
         enum MCOPRE {
             MCOdiv1 = 0b000,
@@ -266,7 +283,29 @@ namespace RCC_ral {
             MCOdiv64 = 0b110,
             MCOdiv128 = 0b111
         };
-                    
+        enum AHBprescaler {
+            AHBnotdiv	= 0,
+            AHBdiv2	    = 0b1000,
+            AHBdiv4	    = 0b1001,
+            AHBdiv8	    = 0b1010,
+            AHBdiv16	= 0b1011,
+            AHBdiv64	= 0b1100,
+            AHBdiv128	= 0b1101,
+            AHBdiv256	= 0b1110,
+            AHBdiv512	= 0b1111
+        };
+        enum  APBprescaler {
+            APBnotdiv = 0,
+            APBdiv2	  = 0b100,
+            APBdiv4	  = 0b101,
+            APBdiv8	  = 0b110,
+            APBdiv16  = 0b111
+        };
+        enum  SystemClockSwitch {
+            CS_HSI		= 0,
+            CS_HSE		= 0b01,
+            CS_PLL		= 0b10
+        };            
         struct Bits_t {
             // Bits 1:0 SW: System clock switch
             volatile SystemClockSwitch SW		:2;
@@ -275,13 +314,13 @@ namespace RCC_ral {
             // Bits 7:4 HPRE: AHB prescaler
             volatile AHBprescaler HPRE	:4;
             // Bits 10:8 PPRE: PCLK prescaler
-            volatile uint_32_t PPRE     :2;
+            volatile APBprescaler PPRE     :3;
             // Bits 13:11 Reserved, must be kept at reset value
             volatile uint32_t dcb7      :3;
             // Bit 14 ADC prescaler
             volatile bool ADCPRE        :1;
             // Bit 15 Reserved, must be kept at reset value
-            volatile bool dcb8:         :1;
+            volatile bool dcb8         :1;
             // Bit 16 PLL entry clock source
             volatile bool PLLSRC        :1;
             // Bit 17 HSE divider for PLL input clock
@@ -291,12 +330,12 @@ namespace RCC_ral {
             // Bits 23:22 Reserved, must be kept at reset value
             volatile uint32_t dcb9      :2;
             // Bits 27:24 MCO Microcontroller clock output
-            volatile uint32_t MCO       :3;
+            volatile uint32_t MCO       :4;
             // Bits 30:28 MCOPRE Microcontroller Clock Output Prescaler
-            volatile MCOPRE             :2;
+            volatile MCOPRE             :3;
             // Bit 31 PLLNODIV PLL clock not divided for MCO
-            volatile PLLNOdiv           :1;
-        }
+            volatile PLLdivMCO PLLNOdiv  :1;
+        };
         union {
                 volatile Bits_t bits;
                 volatile uint32_t reg;
@@ -352,13 +391,13 @@ namespace RCC_ral {
     struct AHBRSTR_t {
         uint32_t reg;
     };
-    struct CFGR2 {
+    struct CFGR2_t {
         uint32_t reg;
     };
-    struct CFGR3 {
+    struct CFGR3_t {
         uint32_t reg;
     };
-    struct CR2 {
+    struct CR2_t {
         uint32_t reg;
     };
     
@@ -433,23 +472,34 @@ extern const uint32_t fCPU;
 using namespace RCC_ral;
 
 class RCC_t : public RCC_ral::CR_t,
-              public PLLCFGR_t,
               public CFGR_t,
+              public APB1RSTR_t,
+              public APB2RSTR_t,
               public CIR_t,
+              public APB1ENR_t,
+              public APB2ENR_t,
+#if defined (STM32F405xx)
+              public PLLCFGR_t,
               public AHB1RSTR_t,
               public AHB2RSTR_t,
               public AHB3RSTR_t,
-              public RESERVED1_t,
-              public APB1RSTR_t,
-              public APB2RSTR_t,
+              public RESERVED1_t,              
               public RESERVED2_t,
               public RESERVED3_t,
-              public AHB1ENR_t,
+              public AHB1ENR_t,             
               public AHB2ENR_t,
               public AHB3ENR_t,
               public RESERVED4_t,
-              public APB1ENR_t,
-              public APB2ENR_t
+#elif defined (STM32F030x6)
+              public BDCR_t,
+              public CSR_t,
+              public CR2_t,
+              public AHBRSTR_t,
+              public AHBENR_t,
+              public CFGR2_t,
+              public CFGR3_t
+            
+#endif
 {
 public:	
     enum Bus {
@@ -461,6 +511,8 @@ public:
     static void waitHSEready() { while (!clockContr().bits.HSERDY) { } }
     static void PLLon()        { clockContr().bits.PLLON = 1; }
     static void waitPLLready() { while (!clockContr().bits.PLLRDY) { } }
+
+#if defined(STM32F405xx)
     static void setPLLP (PLLPdiv val)  { pllConf().bits.PLLP = val; }
 
     template <uint8_t val> static void setPLLM()  
@@ -507,20 +559,29 @@ public:
         if (val >= 2 && val <= 15)
             pllConf().bits.PLLQ = val;
     }
+#endif
 
-    static void setPLLsource (PLLsource val) { pllConf().bits.PLLSRC = val; }
+    
     static void setAHBprescaler (AHBprescaler val) { conf().bits.HPRE = val; }
+#if defined (STM32F405xx)
+    static void setPLLsource (PLLsource val) { pllConf().bits.PLLSRC = val; }
     static void setAPB1prescaler (APBprescaler val) { conf().bits.PPRE1 = val; }
     static void setAPB2prescaler (APBprescaler val) { conf().bits.PPRE2 = val; }
-    static void systemClockSwitch (SystemClockSwitch val) { conf().bits.SW = val; }
     static uint32_t getAPB1clock() { return getAPBclock (conf().bits.PPRE1); }
     static uint32_t getAPB2clock() { return getAPBclock (conf().bits.PPRE2); }
-
+#elif defined (STM32F030x6)
+    static void setPLLsource (bool val) { conf().bits.PLLSRC = val; }
+    static void setAPBprecsaler (APBprescaler val) { conf().bits.PPRE = val; }
+    static void setPLLmultiplier (PLLmultiplier val) { conf().bits.PLLMUL = val; }
+#endif
+    static void systemClockSwitch (SystemClockSwitch val) { conf().bits.SW = val; }
+    
 protected:
     static volatile RCC_ral::CR_t      &clockContr() { return (RCC_ral::CR_t &)      RCC->CR;      }
-    static volatile RCC_ral::PLLCFGR_t &pllConf()    { return (RCC_ral::PLLCFGR_t &) RCC->PLLCFGR; }
     static volatile RCC_ral::CFGR_t    &conf()       { return (RCC_ral::CFGR_t &)    RCC->CFGR;    }
-
+#if defined (STM32F405xx)
+    static volatile RCC_ral::PLLCFGR_t &pllConf()    { return (RCC_ral::PLLCFGR_t &) RCC->PLLCFGR; }
+#endif
 private:
     static inline uint32_t getAPBclock(APBprescaler val)
     {

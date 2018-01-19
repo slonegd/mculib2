@@ -33,5 +33,5 @@
 
 constexpr volatile uint32_t& bitBand (uint32_t base, uint32_t offset, uint32_t bit)
 {
-    return *((volatile uint32_t*)(PERIPH_BB_BASE + (base-PERIPH_BASE + offset)*32 + bit*4));
+    return (volatile uint32_t&)*((volatile uint32_t*)(PERIPH_BB_BASE + (base-PERIPH_BASE + offset)*32 + bit*4));
 }

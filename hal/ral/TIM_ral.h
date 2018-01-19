@@ -272,8 +272,8 @@ public:
 
     // включает тактирование таймера
     static void ClockEnable() {
-        ClkEnable = true;
-        while ( !ClkEnable ) { };
+        ClkEnable() = true;
+        while ( !ClkEnable() ) { };
     }
     static void CounterEnable()    { bitBand(Base, conf1().Offset, CEN) = true; }
     static bool IsCount()          { return bitBand(Base, conf1().Offset, CEN); }
@@ -311,13 +311,14 @@ protected:
     static volatile TIM_ral::CCR_t  &capture()     { return (TIM_ral::CCR_t &)    (*(TIM_TypeDef*)TIMptr).CCR1;  }    
     
 private:
-    static constexpr volatile uint32_t& ClkEnable = 
+    static constexpr volatile uint32_t& ClkEnable() { return  
         TIMptr == TIM2_BASE ? bitBand(RCC_BASE, RCC_ral::APB1ENR_t::Offset, RCC_APB1ENR_TIM2EN_Pos) :
         TIMptr == TIM3_BASE ? bitBand(RCC_BASE, RCC_ral::APB1ENR_t::Offset, RCC_APB1ENR_TIM3EN_Pos) :
         TIMptr == TIM4_BASE ? bitBand(RCC_BASE, RCC_ral::APB1ENR_t::Offset, RCC_APB1ENR_TIM4EN_Pos) :
         TIMptr == TIM5_BASE ? bitBand(RCC_BASE, RCC_ral::APB1ENR_t::Offset, RCC_APB1ENR_TIM5EN_Pos) :
         TIMptr == TIM8_BASE ? bitBand(RCC_BASE, RCC_ral::APB2ENR_t::Offset, RCC_APB2ENR_TIM8EN_Pos) :
                               bitBand(RCC_BASE, RCC_ral::APB2ENR_t::Offset, RCC_APB2ENR_TIM1EN_Pos);
+    }
 };
 
 using TIM1_t = TIM<TIM1_BASE, AFR_t::AF::AF1>;
