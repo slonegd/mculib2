@@ -15,27 +15,27 @@
 #include "timers.h"
 
 
-template <class InRegs_, class OutRegs_, class UART_>
+template <class InRegs_t, class OutRegs_t, class UART_>
 class MBslave
 {
 public:
-    static const uint16_t InRegQty = sizeof(InRegs_) / 2;
-    static const uint16_t OutRegQty = sizeof(OutRegs_) / 2;
+    static const uint16_t InRegQty = sizeof(InRegs_t) / 2;
+    static const uint16_t OutRegQty = sizeof(OutRegs_t) / 2;
 
     union {
-        InRegs_ inRegs;
+        InRegs_t inRegs;
         uint16_t arInRegs[InRegQty];
     };
     union {
-        OutRegs_ outRegs;
+        OutRegs_t outRegs;
         uint16_t arOutRegs[OutRegQty];
     };
     union {
-        InRegs_ inRegsMin;
+        InRegs_t inRegsMin;
         uint16_t arInRegsMin[InRegQty];
     };
     union {
-        InRegs_ inRegsMax;
+        InRegs_t inRegsMax;
         uint16_t arInRegsMax[InRegQty];
     };
 
