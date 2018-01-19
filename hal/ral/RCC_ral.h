@@ -489,7 +489,7 @@ class RCC_t : public RCC_ral::CR_t,
               public AHB1ENR_t,             
               public AHB2ENR_t,
               public AHB3ENR_t,
-              public RESERVED4_t,
+              public RESERVED4_t
 #elif defined (STM32F030x6)
               public BDCR_t,
               public CSR_t,

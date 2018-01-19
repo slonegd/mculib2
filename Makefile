@@ -13,7 +13,10 @@
 ######################################
 # target
 ######################################
-TARGET = STM32F4_DISCOVERY
+TARGET = STM32FX_DISCOVERY
+
+TEST_CATALOG = test_F4
+#TEST_CATALOG = test_F0
 
 
 ######################################
@@ -32,11 +35,20 @@ OPT = -O2
 SOURCES_DIR =  
 SOURCES_DIR += Application 
 #SOURCES_DIR += . 
-SOURCES_DIR += STM32F4_files 
-SOURCES_DIR += STM32F4_files/CMSIS 
 SOURCES_DIR += hal
 SOURCES_DIR += hal/ral
-SOURCES_DIR += test
+SOURCES_DIR += $(TEST_CATALOG)
+ifeq ($(TEST_CATALOG), test_F4)
+SOURCES_DIR += STM32F4_files 
+SOURCES_DIR += STM32F4_files/CMSIS
+endif
+ifeq ($(TEST_CATALOG), test_F0)
+SOURCES_DIR += STM32F0_files 
+SOURCES_DIR += STM32F0_files/CMSIS
+endif
+
+
+
 
 
 # firmware library path
@@ -49,15 +61,25 @@ BUILD_DIR = build
 # source
 ######################################
 # C sources
+ifeq ($(TEST_CATALOG), test_F4)
 C_SOURCES = STM32F4_files/system_stm32f4xx.c 
+endif
+ifeq ($(TEST_CATALOG), test_F0)
+C_SOURCES = STM32F0_files/system_stm32f0xx.c 
+endif
  
 # C++ sourses
 CPP_SOURCES = 
-CPP_SOURCES += test/main.cpp 
+CPP_SOURCES += $(TEST_CATALOG)/main.cpp 
 
 
 # ASM sources
+ifeq ($(TEST_CATALOG), test_F4)
 ASM_SOURCES = STM32F4_files/startup_stm32f405xx.s
+endif
+ifeq ($(TEST_CATALOG), test_F0)
+ASM_SOURCES = STM32F0_files/startup_stm32f030x6.s
+endif
 
 
 ######################################
@@ -69,10 +91,10 @@ PERIFLIB_SOURCES =
 #######################################
 # binaries
 #######################################
-#PREFIX = arm-none-eabi-
+PREFIX = arm-none-eabi-
 #PREFIX = /home/slonegd/Code/gcc-arm-none-eabi-6-2017-q2-update/bin/arm-none-eabi-
 #PREFIX = /home/dvk/code/gcc-arm-none-eabi-6-2017-q1-update/bin/arm-none-eabi-
-PREFIX = /home/peltikhin/code/gcc-arm-none-eabi-7-2017-q4-major/bin/arm-none-eabi-
+#PREFIX = /home/peltikhin/code/gcc-arm-none-eabi-7-2017-q4-major/bin/arm-none-eabi-
 
 CPP = $(PREFIX)g++
 CC = $(PREFIX)gcc
@@ -87,13 +109,23 @@ BIN = $(CP) -O binary -S
 # CFLAGS
 #######################################
 # cpu
+ifeq ($(TEST_CATALOG), test_F4)
 CPU = -mcpu=cortex-m4
+endif
+ifeq ($(TEST_CATALOG), test_F0)
+CPU = -mcpu=cortex-m0
+endif
 
 # fpu
+ifeq ($(TEST_CATALOG), test_F4)
 FPU = -mfpu=fpv4-sp-d16
+endif
+# NONE for Cortex-M0/M0+/M3
 
 # float-abi
+ifeq ($(TEST_CATALOG), test_F4)
 FLOAT-ABI = -mfloat-abi=hard
+endif
 
 # mcu
 MCU = $(CPU) -mthumb $(FPU) $(FLOAT-ABI)
@@ -103,7 +135,12 @@ MCU = $(CPU) -mthumb $(FPU) $(FLOAT-ABI)
 AS_DEFS = 
 
 # C defines
+ifeq ($(TEST_CATALOG), test_F4)
 C_DEFS = -DSTM32F405xx
+endif
+ifeq ($(TEST_CATALOG), test_F0)
+C_DEFS = -DSTM32F030x6
+endif
 
 
 # AS includes
@@ -111,12 +148,18 @@ AS_INCLUDES =
 
 # C includes
 C_INCLUDES =  
-C_INCLUDES += -ISTM32F4_files 
-C_INCLUDES += -ISTM32F4_files/CMSIS 
 C_INCLUDES += -I.
-C_INCLUDES += -Itest
+C_INCLUDES += -I$(TEST_CATALOG)
 C_INCLUDES += -Ihal
 C_INCLUDES += -Ihal/ral
+ifeq ($(TEST_CATALOG), test_F4)
+C_INCLUDES += -ISTM32F4_files 
+C_INCLUDES += -ISTM32F4_files/CMSIS 
+endif
+ifeq ($(TEST_CATALOG), test_F0)
+C_INCLUDES += -ISTM32F0_files 
+C_INCLUDES += -ISTM32F0_files/CMSIS 
+endif
 
 
 # compile gcc flags
@@ -137,7 +180,12 @@ CFLAGS += -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)"
 # LDFLAGS
 #######################################
 # link script
+ifeq ($(TEST_CATALOG), test_F4)
 LDSCRIPT = STM32F4_files/STM32F405RGTx_FLASH.ld
+endif
+ifeq ($(TEST_CATALOG), test_F0)
+LDSCRIPT = STM32F0_files/STM32F030K6Tx_FLASH.ld
+endif
 
 # libraries
 LIBS = -lc -lm -lnosys
