@@ -100,7 +100,7 @@ inline void mbRegInAction ()
 // эта функция вызываеться первой в startup файле
 extern "C" void CLKinit (void)
 {
-    FLASH_t::SetLatency (FLASH_t::Latency::latency_5);
+    FLASH_t::SetLatency (FLASH_t::Latency::_5);
     RCC_t::HSEon();
     RCC_t::waitHSEready();
     RCC_t::setAHBprescaler (RCC_t::AHBprescaler::AHBnotdiv);

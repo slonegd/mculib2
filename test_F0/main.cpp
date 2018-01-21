@@ -20,6 +20,7 @@ int main(void)
     while (1)
     {
         timers.update();
+        //flash.update();
         if (offTimer.event()) {
             GPIOC->ODR |= GPIO_ODR_8;
             offTimer.stop();

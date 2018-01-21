@@ -17,96 +17,6 @@
 #include <stdbool.h>
 #include <string.h>
 #include "FLASH_ral.h"
-#include "constDef.h"
-
-using AddresDef = ConstDef<uint32_t>;
-using SizeDef = ConstDef<int32_t>;
-
-template<uint8_t sector> constexpr ConstDef<uint32_t> Addres() { return {0, false}; }
-template<uint8_t sector> constexpr ConstDef<int32_t>  Size()   { return {0, false}; }
-
-#if defined(STM32F405xx)
-template<> constexpr AddresDef Addres<1>() { return {0x08004000, true}; }
-template<> constexpr SizeDef Size<1>()     { return {16*1024, true};    }
-
-template<> constexpr AddresDef Addres<2>() { return {0x08008000, true}; }
-template<> constexpr SizeDef Size<2>()     { return {16*1024, true};    }
-
-template<> constexpr AddresDef Addres<3>() { return {0x0800C000, true}; }
-template<> constexpr SizeDef Size<3>()     { return {16*1024, true};    }
-
-template<> constexpr AddresDef Addres<4>() { return {0x08010000, true}; }
-template<> constexpr SizeDef Size<4>()     { return {64*1024, true};    }
-
-template<> constexpr AddresDef Addres<5>() { return {0x08020000, true}; }
-template<> constexpr SizeDef Size<5>()     { return {128*1024, true};   }
-
-template<> constexpr AddresDef Addres<6>() { return {0x08040000, true}; }
-template<> constexpr SizeDef Size<6>()     { return {128*1024, true};   }
-
-template<> constexpr AddresDef Addres<7>() { return {0x08060000, true}; }
-template<> constexpr SizeDef Size<7>()     { return {128*1024, true};   }
-
-template<> constexpr AddresDef Addres<8>() { return {0x08080000, true}; }
-template<> constexpr SizeDef Size<8>()     { return {128*1024, true};   }
-
-template<> constexpr AddresDef Addres<9>() { return {0x080A0000, true}; }
-template<> constexpr SizeDef Size<9>()     { return {128*1024, true};   }
-
-template<> constexpr AddresDef Addres<10>() { return {0x080C0000, true}; }
-template<> constexpr SizeDef Size<10>()     { return {128*1024, true};   }
-
-template<> constexpr AddresDef Addres<11>() { return {0x080E0000, true}; }
-template<> constexpr SizeDef Size<11>()     { return {128*1024, true};   }
-
-#elif defined(STM32F030x6)
-template<> constexpr AddresDef Addres<1>() { return {0x08000400, true}; }
-template<> constexpr SizeDef Size<1>()     { return {1024, true};       }
-
-template<> constexpr AddresDef Addres<2>() { return {0x08000800, true}; }
-template<> constexpr SizeDef Size<2>()     { return {1024, true};       }
-
-template<> constexpr AddresDef Addres<3>() { return {0x08000C00, true}; }
-template<> constexpr SizeDef Size<3>()     { return {1024, true};       }
-
-template<> constexpr AddresDef Addres<4>() { return {0x08001000, true}; }
-template<> constexpr SizeDef Size<4>()     { return {1024, true};       }
-
-template<> constexpr AddresDef Addres<5>() { return {0x08001400, true}; }
-template<> constexpr SizeDef Size<5>()     { return {1024, true};       }
-
-template<> constexpr AddresDef Addres<6>() { return {0x08001800, true}; }
-template<> constexpr SizeDef Size<6>()     { return {1024, true};       }
-
-template<> constexpr AddresDef Addres<7>() { return {0x08001C00, true}; }
-template<> constexpr SizeDef Size<7>()     { return {1024, true};       }
-
-template<> constexpr AddresDef Addres<8>() { return {0x08002000, true}; }
-template<> constexpr SizeDef Size<8>()     { return {1024, true};       }
-
-template<> constexpr AddresDef Addres<9>() { return {0x08002400, true}; }
-template<> constexpr SizeDef Size<9>()     { return {1024, true};       }
-
-template<> constexpr AddresDef Addres<10>() { return {0x08002800, true}; }
-template<> constexpr SizeDef Size<10>()     { return {1024, true};       }
-
-template<> constexpr AddresDef Addres<11>() { return {0x08002C00, true}; }
-template<> constexpr SizeDef Size<11>()     { return {1024, true};       }
-
-template<> constexpr AddresDef Addres<12>() { return {0x08003000, true}; }
-template<> constexpr SizeDef Size<12>()     { return {1024, true};       }
-
-template<> constexpr AddresDef Addres<13>() { return {0x08003400, true}; }
-template<> constexpr SizeDef Size<13>()     { return {1024, true};       }
-
-template<> constexpr AddresDef Addres<14>() { return {0x08003800, true}; }
-template<> constexpr SizeDef Size<14>()     { return {1024, true};       }
-
-template<> constexpr AddresDef Addres<15>() { return {0x08003C00, true}; }
-template<> constexpr SizeDef Size<15>()     { return {1024, true};       }
-// тут надопродолжить до Addres<31>
-#endif
-
 
 
 // для STM32F0 sector на самом деле page из refmanual
@@ -114,174 +24,220 @@ template <class DATA, uint8_t sector>
 class Flash 
 {
 public:
-    // обязательно должен быть первым
-    // потому что использую this как указатель к структуре
-    DATA data;
-    bool readFromFlash ();
-    void update();
-    Flash (DATA d)
-    {
-        static_assert (
-            Addres<sector>().defined,
-            "Недопустимый сектор памяти"
-        );
-        static_assert (
-            sizeof(DATA) < 255,
-            "Размер сохраняемой структцры не может превышать 255 байт"
-        );
-        FLASH_t::EndOfProgInterruptEn();
-        if ( !readFromFlash() ) {
-            memcpy (&data, &d, sizeof(DATA));
-        }
-    }
+   // обязательно должен быть первым
+   // потому что использую this как указатель к структуре
+   DATA data;
+
+
+   // метод должен периодически вызываться в программе
+   // запускает запись во флэш, если данные изменились
+   void update();
+
+
+   // конструктор принимает значения, которые необходимо записать
+   // при первой прошивке (по умолчанию)
+   Flash (DATA d)
+   {
+      static_assert (
+         SectorAddr != 0,
+         "Недопустимый сектор памяти"
+      );
+      static_assert (
+         sizeof(DATA) < 255,
+         "Размер сохраняемой структуры не может превышать 255 байт"
+      );
+      FLASH_t::EndOfProgInterruptEn(); // уже не помню зачем это
+      if ( !readFromFlash() ) {
+         memcpy (&data, &d, sizeof(DATA));
+      }
+   }
+
+
+
 private:
-    static constexpr uint8_t QtyBytes = sizeof(DATA);
-    static const uint32_t SectorAddr = Addres<sector>().val;
-    static const int32_t SectorSize = Size<sector>().val;
-    uint8_t copy[QtyBytes];
-    uint8_t* original = (uint8_t*)this;
-    int32_t flashOffset;
-    uint8_t needErase;
-    struct ByteInd_t {
-        uint8_t byte;
-        uint8_t ind;   
-    };
-    union Flash_t {
-        ByteInd_t data[SectorSize/2];
-        uint16_t word[SectorSize/2];
-    };
-    volatile Flash_t& flash = *( (Flash_t *) SectorAddr );
+   static constexpr uint8_t QtyBytes = sizeof(DATA);
+#if defined(STM32F405xx)
+   static constexpr uint32_t SectorAddr =
+      sector == 1  ? 0x08004000 :
+      sector == 2  ? 0x08008000 :
+      sector == 3  ? 0x0800C000 :
+      sector == 4  ? 0x08010000 :
+      sector == 5  ? 0x08020000 :
+      sector == 6  ? 0x08040000 :
+      sector == 7  ? 0x08060000 :
+      sector == 8  ? 0x08080000 :
+      sector == 9  ? 0x080A0000 :
+      sector == 10 ? 0x080C0000 :
+      sector == 11 ? 0x080E0000 : 0;
+   static constexpr int32_t SectorSize =
+      sector > 0 && sector < 4  ? 16*1024 :
+      sector == 4               ? 64*1024 :
+      sector > 4 && sector < 12 ? 128*1024 : 0;
+#elif defined(STM32F030x6)
+   static constexpr uint32_t SectorAddr =
+      sector > 0 && sector < 31 ? 0x08000000 + 1024*sector : 0;
+   static constexpr int32_t SectorSize =
+      sector > 0 && sector < 31 ? 1024 : 0;
+#endif
+
+
+   uint8_t copy[QtyBytes];
+   uint8_t* original = (uint8_t*)this;
+   int32_t flashOffset;
+   bool needErase;
+   struct ByteInd_t {
+      uint8_t byte;
+      uint8_t ind;   
+   };
+   union Flash_t {
+      ByteInd_t data[SectorSize/2];
+      uint16_t word[SectorSize/2];
+   };
+   volatile Flash_t& flash = *( (Flash_t *) SectorAddr );
+
+   // возвращает true, если данные прочитаны
+   // false, если нет или данные не полные
+   bool readFromFlash();
 };
+
 
 
 template <class Data, uint8_t sector>
 bool Flash<Data,sector>::readFromFlash ()
 {
-    // обнуляем буфер перед заполнением
-    memset (copy, 0xFF, QtyBytes);
+   // обнуляем буфер перед заполнением
+   memset (copy, 0xFF, QtyBytes);
  
-    // чтение данных в копию data в виде массива
-    flashOffset = -1;
-    bool indExist[QtyBytes] = {false};
-    for (uint32_t i = 0; i < SectorSize; i++) {
-        uint8_t index;
-        index = flash.data[i].ind;
-        if ( index < QtyBytes) {
-            copy[index] = flash.data[i].byte;
-            indExist[index] = true;
-        } else if (index == 0xFF) {
-            flashOffset = i;
-            break;
-        }
-    }
+   // чтение данных в копию data в виде массива
+   flashOffset = -1;
+   bool indExist[QtyBytes] = {false};
+   for (uint32_t i = 0; i < SectorSize; i++) {
+      uint8_t index;
+      index = flash.data[i].ind;
+      if ( index < QtyBytes) {
+         copy[index] = flash.data[i].byte;
+         indExist[index] = true;
+      } else if (index == 0xFF) {
+         flashOffset = i;
+         break;
+      }
+   }
 
-    // проверка есть ли ещё место
-    if ( flashOffset == -1) {
-        needErase = true;
-        return false;    
-    }
+   // проверка есть ли ещё место
+   if ( flashOffset == -1) {
+      needErase = true;
+      return false;    
+   }
 
-    // проверка остальной части сектора флэш
-    for (uint32_t i = flashOffset; i < SectorSize; i++) {
-        if (flash.word[i] != 0xFFFF) {
-            needErase = true;
-            return false;    
-        }
-    }
+   // проверка остальной части сектора флэш
+   for (uint32_t i = flashOffset; i < SectorSize; i++) {
+      if (flash.word[i] != 0xFFFF) {
+         needErase = true;
+         return false;    
+      }
+   }
 
-    // проверка, что все данные прочитаны
-    bool tmp = true;
-    for (uint8_t i = 0; i < QtyBytes; i++) {
-        tmp &= indExist[i];
-    }
-    if (tmp) {
-        memcpy(original, copy, QtyBytes);
-        return true;
-    } else {
-        return false;
-    }
-
+   // проверка, что все данные прочитаны
+   bool tmp = true;
+   for (uint8_t i = 0; i < QtyBytes; i++) {
+      tmp &= indExist[i];
+   }
+   if (tmp) {
+      memcpy(original, copy, QtyBytes);
+      return true;
+   } else {
+      return false;
+   }
 }
+
+
+
 template <class Data, uint8_t sector>
 void Flash<Data,sector>::update ()
 {
-    // реализация автоматом
-	enum FuncState {
-		CheckChanges,
-		StartWrite,
-		CheckWrite,
-		Errase,
-		CheckErase
-	};
-    static FuncState state = CheckChanges;
-    static volatile uint8_t dataWrite = 0;
-    static uint8_t byteN = 0;
+   // реализация автоматом
+   enum State {
+      CheckChanges,
+      StartWrite,
+      CheckWrite,
+      Errase,
+      CheckErase
+   };
+   static State state = CheckChanges;
+   static volatile uint8_t dataWrite = 0;
+   static uint8_t byteN = 0;
 
-	switch (state) {
+   switch (state) {
 
-    case CheckChanges:
-        if (needErase) {
-            state = Errase;
-        } else if (original[byteN] == copy[byteN]) {
-            byteN++;
-            if (byteN == QtyBytes) {
-                byteN = 0;
-            }
-        } else {
-            state = StartWrite;
-        }
-		break;
+   case CheckChanges:
+      if (needErase) {
+         state = Errase;
+      } else if (original[byteN] == copy[byteN]) {
+         byteN++;
+         if (byteN == QtyBytes) {
+            byteN = 0;
+         }
+      } else {
+         state = StartWrite;
+      }
+      break;
 
-    case StartWrite:
-        if ( !FLASH_t::Busy() ) {
-            FLASH_t::Unlock();
-            FLASH_t::SetProgMode();
-            FLASH_t::SetProgSize (FLASH_t::ProgSize::x16);
-            dataWrite = original[byteN];
-            flash.word[flashOffset] = (uint16_t)byteN << 8 | dataWrite;
-            state = CheckWrite;
-        }
-        break;
+   case StartWrite:
+      if ( !FLASH_t::Busy() && !FLASH_t::IsLock() ) {
+         FLASH_t::Unlock();
+         FLASH_t::SetProgMode();
+#if defined(STM32F405xx)
+         FLASH_t::SetProgSize (FLASH_t::ProgSize::x16);
+#endif
+         dataWrite = original[byteN];
+         flash.word[flashOffset] = (uint16_t)byteN << 8 | dataWrite;
+         state = CheckWrite;
+      }
+      break;
 
-    case CheckWrite:
-        if ( FLASH_t::EndOfProg() ) {
-            FLASH_t::ClearEndOfProgFlag();
-            FLASH_t::Lock();
-            copy[byteN] = dataWrite;
-            flashOffset++;
-            if ( flashOffset >= SectorSize ) {
-                needErase = true;
-            }
-            state = CheckChanges;
-        }
-        break;
+   case CheckWrite:
+      if ( FLASH_t::EndOfProg() ) {
+         FLASH_t::ClearEndOfProgFlag();
+         FLASH_t::Lock();
+         copy[byteN] = dataWrite;
+         flashOffset++;
+         if ( flashOffset >= SectorSize ) {
+            needErase = true;
+         }
+         state = CheckChanges;
+      }
+      break;
 
-    case Errase:
-        if ( !FLASH_t::Busy() ) {
-            FLASH_t::Unlock();
-            FLASH_t::template StartEraseSector<(FLASH_t::Sectors)sector>();
-            state = CheckErase;
-        }
-        break;
+   case Errase:
+      if ( !FLASH_t::Busy() && !FLASH_t::IsLock() ) {
+         FLASH_t::Unlock();
+#if defined(STM32F405xx)
+         FLASH_t::template StartEraseSector<sector>();
+#elif defined(STM32F030x6)
+         FLASH_t::template StartEraseSector<SectorAddr>();
+#endif
+         state = CheckErase;
+      }
+      break;
 
-    case CheckErase:
-        if ( FLASH_t::EndOfProg() ) {
-            FLASH_t::ClearEndOfProgFlag();
-            FLASH_t::Lock();
-            // проверка, что стёрли
-            bool tmp = true;
-            for (uint32_t i = 0; i < SectorSize; i++) {
-                tmp &= (flash.word[i] == 0xFFFF);
-            }
-            if (tmp) {
-                needErase = false;
-                memset (copy, 0xFF, QtyBytes);
-                flashOffset = 0;
-            }
-            state = CheckChanges;
-        }
-        break;
-	} // switch
+   case CheckErase:
+      if ( FLASH_t::EndOfProg() ) {
+         FLASH_t::ClearEndOfProgFlag();
+         FLASH_t::Lock();
+         // проверка, что стёрли
+         bool tmp = true;
+         for (uint32_t i = 0; i < SectorSize; i++) {
+            tmp &= (flash.word[i] == 0xFFFF);
+         }
+         if (tmp) {
+            needErase = false;
+            memset (copy, 0xFF, QtyBytes);
+            flashOffset = 0;
+         }
+         state = CheckChanges;
+      }
+      break;
+   } // switch
 }
 
 

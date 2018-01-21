@@ -2,6 +2,7 @@
 
 #include "RCC_ral.h"
 //#include "DebugVar.h"
+#include "flash_hal.h"
 
 // эта функция вызываеться первой в startup файле
 extern "C" void CLKinit (void)
@@ -16,3 +17,14 @@ extern "C" void CLKinit (void)
     RCC_t::PLLon();
     RCC_t::waitPLLready();
 }
+
+// энергонезависимые данные
+struct FlashData {
+    uint16_t d1;
+    uint16_t d2;
+};
+const uint8_t flashSector = 10;
+auto flash = Flash<FlashData, flashSector> ( {
+    .d1 = 1,
+    .d2 = 3
+} );

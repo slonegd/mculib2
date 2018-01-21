@@ -12,11 +12,20 @@
 		"-I./inc/CMSIS/",
 		"-I./src/",
 		"-I./src/usrlib/",
-		"-I/usr/lib/arm-none-eabi/include/"
+        "-I/usr/lib/arm-none-eabi/include/",
+        "-I.",
+        "-I./hal",
+        "-I./hal/ral",
+        "-I./loki",
+        "-I./STMF4_files",
+        "-I./STMF4_files/CMSIS",
+        "-I./test_F4"
 	],
     // Показывать значения переменных в редакторе во время отладки
     "debug.inlineValues": true,
     
-    "C_Cpp.intelliSenseEngine": "Default"
-
+    "C_Cpp.intelliSenseEngine": "Default",
+    "editor.fontSize": 14,
+    "editor.tabSize": 3,
+    "editor.renderWhitespace": "boundary"
 }

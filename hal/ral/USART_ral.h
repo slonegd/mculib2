@@ -318,8 +318,8 @@ protected:
 
 private:
     static constexpr uint32_t ClkEnOffset = 
-        bus == RCC_t::Bus::APB1 ? RCC_ral::APB1ENR_t::Offset :
-                                  RCC_ral::APB2ENR_t::Offset;
+        bus == RCC_t::Bus::APB1 ? (uint32_t)RCC_ral::APB1ENR_t::Offset :
+                                  (uint32_t)RCC_ral::APB2ENR_t::Offset;
 
 
 };
