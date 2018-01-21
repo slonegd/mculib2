@@ -321,11 +321,11 @@ private:
     }
 };
 
-using TIM1_t = TIM<TIM1_BASE, AFR_t::AF::AF1>;
-using TIM2_t = TIM<TIM2_BASE, AFR_t::AF::AF1>;
-using TIM3_t = TIM<TIM3_BASE, AFR_t::AF::AF2>;
-using TIM4_t = TIM<TIM4_BASE, AFR_t::AF::AF2>;
-using TIM5_t = TIM<TIM5_BASE, AFR_t::AF::AF2>;
+using TIM1_t = TIM<TIM1_BASE, AFR_t::AF::_1>;
+using TIM2_t = TIM<TIM2_BASE, AFR_t::AF::_1>;
+using TIM3_t = TIM<TIM3_BASE, AFR_t::AF::_2>;
+using TIM4_t = TIM<TIM4_BASE, AFR_t::AF::_2>;
+using TIM5_t = TIM<TIM5_BASE, AFR_t::AF::_2>;
 
-using TIM8_t = TIM<TIM8_BASE, AFR_t::AF::AF3>;
+using TIM8_t = TIM<TIM8_BASE, AFR_t::AF::_3>;
 

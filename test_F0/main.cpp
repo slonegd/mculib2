@@ -4,11 +4,16 @@
 const uint8_t timersQty = 2;
 Timers<timersQty> timers;
 
+using Led = PC8;
+
 int main(void)
 {
     
-    RCC->AHBENR |= RCC_AHBENR_GPIOCEN;
-    GPIOC->MODER |= (GPIO_MODER_MODER8_0 | GPIO_MODER_MODER9_0) ;
+    //RCC->AHBENR |= RCC_AHBENR_GPIOCEN;
+    //GPIOC->MODER |= (GPIO_MODER_MODER8_0 | GPIO_MODER_MODER9_0) ;
+
+    Led::Port::Enable();
+    Led::Configure<Led::PinConf_t::OutputPushPullLowSpeedNoResistor>();
 
 
     
@@ -20,14 +25,14 @@ int main(void)
     while (1)
     {
         timers.update();
-        //flash.update();
+        flash.update();
         if (offTimer.event()) {
-            GPIOC->ODR |= GPIO_ODR_8;
+            Led::Set();
             offTimer.stop();
             onTimer.setTimeAndStart(1000);    
         };
         if (onTimer.event()) {
-            GPIOC->ODR &= ~GPIO_ODR_8;
+            Led::Clear();
             onTimer.stop();
             offTimer.setTimeAndStart(1000);
         };

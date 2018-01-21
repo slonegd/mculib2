@@ -46,14 +46,15 @@ public:
         PORT::pupd().reg    &= ~((uint32_t)0b1  << pin);
         PORT::pupd().reg    |=  (uint32_t)res   << pin;
     }
-/*    template<PinConf_t pinConf>
+
+
+    using PinConf_t = typename Port::PinConf_t;
+    template<PinConf_t pinConf>
     static void Configure() { Port::template Configure<pinConf, pin>(); }
-*/
+
     template <AF func> static void SetAltFunc()
     {
-        constexpr uint8_t reg = pin / 8;
-        constexpr uint32_t mask = (uint32_t)func << (pin - 8*reg) * 4;
-        PORT::af().reg[reg] |= mask;
+        Port::template SetAltFunc<func, pin>();
     }
 
     static void Set()           { PORT::template Set<1u << pin> (); }
@@ -141,23 +142,6 @@ using PD13 = Pin_t<PD, 13>;
 using PD14 = Pin_t<PD, 14>;
 using PD15 = Pin_t<PD, 15>;
 
-using PE0 = Pin_t<PE, 0>;
-using PE1 = Pin_t<PE, 1>;
-using PE2 = Pin_t<PE, 2>;
-using PE3 = Pin_t<PE, 3>;
-using PE4 = Pin_t<PE, 4>;
-using PE5 = Pin_t<PE, 5>;
-using PE6 = Pin_t<PE, 6>;
-using PE7 = Pin_t<PE, 7>;
-using PE8 = Pin_t<PE, 8>;
-using PE9 = Pin_t<PE, 9>;
-using PE10 = Pin_t<PE, 10>;
-using PE11 = Pin_t<PE, 11>;
-using PE12 = Pin_t<PE, 12>;
-using PE13 = Pin_t<PE, 13>;
-using PE14 = Pin_t<PE, 14>;
-using PE15 = Pin_t<PE, 15>;
-
 using PF0 = Pin_t<PF, 0>;
 using PF1 = Pin_t<PF, 1>;
 using PF2 = Pin_t<PF, 2>;
@@ -175,6 +159,24 @@ using PF13 = Pin_t<PF, 13>;
 using PF14 = Pin_t<PF, 14>;
 using PF15 = Pin_t<PF, 15>;
 
+#if defined(STM32F405xx)
+using PE0 = Pin_t<PE, 0>;
+using PE1 = Pin_t<PE, 1>;
+using PE2 = Pin_t<PE, 2>;
+using PE3 = Pin_t<PE, 3>;
+using PE4 = Pin_t<PE, 4>;
+using PE5 = Pin_t<PE, 5>;
+using PE6 = Pin_t<PE, 6>;
+using PE7 = Pin_t<PE, 7>;
+using PE8 = Pin_t<PE, 8>;
+using PE9 = Pin_t<PE, 9>;
+using PE10 = Pin_t<PE, 10>;
+using PE11 = Pin_t<PE, 11>;
+using PE12 = Pin_t<PE, 12>;
+using PE13 = Pin_t<PE, 13>;
+using PE14 = Pin_t<PE, 14>;
+using PE15 = Pin_t<PE, 15>;
+
 using PG0 = Pin_t<PG, 0>;
 using PG1 = Pin_t<PG, 1>;
 using PG2 = Pin_t<PG, 2>;
@@ -191,3 +193,4 @@ using PG12 = Pin_t<PG, 12>;
 using PG13 = Pin_t<PG, 13>;
 using PG14 = Pin_t<PG, 14>;
 using PG15 = Pin_t<PG, 15>;
+#endif

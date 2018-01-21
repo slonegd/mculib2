@@ -93,7 +93,7 @@ void USART<USART_, bufSize, RX, TX, RTS, LED>::init (Settings set)
         RX::OutSpeed::High,
         RX::PullResistor::No
     );
-    RX::template SetAltFunc <PA1::AF::AF7> ();
+    RX::template SetAltFunc <PA1::AF::_7> ();
 
     TX::Port::ClockEnable();
     TX::Configure (
@@ -102,7 +102,7 @@ void USART<USART_, bufSize, RX, TX, RTS, LED>::init (Settings set)
         TX::OutSpeed::High,
         TX::PullResistor::No
     );
-    TX::template SetAltFunc <PA1::AF::AF7> ();
+    TX::template SetAltFunc <PA1::AF::_7> ();
 
     RTS::Port::ClockEnable();
     RTS::Configure (
@@ -111,7 +111,7 @@ void USART<USART_, bufSize, RX, TX, RTS, LED>::init (Settings set)
         RTS::OutSpeed::High,
         RTS::PullResistor::No
     );
-    RTS::template SetAltFunc <PA1::AF::AF7> ();
+    RTS::template SetAltFunc <PA1::AF::_7> ();
 
     LED::Port::ClockEnable();
     LED::Configure (
@@ -120,7 +120,7 @@ void USART<USART_, bufSize, RX, TX, RTS, LED>::init (Settings set)
         LED::OutSpeed::Low,
         LED::PullResistor::No
     );
-    LED::template SetAltFunc <PA1::AF::AF0> ();
+    LED::template SetAltFunc <PA1::AF::_0> ();
 
     // уарт
     USART_::ClockEnable();

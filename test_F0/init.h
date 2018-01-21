@@ -3,6 +3,7 @@
 #include "RCC_ral.h"
 //#include "DebugVar.h"
 #include "flash_hal.h"
+#include "pin_hal.h"
 
 // эта функция вызываеться первой в startup файле
 extern "C" void CLKinit (void)
