@@ -1,7 +1,7 @@
 #pragma once
 
 #include "RCC_ral.h"
-//#include "DebugVar.h"
+#include "DebugVar.h"
 #include "flash_hal.h"
 #include "pin_hal.h"
 

@@ -1,1 +1,4 @@
 отладить flash_hal для stm32f0
+отладить pin_hal для stm32f0
+закончить SPI_ral
+написать SPImaster с DMA

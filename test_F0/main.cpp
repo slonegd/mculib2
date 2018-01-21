@@ -8,10 +8,13 @@ using Led = PC8;
 
 int main(void)
 {
-    
+    makeDebugVar();
+
+    SPI1_::SetAsMaster();
+
+
     //RCC->AHBENR |= RCC_AHBENR_GPIOCEN;
     //GPIOC->MODER |= (GPIO_MODER_MODER8_0 | GPIO_MODER_MODER9_0) ;
-
     Led::Port::Enable();
     Led::Configure<Led::PinConf_t::OutputPushPullLowSpeedNoResistor>();
 

@@ -3,20 +3,26 @@
 #include "RCC_ral.h"
 #include "FLASH_ral.h"
 #include "GPIO_ral.h"
+#include "SPI_ral.h"
+#if defined(STM32F405xx)
 #include "TIM_ral.h"
 #include "USART_ral.h"
 #include "ADC_ral.h"
 #include "DMA_ral.h"
 #include "SysTick_ral.h"
+#endif
+
 
 volatile auto RCC_d = (RCC_t*) RCC;
 volatile auto GPIOA_d = (GPIO_t*) GPIOA;
 volatile auto GPIOB_d = (GPIO_t*) GPIOB;
 volatile auto GPIOC_d = (GPIO_t*) GPIOC;
 volatile auto GPIOD_d = (GPIO_t*) GPIOD;
-volatile auto GPIOE_d = (GPIO_t*) GPIOE;
 volatile auto GPIOF_d = (GPIO_t*) GPIOF;
 volatile auto FLASH_d = (FLASH_t*) FLASH;
+volatile auto SPI1_d = (SPI1_*)SPI1_::Base;
+#if defined(STM32F405xx)
+volatile auto GPIOE_d = (GPIO_t*) GPIOE;
 volatile auto TIM2_d = (TIM_t*) TIM2;
 volatile auto TIM3_d = (TIM_t*) TIM3;
 volatile auto TIM4_d = (TIM_t*) TIM4;
@@ -46,6 +52,7 @@ volatile auto DMA2Stream7_d = (DMAstream_t*) DMA2_Stream7;
 volatile auto DMA1_d = (DMA_t*) DMA1;
 volatile auto DMA2_d = (DMA_t*) DMA2;
 volatile auto SysTick_d = (SysTick_t*) SysTick;
+#endif
 
 
 inline void makeDebugVar (void)
@@ -56,8 +63,10 @@ inline void makeDebugVar (void)
     GPIOB_d->BSRR_t::reg = 0;
     GPIOC_d->BSRR_t::reg = 0;
     GPIOD_d->BSRR_t::reg = 0;
-    GPIOE_d->BSRR_t::reg = 0;
     GPIOF_d->BSRR_t::reg = 0;
+    SPI1_d->makeDebugVar();
+#if defined(STM32F405xx)
+    GPIOE_d->BSRR_t::reg = 0;
     TIM2_d->CR1_t::bits.dcb = 0;
     TIM3_d->CR1_t::bits.dcb = 0;
     TIM4_d->CR1_t::bits.dcb = 0;
@@ -87,5 +96,6 @@ inline void makeDebugVar (void)
     DMA1_d->LIFCR_t::bits.dcb1 = 0;
     DMA2_d->LIFCR_t::bits.dcb1 = 0;
     SysTick_d->VAL_t::reg = 0;
+#endif
 
 }
