@@ -1,5 +1,6 @@
 /**
  * RAL над регистрами SPI
+ * файл пока создан только для stm32f0
  */
 
 #pragma once
@@ -190,7 +191,7 @@ typedef struct
 */
 
 template<uint32_t BaseAdr>
-class SPI_ : private SPI_ral::CR1_t,
+class SPIx : private SPI_ral::CR1_t,
              private SPI_ral::CR2_t,
              private SPI_ral::SR_t,
              private SPI_ral::DR_t,
@@ -216,7 +217,8 @@ protected:
    static volatile MakeRef(CRCPR_t, CRCpolinom);
    static volatile MakeRef(RXCRCR_t, CRCrx);
    static volatile MakeRef(TXCRCR_t, CRCtx);
-
+#undef MakeRef
 };
 
-using SPI1_ = SPI_<SPI1_BASE>;
+#undef SPI1
+using SPI1 = SPIx<SPI1_BASE>;

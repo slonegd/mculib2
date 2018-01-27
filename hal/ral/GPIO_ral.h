@@ -245,7 +245,9 @@ public:
 
    enum PinConf_t {
       OutputPushPullLowSpeedNoResistor =
-         MakeMask(Mode_t::Output, OutType_t::PushPull, OutSpeed_t::Low, PullResistor_t::No, AF::_0)
+         MakeMask(Mode_t::Output, OutType_t::PushPull, OutSpeed_t::Low, PullResistor_t::No, AF::_0),
+      Input =
+         MakeMask(Mode_t::Input, OutType_t::PushPull, OutSpeed_t::Low, PullResistor_t::No, AF::_0),
    };
 
 

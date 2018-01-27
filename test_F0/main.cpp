@@ -10,7 +10,7 @@ int main(void)
 {
     makeDebugVar();
 
-    SPI1_::SetAsMaster();
+    SPI1::SetAsMaster();
 
 
     //RCC->AHBENR |= RCC_AHBENR_GPIOCEN;

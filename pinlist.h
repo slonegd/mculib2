@@ -18,15 +18,12 @@ using NullType = Loki::NullType;
 template <class PinList>
 class PinListfunc
 {
-private:
-    using PinsToPorts = typename GetPorts<PinList>::Result;
-    using Ports = typename Loki::TL::NoDuplicates<PinsToPorts>::Result;
-    static const uint16_t PortMask = GetPortMask<PinList>::value;
 public:
 	static void Write(uint16_t value)
 	{
 		PortWriteIterator<Ports, PinList>::Write(value);
 	}
+
 
     // работает только для пинлиста одного порта
     // возвращает значение, которое необходимо отправить в регистр GPIO->BSRR
@@ -34,6 +31,15 @@ public:
     template <uint16_t val> static uint32_t BSRvalue() {
         return ((PortMask & val) | ((uint32_t)(PortMask & ~val) << 16));
     }
+
+
+    // проходит по всему пин листу и выполняет функцию
+
+
+private:
+    using PinsToPorts = typename GetPorts<PinList>::Result;
+    using Ports = typename Loki::TL::NoDuplicates<PinsToPorts>::Result;
+    static const uint16_t PortMask = GetPortMask<PinList>::value;
 };
 
 ////////////////////////////////////////////////////////////////////////////////

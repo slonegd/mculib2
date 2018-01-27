@@ -13,6 +13,8 @@
 #endif
 
 
+#define MAKE_VAR(name) volatile auto name##_d = (name*) name::Base
+
 volatile auto RCC_d = (RCC_t*) RCC;
 volatile auto GPIOA_d = (GPIO_t*) GPIOA;
 volatile auto GPIOB_d = (GPIO_t*) GPIOB;
@@ -20,7 +22,8 @@ volatile auto GPIOC_d = (GPIO_t*) GPIOC;
 volatile auto GPIOD_d = (GPIO_t*) GPIOD;
 volatile auto GPIOF_d = (GPIO_t*) GPIOF;
 volatile auto FLASH_d = (FLASH_t*) FLASH;
-volatile auto SPI1_d = (SPI1_*)SPI1_::Base;
+MAKE_VAR(SPI1);
+MAKE_VAR(DMA1);
 #if defined(STM32F405xx)
 volatile auto GPIOE_d = (GPIO_t*) GPIOE;
 volatile auto TIM2_d = (TIM_t*) TIM2;
@@ -33,27 +36,33 @@ volatile auto USART6_d = (USART_t*) USART6;
 volatile auto ADC1_d = (ADC_t*) ADC1;
 volatile auto ADC2_d = (ADC_t*) ADC2;
 volatile auto ADC3_d = (ADC_t*) ADC3;
-volatile auto DMA1Stream0_d = (DMAstream_t*) DMA1_Stream0;
-volatile auto DMA1Stream1_d = (DMAstream_t*) DMA1_Stream1;
-volatile auto DMA1Stream2_d = (DMAstream_t*) DMA1_Stream2;
-volatile auto DMA1Stream3_d = (DMAstream_t*) DMA1_Stream3;
-volatile auto DMA1Stream4_d = (DMAstream_t*) DMA1_Stream4;
-volatile auto DMA1Stream5_d = (DMAstream_t*) DMA1_Stream5;
-volatile auto DMA1Stream6_d = (DMAstream_t*) DMA1_Stream6;
-volatile auto DMA1Stream7_d = (DMAstream_t*) DMA1_Stream7;
-volatile auto DMA2Stream0_d = (DMAstream_t*) DMA2_Stream0;
-volatile auto DMA2Stream1_d = (DMAstream_t*) DMA2_Stream1;
-volatile auto DMA2Stream2_d = (DMAstream_t*) DMA2_Stream2;
-volatile auto DMA2Stream3_d = (DMAstream_t*) DMA2_Stream3;
-volatile auto DMA2Stream4_d = (DMAstream_t*) DMA2_Stream4;
-volatile auto DMA2Stream5_d = (DMAstream_t*) DMA2_Stream5;
-volatile auto DMA2Stream6_d = (DMAstream_t*) DMA2_Stream6;
-volatile auto DMA2Stream7_d = (DMAstream_t*) DMA2_Stream7;
-volatile auto DMA1_d = (DMA_t*) DMA1;
-volatile auto DMA2_d = (DMA_t*) DMA2;
+MAKE_VAR(DMA1stream0);
+MAKE_VAR(DMA1stream1);
+MAKE_VAR(DMA1stream2);
+MAKE_VAR(DMA1stream3);
+MAKE_VAR(DMA1stream4);
+MAKE_VAR(DMA1stream5);
+MAKE_VAR(DMA1stream6);
+MAKE_VAR(DMA1stream7);
+MAKE_VAR(DMA2stream0);
+MAKE_VAR(DMA2stream1);
+MAKE_VAR(DMA2stream2);
+MAKE_VAR(DMA2stream3);
+MAKE_VAR(DMA2stream4);
+MAKE_VAR(DMA2stream5);
+MAKE_VAR(DMA2stream6);
+MAKE_VAR(DMA2stream7);
+MAKE_VAR(DMA2);
 volatile auto SysTick_d = (SysTick_t*) SysTick;
+#elif defined(STM32F030x6)
+MAKE_VAR(DMA1channel1);
+MAKE_VAR(DMA1channel2);
+MAKE_VAR(DMA1channel3);
+MAKE_VAR(DMA1channel4);
+MAKE_VAR(DMA1channel5);
 #endif
 
+#undef MAKE_VAR
 
 inline void makeDebugVar (void)
 {
@@ -77,25 +86,31 @@ inline void makeDebugVar (void)
     ADC1_d->SR_t::bits.dcb1 = 0;
     ADC2_d->SR_t::bits.dcb1 = 0;
     ADC3_d->SR_t::bits.dcb1 = 0;
-    DMA1Stream0_d->CR_t::bits.dcb1 = 0;
-    DMA1Stream1_d->CR_t::bits.dcb1 = 0;
-    DMA1Stream2_d->CR_t::bits.dcb1 = 0;
-    DMA1Stream3_d->CR_t::bits.dcb1 = 0;
-    DMA1Stream4_d->CR_t::bits.dcb1 = 0;
-    DMA1Stream5_d->CR_t::bits.dcb1 = 0;
-    DMA1Stream6_d->CR_t::bits.dcb1 = 0;
-    DMA1Stream7_d->CR_t::bits.dcb1 = 0;
-    DMA2Stream0_d->CR_t::bits.dcb1 = 0;
-    DMA2Stream1_d->CR_t::bits.dcb1 = 0;
-    DMA2Stream2_d->CR_t::bits.dcb1 = 0;
-    DMA2Stream3_d->CR_t::bits.dcb1 = 0;
-    DMA2Stream4_d->CR_t::bits.dcb1 = 0;
-    DMA2Stream5_d->CR_t::bits.dcb1 = 0;
-    DMA2Stream6_d->CR_t::bits.dcb1 = 0;
-    DMA2Stream7_d->CR_t::bits.dcb1 = 0;
-    DMA1_d->LIFCR_t::bits.dcb1 = 0;
-    DMA2_d->LIFCR_t::bits.dcb1 = 0;
+    DMA1stream0_d->makeDebugVar();
+    DMA1stream1_d->makeDebugVar();
+    DMA1stream2_d->makeDebugVar();
+    DMA1stream3_d->makeDebugVar();
+    DMA1stream4_d->makeDebugVar();
+    DMA1stream5_d->makeDebugVar();
+    DMA1stream6_d->makeDebugVar();
+    DMA1stream7_d->makeDebugVar();
+    DMA2stream0_d->makeDebugVar();
+    DMA2stream1_d->makeDebugVar();
+    DMA2stream2_d->makeDebugVar();
+    DMA2stream3_d->makeDebugVar();
+    DMA2stream4_d->makeDebugVar();
+    DMA2stream5_d->makeDebugVar();
+    DMA2stream6_d->makeDebugVar();
+    DMA2stream7_d->makeDebugVar();
+    DMA1_d->LIFCR_t::bits.res1 = 0;
+    DMA2_d->LIFCR_t::bits.res1 = 0;
     SysTick_d->VAL_t::reg = 0;
+#elif defined(STM32F030x6)
+    DMA1channel1_d->makeDebugVar();
+    DMA1channel2_d->makeDebugVar();
+    DMA1channel3_d->makeDebugVar();
+    DMA1channel4_d->makeDebugVar();
+    DMA1channel5_d->makeDebugVar();
 #endif
 
 }
