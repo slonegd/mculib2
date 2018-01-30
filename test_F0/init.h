@@ -2,8 +2,11 @@
 
 #include "RCC_ral.h"
 #include "DebugVar.h"
+#include "timers.h"
 #include "flash_hal.h"
 #include "pin_hal.h"
+#include "spi_hal.h"
+
 
 // эта функция вызываеться первой в startup файле
 extern "C" void CLKinit (void)
@@ -29,3 +32,11 @@ auto flash = Flash<FlashData, flashSector> ( {
     .d1 = 1,
     .d2 = 3
 } );
+
+
+struct SPIdata {
+    uint16_t time;
+    uint16_t currentTemperature;
+    uint16_t targetTemperature;
+};
+SPI<SPI1, SPIdata> spi;

@@ -22,8 +22,7 @@ public:
 
 
    using PinConf_t = GPIO_t::PinConf_t;
-   template<PinConf_t pinConf, uint8_t pin>
-   static void Configure()
+   template<PinConf_t pinConf, uint8_t pin> static void Configure()
    {
       ClockEnable();
       mode().reg   &= ~((uint32_t)0b11 << pin*2);

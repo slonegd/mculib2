@@ -19,6 +19,7 @@
 
 #pragma once
 
+
 #include "stm32f4xx.h"
 
 #define BITBAND_SET(Rstruct, Bit, Val) (*((volatile uint32_t*)(PERIPH_BB_BASE + (Base-PERIPH_BASE + Rstruct.Offset)*32 + Bit*4)) = Val)

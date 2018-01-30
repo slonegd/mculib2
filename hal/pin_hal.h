@@ -51,6 +51,7 @@ public:
     using PinConf_t = typename Port::PinConf_t;
     template<PinConf_t pinConf>
     static void Configure() { Port::template Configure<pinConf, pin>(); }
+    #define CONFIGURE(Pin,Conf) Pin::template Configure<Pin::PinConf_t::Conf>()
 
     template <AF func> static void SetAltFunc()
     {

@@ -5,8 +5,9 @@
 #include "stm32f0xx.h"
 #elif defined(STM32F405xx)
 #include "stm32f4xx.h"
-#endif
 #include "bitbanding.h"
+#endif
+//#include "something.h"
 
 namespace DMA_ral {
 
@@ -480,7 +481,7 @@ public:
                                   NonMaskableInt_IRQn;
 #endif
 
-   static void ClockEnable() { RCC->AHB1ENR |= (uint32_t)1 << (DMAn + 20); }
+   
    static void SetMemoryAdr (uint32_t val) { memAdr0().reg = val; }
    static void SetPeriphAdr (uint32_t val) { perAdr().reg = val; }
    static void SetQtyTransactions (uint16_t val) { nData().reg = (uint32_t)val; }
@@ -516,6 +517,7 @@ public:
 
 
 #if defined(STM32F405xx)
+   static void ClockEnable() { RCC->AHB1ENR |= (uint32_t)1 << (DMAn + 20); }
    static void Enable() { BITBAND_SET(conf(), EN, true); }
    static void Disable()
    { 
@@ -529,6 +531,7 @@ public:
    }
    static void ClearFlagTransferCompleteInterrupt() { BITBAND_SET(conf(), TCIpos, true); }
 #elif defined(STM32F030x6)
+   static void ClockEnable() { RCC->AHBENR |= RCC_AHBENR_DMAEN_Msk; }
    static void Enable() { conf().reg |= ENmask; }
    static void Disable()
    {
