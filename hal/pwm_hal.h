@@ -16,6 +16,7 @@
 #include "TIM_ral.h"
 #include "pin_hal.h"
 #include "constDef.h"
+#include "literals.h"
 
 namespace PWM_HAL {
     using ChannelDef = ConstDef<uint8_t>;
@@ -71,6 +72,7 @@ namespace PWM_HAL {
  
 
 }
+
 
 
 template <class Timer, class Pin>

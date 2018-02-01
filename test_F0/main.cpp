@@ -32,7 +32,7 @@ int main(void)
         if (offTimer.event()) {
             Led::Set();
             offTimer.stop();
-            onTimer.setTimeAndStart(1000);    
+            onTimer.setTimeAndStart(1000);
         };
         if (onTimer.event()) {
             Led::Clear();

@@ -15,8 +15,8 @@
 ######################################
 TARGET = STM32FX_DISCOVERY
 
-#TEST_CATALOG = test_F4
-TEST_CATALOG = test_F0
+TEST_CATALOG = test_F4
+#TEST_CATALOG = test_F0
 
 
 ######################################
@@ -26,6 +26,7 @@ TEST_CATALOG = test_F0
 DEBUG = 1
 # optimization
 OPT = -O2
+CPPSTD =-std=c++1y
 
 
 #######################################
@@ -212,7 +213,7 @@ $(BUILD_DIR)/%.o: %.c Makefile | $(BUILD_DIR)
 	$(CC) -c $(CFLAGS) -std=c99 -Wa,-a,-ad,-alms=$(BUILD_DIR)/$(notdir $(<:.c=.lst)) $< -o $@
 
 $(BUILD_DIR)/%.o: %.cpp Makefile | $(BUILD_DIR) 
-	$(CPP) -c $(CFLAGS) -std=c++1y -Wa,-a,-ad,-alms=$(BUILD_DIR)/$(notdir $(<:.cpp=.lst)) $< -o $@
+	$(CPP) -c $(CFLAGS) $(CPPSTD) -Wa,-a,-ad,-alms=$(BUILD_DIR)/$(notdir $(<:.cpp=.lst)) $< -o $@
 
 $(BUILD_DIR)/%.o: %.s Makefile | $(BUILD_DIR)
 	$(AS) -c $(CFLAGS) $< -o $@

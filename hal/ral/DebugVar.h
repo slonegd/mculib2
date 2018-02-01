@@ -1,15 +1,16 @@
 #pragma once
 
-#include "RCC_ral.h"
-#include "FLASH_ral.h"
-#include "GPIO_ral.h"
-#include "SPI_ral.h"
-#include "DMA_ral.h"
-#if defined(STM32F405xx)
-#include "TIM_ral.h"
-#include "USART_ral.h"
-#include "ADC_ral.h"
-#include "SysTick_ral.h"
+    #include "RCC_ral.h"
+    #include "FLASH_ral.h"
+    #include "GPIO_ral.h"
+    #include "DMA_ral.h"
+#if defined(STM32F030x6)
+    #include "SPI_ral.h"
+#elif defined(STM32F405xx)
+    #include "TIM_ral.h"
+    #include "USART_ral.h"
+    #include "ADC_ral.h"
+    #include "SysTick_ral.h"
 #endif
 
 
@@ -22,44 +23,44 @@ volatile auto GPIOC_d = (GPIO_t*) GPIOC;
 volatile auto GPIOD_d = (GPIO_t*) GPIOD;
 volatile auto GPIOF_d = (GPIO_t*) GPIOF;
 volatile auto FLASH_d = (FLASH_t*) FLASH;
-MAKE_VAR(SPI1);
 MAKE_VAR(DMA1);
-#if defined(STM32F405xx)
-volatile auto GPIOE_d = (GPIO_t*) GPIOE;
-volatile auto TIM2_d = (TIM_t*) TIM2;
-volatile auto TIM3_d = (TIM_t*) TIM3;
-volatile auto TIM4_d = (TIM_t*) TIM4;
-volatile auto USART1_d = (USART_t*) USART1;
-volatile auto USART2_d = (USART_t*) USART2;
-volatile auto USART3_d = (USART_t*) USART3;
-volatile auto USART6_d = (USART_t*) USART6;
-volatile auto ADC1_d = (ADC_t*) ADC1;
-volatile auto ADC2_d = (ADC_t*) ADC2;
-volatile auto ADC3_d = (ADC_t*) ADC3;
-MAKE_VAR(DMA1stream0);
-MAKE_VAR(DMA1stream1);
-MAKE_VAR(DMA1stream2);
-MAKE_VAR(DMA1stream3);
-MAKE_VAR(DMA1stream4);
-MAKE_VAR(DMA1stream5);
-MAKE_VAR(DMA1stream6);
-MAKE_VAR(DMA1stream7);
-MAKE_VAR(DMA2stream0);
-MAKE_VAR(DMA2stream1);
-MAKE_VAR(DMA2stream2);
-MAKE_VAR(DMA2stream3);
-MAKE_VAR(DMA2stream4);
-MAKE_VAR(DMA2stream5);
-MAKE_VAR(DMA2stream6);
-MAKE_VAR(DMA2stream7);
-MAKE_VAR(DMA2);
-volatile auto SysTick_d = (SysTick_t*) SysTick;
-#elif defined(STM32F030x6)
-MAKE_VAR(DMA1channel1);
-MAKE_VAR(DMA1channel2);
-MAKE_VAR(DMA1channel3);
-MAKE_VAR(DMA1channel4);
-MAKE_VAR(DMA1channel5);
+#if defined(STM32F030x6)
+    MAKE_VAR(SPI1);
+    MAKE_VAR(DMA1channel1);
+    MAKE_VAR(DMA1channel2);
+    MAKE_VAR(DMA1channel3);
+    MAKE_VAR(DMA1channel4);
+    MAKE_VAR(DMA1channel5);
+#elif defined(STM32F405xx)
+    volatile auto GPIOE_d = (GPIO_t*) GPIOE;
+    volatile auto TIM2_d = (TIM_t*) TIM2;
+    volatile auto TIM3_d = (TIM_t*) TIM3;
+    volatile auto TIM4_d = (TIM_t*) TIM4;
+    volatile auto USART1_d = (USART_t*) USART1;
+    volatile auto USART2_d = (USART_t*) USART2;
+    volatile auto USART3_d = (USART_t*) USART3;
+    volatile auto USART6_d = (USART_t*) USART6;
+    volatile auto ADC1_d = (ADC_t*) ADC1;
+    volatile auto ADC2_d = (ADC_t*) ADC2;
+    volatile auto ADC3_d = (ADC_t*) ADC3;
+    MAKE_VAR(DMA1stream0);
+    MAKE_VAR(DMA1stream1);
+    MAKE_VAR(DMA1stream2);
+    MAKE_VAR(DMA1stream3);
+    MAKE_VAR(DMA1stream4);
+    MAKE_VAR(DMA1stream5);
+    MAKE_VAR(DMA1stream6);
+    MAKE_VAR(DMA1stream7);
+    MAKE_VAR(DMA2stream0);
+    MAKE_VAR(DMA2stream1);
+    MAKE_VAR(DMA2stream2);
+    MAKE_VAR(DMA2stream3);
+    MAKE_VAR(DMA2stream4);
+    MAKE_VAR(DMA2stream5);
+    MAKE_VAR(DMA2stream6);
+    MAKE_VAR(DMA2stream7);
+    MAKE_VAR(DMA2);
+    volatile auto SysTick_d = (SysTick_t*) SysTick;
 #endif
 
 #undef MAKE_VAR
@@ -73,8 +74,9 @@ inline void makeDebugVar (void)
     GPIOC_d->BSRR_t::reg = 0;
     GPIOD_d->BSRR_t::reg = 0;
     GPIOF_d->BSRR_t::reg = 0;
+#if defined(STM32F030x6)
     SPI1_d->makeDebugVar();
-#if defined(STM32F405xx)
+#elif defined(STM32F405xx)
     GPIOE_d->BSRR_t::reg = 0;
     TIM2_d->CR1_t::bits.dcb = 0;
     TIM3_d->CR1_t::bits.dcb = 0;
