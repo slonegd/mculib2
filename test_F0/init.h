@@ -8,13 +8,15 @@
 #include "spi_hal.h"
 #include "zoomer.h"
 #include "literals.h"
+#include "buttons.h"
 
-const uint8_t timersQty = 4;
+const uint8_t timersQty = 5;
 Timers<timersQty> timers;
 auto& onTimer  = timers.all[0];
 auto& offTimer = timers.all[1];
 auto& spiTimer = timers.all[2];
 auto& zoomerTimer = timers.all[3];
+auto& butTimer = timers.all[4];
 
 using Led = PC8;
 
@@ -47,6 +49,11 @@ PWM_ pwm;
 // зуммер
 auto zoomer = Zoomer<PWM_> (pwm, zoomerTimer, 4000_Hz); 
 
+
+using But1 = PA0;
+using But2 = PA1;
+using But3 = PA2;
+auto buttons = Buttons<But1,But2,But3>(butTimer);
 
 
 // эта функция вызываеться первой в startup файле

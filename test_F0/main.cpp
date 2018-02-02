@@ -1,5 +1,5 @@
 #include "init.h"
-
+#include "meta.h"
 
 
 
@@ -17,10 +17,19 @@ int main(void)
     offTimer.setTimeAndStart (1000);
     spiTimer.setTimeAndStart (100);
 
+    // тест метапрограммирования на вариадиках
+    static_assert (QtyTypes<PA0,PA1,PA3>::value == 3, "");
+    using Test = At<3,PA0,PA1,PA3>::Result;
+    static_assert (std::is_same<Test,PA3>::value, "");
+    static_assert (Position<PA1,PA0,PA1,PA3>::value == 2, "");
+
+    buttons.push<But1>();
+
     while (1)
     {
         timers.update();
         zoomer();
+        buttons();
 
         if (offTimer.event()) {
             Led::Set();
