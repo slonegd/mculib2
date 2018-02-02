@@ -7,11 +7,18 @@
 #pragma once
 
 #include "timers.h"
-
-class Buttons
+/*
+template
+class Button
 {
 public:
+   template<class Pin>
+   Button() ()
    enum State {
 
    };
-};
+   static void setTimer (Timer& timer) { Base::timer = timer; }
+
+private:
+   static Timer& timer;
+};*/

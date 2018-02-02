@@ -6,21 +6,18 @@
 #include "flash_hal.h"
 #include "pin_hal.h"
 #include "spi_hal.h"
+#include "zoomer.h"
+#include "literals.h"
 
+const uint8_t timersQty = 4;
+Timers<timersQty> timers;
+auto& onTimer  = timers.all[0];
+auto& offTimer = timers.all[1];
+auto& spiTimer = timers.all[2];
+auto& zoomerTimer = timers.all[3];
 
-// эта функция вызываеться первой в startup файле
-extern "C" void CLKinit (void)
-{
-    FLASH->ACR |= FLASH_ACR_PRFTBE;
-    FLASH->ACR &= (uint32_t)((uint32_t)~FLASH_ACR_LATENCY);
-   	FLASH->ACR |= (uint32_t) 5;    
- 
-    RCC_t::setPLLsource(false);
-    RCC_t::setPLLmultiplier(RCC_t::PLLmultiplier::PLLmul12);
+using Led = PC8;
 
-    RCC_t::PLLon();
-    RCC_t::waitPLLready();
-}
 
 // энергонезависимые данные
 struct FlashData {
@@ -40,3 +37,28 @@ struct SPIdata {
     uint16_t targetTemperature;
 };
 SPI<SPI1, SPIdata> spi;
+
+// шим
+using PWMout = Led;
+using PWMtimer = TIM3;
+using PWM_ = PWM<PWMtimer, PWMout>;
+PWM_ pwm;
+
+// зуммер
+auto zoomer = Zoomer<PWM_> (pwm, zoomerTimer, 4000_Hz); 
+
+
+
+// эта функция вызываеться первой в startup файле
+extern "C" void CLKinit (void)
+{
+    FLASH->ACR |= FLASH_ACR_PRFTBE;
+    FLASH->ACR &= (uint32_t)((uint32_t)~FLASH_ACR_LATENCY);
+   	FLASH->ACR |= (uint32_t) 5;    
+ 
+    RCC_t::setPLLsource(false);
+    RCC_t::setPLLmultiplier(RCC_t::PLLmultiplier::PLLmul12);
+
+    RCC_t::PLLon();
+    RCC_t::waitPLLready();
+}

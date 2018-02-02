@@ -49,7 +49,7 @@ auto flash = Flash<FlashData, flashSector> ( {
 
 // шим
 using PWMout = Rled;
-using PWMtimer = TIM4_t;
+using PWMtimer = TIM4;
 using PWM_ = PWM<PWMtimer, PWMout>;
 PWM_ pwm;
 
@@ -64,7 +64,7 @@ using D4pin = PC0;
 using D5pin = PC1;
 using D6pin = PC2;
 using D7pin = PC3;
-using LCDtim = TIM8_t;
+using LCDtim = TIM8;
 using LCDdma = DMA2stream2;
 using LCD_ = HD44780<RSpin, RWpin, Epin, D4pin, D5pin, D6pin, D7pin>;
 LCD_ LCD;

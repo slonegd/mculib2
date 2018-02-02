@@ -15,8 +15,8 @@
 ######################################
 TARGET = STM32FX_DISCOVERY
 
-TEST_CATALOG = test_F4
-#TEST_CATALOG = test_F0
+#TEST_CATALOG = test_F4
+TEST_CATALOG = test_F0
 
 
 ######################################

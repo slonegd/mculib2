@@ -1,19 +1,11 @@
 #include "init.h"
 
-const uint8_t timersQty = 3;
-Timers<timersQty> timers;
-auto& onTimer  = timers.all[0];
-auto& offTimer = timers.all[1];
-auto& spiTimer = timers.all[2];
 
-using Led = PC8;
 
 
 int main(void)
 {
     makeDebugVar();
-
-    SPI1::SetAsMaster();
 
 
     //RCC->AHBENR |= RCC_AHBENR_GPIOCEN;
@@ -28,11 +20,13 @@ int main(void)
     while (1)
     {
         timers.update();
+        zoomer();
 
         if (offTimer.event()) {
             Led::Set();
             offTimer.stop();
             onTimer.setTimeAndStart(1000);
+            zoomer.beep (100_ms, 2_cnt);
         };
         if (onTimer.event()) {
             Led::Clear();

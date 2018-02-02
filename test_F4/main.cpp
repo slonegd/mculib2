@@ -4,6 +4,7 @@
  *////////////////////////////////////////////////////////////////////////////
 #include "init.h"
 #include "something.h"
+#include <type_traits>
 
 uint8_t i = 0;
 
@@ -52,7 +53,9 @@ int main(void)
    while (1)
    {
       timers.update();
-      zoomer();
+
+      if (std::is_same<PWMout,Rled>::value)
+         zoomer();
 
       if ( modbus.incomingMessage() ) {
          modbus.handler();
@@ -100,7 +103,7 @@ int main(void)
 
             flash.data.d2++;
 
-            zoomer.shortBeep(3);
+            zoomer.beep(50_ms, 2_cnt);
          }
       }
 
