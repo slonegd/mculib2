@@ -6,14 +6,17 @@
 			"name": "(gdb) Attach",
 			"type": "cppdbg",
 			"request": "launch",
-		 // slonegd note
-		 // "miDebuggerPath": "/home/slonegd/opt/gcc-arm-none-eabi-6-2017-q1-update/bin/arm-none-eabi-gdb",
-         // phobos
-            "miDebuggerPath": "/home/dvk/code/gcc-arm-none-eabi-6-2017-q1-update/bin/arm-none-eabi-gdb",
-		 // work note
-         //	"miDebuggerPath": "/home/ap/Code/gcc-arm-none-eabi-6-2017-q2-update/bin/arm-none-eabi-gdb",
-		 // home
-		 //	"miDebuggerPath": "/home/slonegd/Code/gcc-arm-none-eabi-6-2017-q2-update/bin/arm-none-eabi-gdb",
+		// slonegd note
+		// "miDebuggerPath": "/home/slonegd/opt/gcc-arm-none-eabi-6-2017-q1-update/bin/arm-none-eabi-gdb",
+         	// phobos
+         	// "miDebuggerPath": "/home/dvk/code/gcc-arm-none-eabi-6-2017-q1-update/bin/arm-none-eabi-gdb",
+		// deimos
+		   "miDebuggerPath": "/home/peltikhin/code/gcc-arm-none-eabi-7-2017-q4-major/bin/arm-none-eabi-gdb",		
+		// work note
+         	// "miDebuggerPath": "/home/ap/Code/gcc-arm-none-eabi-6-2017-q2-update/bin/arm-none-eabi-gdb",
+		// home
+		// "miDebuggerPath": "/home/slonegd/Code/gcc-arm-none-eabi-6-2017-q2-update/bin/arm-none-eabi-gdb",
+		//	"program": "${workspaceRoot}/build/STM32FX_DISCOVERY.elf",
 			"program": "${workspaceRoot}/build/STM32FX_DISCOVERY.elf",
 			"miDebuggerServerAddress": "localhost:4242",
 		   

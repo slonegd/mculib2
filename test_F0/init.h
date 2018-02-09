@@ -14,7 +14,6 @@ extern "C" void CLKinit (void)
  
     RCC_t::setPLLsource(false);
     RCC_t::setPLLmultiplier(RCC_t::PLLmultiplier::PLLmul12);
-
     RCC_t::PLLon();
     RCC_t::waitPLLready();
 }

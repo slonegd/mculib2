@@ -237,13 +237,15 @@ clean:
 	-rm -fR .dep $(BUILD_DIR)
 
 flash_stlink:
-	/home/dvk/code/stlink/build/Release/st-flash write $(BUILD_DIR)/$(TARGET).bin 0x8000000
+#	/home/dvk/code/stlink/build/Release/st-flash write $(BUILD_DIR)/$(TARGET).bin 0x8000000
 #	/home/slonegd/Code/stlink/build/Release/st-flash write $(BUILD_DIR)/$(TARGET).bin 0x8000000
 #	st-flash write $(BUILD_DIR)/$(TARGET).bin 0x8000000
+	/home/peltikhin/code/EmbeddedArm/stlink/build/Release/st-flash write $(BUILD_DIR)/$(TARGET).bin 0x8000000
 
 util:
-	/home/dvk/code/stlink/build/Release/src/gdbserver/st-util
+#	/home/dvk/code/stlink/build/Release/src/gdbserver/st-util
 #	/home/slonegd/Code/stlink/build/Release/src/gdbserver/st-util
+	/home/peltikhin/code/EmbeddedArm/stlink/build/Release/src/gdbserver/st-util
 
 debug: clean all flash_stlink util
   

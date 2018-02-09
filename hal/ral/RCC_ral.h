@@ -271,7 +271,8 @@ namespace RCC_ral {
             PLLmul13 = 0b1011,
             PLLmul14 = 0b1100,
             PLLmul15 = 0b1101,
-            PLLmul16 = 0b1111,
+            PLLmul16 = 0b1110,
+            PLLmul16_ = 0b1111,
         };
         enum MCOPRE {
             MCOdiv1 = 0b000,
@@ -363,11 +364,10 @@ namespace RCC_ral {
             volatile bool UART5EN   :1;
             volatile bool I2C1EN    :1;
             volatile bool I2C2EN    :1;
-            uint32_t dcb7           :1;
             volatile bool USBEN     :1;
-            uint32_t dcb8           :2;
+            uint32_t dcb7           :3;
             volatile bool PWREN     :1;
-            uint32_t dcb9           :3;
+            uint32_t dcb8           :3;
         };
         union {
             volatile Bits bits;
