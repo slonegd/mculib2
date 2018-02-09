@@ -1,5 +1,6 @@
 /**
  * RAL над регистрами SPI
+ * файл пока создан только для stm32f0
  */
 
 #pragma once
@@ -10,6 +11,7 @@
 #elif defined(STM32F405xx)
 #include "stm32f4xx.h"
 #endif
+#include "DMA_ral.h"
 
 
 namespace SPI_ral {
@@ -178,19 +180,19 @@ namespace SPI_ral {
 /*
 typedef struct
 {
-  __IO uint32_t CR1;     // SPI Control register 1 (not used in I2S mode),      Address offset: 0x00
-  __IO uint32_t CR2;     // SPI Control register 2,                             Address offset: 0x04
-  __IO uint32_t SR;      // SPI Status register,                                Address offset: 0x08
-  __IO uint32_t DR;      // SPI data register,                                  Address offset: 0x0C
-  __IO uint32_t CRCPR;   // SPI CRC polynomial register (not used in I2S mode), Address offset: 0x10
-  __IO uint32_t RXCRCR;  // SPI Rx CRC register (not used in I2S mode),         Address offset: 0x14
-  __IO uint32_t TXCRCR;  // SPI Tx CRC register (not used in I2S mode),         Address offset: 0x18
-  __IO uint32_t I2SCFGR; // SPI_I2S configuration register,                     Address offset: 0x1C
+   __IO uint32_t CR1;     // SPI Control register 1 (not used in I2S mode),      Address offset: 0x00
+   __IO uint32_t CR2;     // SPI Control register 2,                             Address offset: 0x04
+   __IO uint32_t SR;      // SPI Status register,                                Address offset: 0x08
+   __IO uint32_t DR;      // SPI data register,                                  Address offset: 0x0C
+   __IO uint32_t CRCPR;   // SPI CRC polynomial register (not used in I2S mode), Address offset: 0x10
+   __IO uint32_t RXCRCR;  // SPI Rx CRC register (not used in I2S mode),         Address offset: 0x14
+   __IO uint32_t TXCRCR;  // SPI Tx CRC register (not used in I2S mode),         Address offset: 0x18
+   __IO uint32_t I2SCFGR; // SPI_I2S configuration register,                     Address offset: 0x1C
 } SPI_TypeDef;
 */
 
 template<uint32_t BaseAdr>
-class SPI_ : private SPI_ral::CR1_t,
+class SPIx : private SPI_ral::CR1_t,
              private SPI_ral::CR2_t,
              private SPI_ral::SR_t,
              private SPI_ral::DR_t,
@@ -202,21 +204,45 @@ public:
    static const uint32_t Base = BaseAdr;
 
 
+   using Div = CR1_t::Div;
+   using DataSize = CR2_t::DataSize;
+   using DMAtx = DMA1channel3;
+
+
    void makeDebugVar() { conf1().bits.res1 = 0; }
+
+   static void ClockEnable() { RCC->APB2ENR |= RCC_APB2ENR_SPI1EN_Msk; }
    static void SetAsMaster() { conf1().reg |= SPI_CR1_MSTR_Msk; }
+   template<Div val> static void SetBoudRate()
+   {
+      conf1().reg &= ~SPI_CR1_BR_Msk;
+      constexpr uint32_t mask = (uint32_t)val << SPI_CR1_BR_Pos;
+      conf1().reg |= mask;
+   }
+   static void SlaveSelectEnable() { conf2().reg |= SPI_CR2_SSOE_Msk; }
+   template<DataSize val> static void SetDataSize()
+   {
+      conf2().reg &= ~SPI_CR2_DS_Msk;
+      constexpr uint32_t mask = (uint32_t)val << SPI_CR2_DS_Pos;
+      conf2().reg |= mask;
+   }
+   static void TxDMAenable() { conf2().reg |= SPI_CR2_TXDMAEN_Msk; }
+   static void Enable() { conf1().reg |= SPI_CR1_SPE; }
+
 
 
 
 protected:
 #define MakeRef(Reg,Ref) SPI_ral::Reg& Ref() { return (SPI_ral::Reg&) *(uint32_t*)(Base + SPI_ral::Reg::Offset); }
-   static volatile MakeRef(CR1_t, conf1);
-   static volatile MakeRef(CR2_t, conf2);
-   static volatile MakeRef(SR_t, status);
-   static volatile MakeRef(DR_t, data);
-   static volatile MakeRef(CRCPR_t, CRCpolinom);
-   static volatile MakeRef(RXCRCR_t, CRCrx);
-   static volatile MakeRef(TXCRCR_t, CRCtx);
-
+   static volatile MakeRef (CR1_t,    conf1      );
+   static volatile MakeRef (CR2_t,    conf2      );
+   static volatile MakeRef (SR_t,     status     );
+   static volatile MakeRef (DR_t,     data       );
+   static volatile MakeRef (CRCPR_t,  CRCpolinom );
+   static volatile MakeRef (RXCRCR_t, CRCrx      );
+   static volatile MakeRef (TXCRCR_t, CRCtx      );
+#undef MakeRef
 };
 
-using SPI1_ = SPI_<SPI1_BASE>;
+#undef SPI1
+using SPI1 = SPIx<SPI1_BASE>;

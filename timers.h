@@ -16,16 +16,17 @@ struct Timer
     volatile bool enable;
     // устанавливается в true, если дотикал
     volatile bool counted;
-	// время работы в мс до установки counted
-	volatile uint32_t timeSet;
-	// прошедшее время в мс
-	volatile uint32_t timePassed;	
+    // время работы в мс до установки counted
+    volatile uint32_t timeSet;
+    // прошедшее время в мс
+    volatile uint32_t timePassed;	
 
     inline void setTimeAndStart (uint32_t ms)
     {
         timeSet = ms;
         enable = true;
     }
+    inline void setTime (uint32_t ms) { timeSet = ms; }
     // возвращает true, если таймер натикал и перезапускает его
     inline bool event()
     {

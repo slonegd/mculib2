@@ -214,6 +214,12 @@ template <class PortList, class PinList> struct PortWriteIterator;
     };
 
 
+
+
+
+// ДАЛЕЕ УЖЕ МОЁ ТВОРЧЕСТВО
+
+
 ////////////////////////////////////////////////////////////////////////////////
 // выдаёт значение регистра bsr для пинлиста одного порта в зависимости
 // от значения
@@ -225,3 +231,21 @@ template <class PinList, uint16_t val> struct BSRValue
     static const uint32_t Get = (PortMask & val | ((uint32_t)(PortMask & ~val) << 16));
 };
 
+/*
+////////////////////////////////////////////////////////////////////////////////
+// итератор по пин листу так и не придумал
+////////////////////////////////////////////////////////////////////////////////
+template <class PinList, class func> struct Iterator;
+template <class func> struct Iterator<NullType, func>
+{
+    static func f;
+
+}
+template <> struct Iterator<NullType> { using Result }
+template <class function> forechIterator<NullType, function> (function f)
+{ };
+template <class function> forechIterator<HEAD, TAIL, function> (function f)
+{
+    HEAD::f();
+    forechIterator<TAIL, function> (function f);
+}*/

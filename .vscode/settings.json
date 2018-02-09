@@ -4,7 +4,8 @@
         "stm32f4xx.h": "c",
         "stm32f4_bf.h": "c",
         "type_traits": "cpp",
-        "initializer_list": "cpp"
+        "initializer_list": "cpp",
+        "cstdint": "cpp"
     },
 	// Compiler options for C (e.g. ["-std=c99"])
 	"clang.cflags": [

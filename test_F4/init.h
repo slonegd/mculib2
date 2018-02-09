@@ -13,6 +13,8 @@
 #include "pinlist.h"
 #include "modbusSlave.h"
 #include "HD44780_hal.h"
+#include "zoomer.h"
+#include "literals.h"
 
 
 // discoveri 
@@ -25,13 +27,14 @@ using Leds = PinList<Bled, Oled>;
 using Button = PA0;
 
 // программные таймеры
-const uint8_t timersQty = 5;
+const uint8_t timersQty = 6;
 Timers<timersQty> timers;
 auto& ledTimer = timers.all[0];
 auto& butTimer = timers.all[1];
 auto& mbTimer  = timers.all[2];
 auto& txTimer  = timers.all[3];
 auto& lcdTimer = timers.all[4];
+auto& zoomerTimer = timers.all[5];
 
 // энергонезависимые данные
 struct FlashData {
@@ -46,8 +49,12 @@ auto flash = Flash<FlashData, flashSector> ( {
 
 // шим
 using PWMout = Rled;
-using PWMtimer = TIM4_t;
-PWM<PWMtimer, PWMout> pwm;
+using PWMtimer = TIM4;
+using PWM_ = PWM<PWMtimer, PWMout>;
+PWM_ pwm;
+
+// зуммер
+auto zoomer = Zoomer<PWM_> (pwm, zoomerTimer, 4000_Hz); 
 
 // LCD
 using RSpin = PC4;
@@ -57,7 +64,7 @@ using D4pin = PC0;
 using D5pin = PC1;
 using D6pin = PC2;
 using D7pin = PC3;
-using LCDtim = TIM8_t;
+using LCDtim = TIM8;
 using LCDdma = DMA2stream2;
 using LCD_ = HD44780<RSpin, RWpin, Epin, D4pin, D5pin, D6pin, D7pin>;
 LCD_ LCD;
@@ -119,7 +126,7 @@ extern "C" void CLKinit (void)
 
 inline void PortsInit (void)
 {
-	LedPort::ClockEnable();
+    LedPort::ClockEnable();
 
     Bled::Configure (Bled::Mode::Output,
                      Bled::OutType::PushPull,
