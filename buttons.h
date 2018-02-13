@@ -7,10 +7,10 @@
 #pragma once
 
 #include "timers.h"
-#include "meta.h"
+#include "literals.h"
 
 
-
+// Types - это список пинов всех кнопок
 template<class ... Types>
 class Buttons
 {
@@ -20,7 +20,9 @@ public:
 
 
    Buttons (Timer& timer)
-      : pressedButtons(), timer(timer)
+      : pushHandeledFlag(false),
+        longPushHandeledFlag(false),
+        timer(timer)
    {
       timer.setTime (100_s);
    }
@@ -30,46 +32,65 @@ public:
    // должна периодически вызываться
    void operator () ()
    {
-      bool tmp = true;
-      for (auto but : pressedButtons)
-         tmp &= but;
-      if (tmp)
+      // (Types::IsSet() or ... ); - аналог в 17 стандарте
+      if ( List<Types...>::IsAnyPush() ) {
          timer.start();
-      else
+      } else {
          timer.stop();
+         pushHandeledFlag = false;
+         longPushHandeledFlag = false;
+      }
    }
 
 
-   template<class Button> bool push()
+   // определяет событие нажатия кнопки (или кнопок если их несколько)
+   template<class ... Buttons_> bool push()
    {
-      return updateBut<Button>()
-             && timer.timePassed > MinPressed 
-             && timer.timePassed < LongPressed;
+      bool tmp;
+      if (pushHandeledFlag) {
+         tmp = false;
+      } else {
+         // (Buttons_::IsSet() and ... ); - аналог в 17 стандарте
+         tmp = List<Buttons_...>::IsAllPush() and timer.timePassed > MinPressed;
+         if (tmp)
+            pushHandeledFlag = true;
+      }
+      return tmp;
    }
 
 
-   template<class Button> bool longPush()
+   // определяет событие долгого нажатия кнопки (или кнопок если их несколько)
+   template<class ... Buttons_> bool longPush()
    {
-      return updateBut<Button>()
-             && timer.timePassed > LongPressed;
+      bool tmp;
+      if (longPushHandeledFlag) {
+         tmp = false;
+      } else {
+         tmp = List<Buttons_...>::IsAllPush() and timer.timePassed > LongPressed;
+         if (tmp)
+            longPushHandeledFlag = true;
+      }
+      return tmp;
    }
 
 
 
 private:
-   static const uint8_t qty = QtyTypes<Types...>::value;
-
-   bool pressedButtons[qty];
+   bool pushHandeledFlag;
+   bool longPushHandeledFlag;
    Timer& timer;
 
 
-   template<class Button> bool updateBut()
-   {
-      const uint8_t n = Position<Button, Types...>::value;
-      static_assert (n != 0, "такого типа нет в списке кнопок");
-      bool tmp = Button::IsSet();
-      pressedButtons[n-1] = tmp;
-      return tmp;
-   }
+   // всю эту рекурсивную бяку можно/нужно заменить на fold expression 17 стандарта
+   template<class T, class ... Ts> struct List { 
+      static bool IsAnyPush() { return T::IsSet() or List<Ts...>::IsAnyPush(); }
+      static bool IsAllPush() { return T::IsSet() and List<Ts...>::IsAllPush(); }
+   };
+   template<class T> struct List<T> {
+      static bool IsAnyPush() { return T::IsSet(); }
+      static bool IsAllPush() { return T::IsSet(); }
+   };
 
 };
+
+

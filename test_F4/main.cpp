@@ -32,8 +32,8 @@ int main(void)
    // pwm.outEnable();
 
    // adc
-   ADC1_t::ClockEnable();
-   ADCaverage<ADC1_t, 16, PC0, DMA1stream0> current;
+   ADC1::ClockEnable();
+   ADCaverage<ADC1, PC0, 16> current;
 
    // инициализация программных таймеров задач
    ledTimer.setTimeAndStart (500);

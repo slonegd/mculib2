@@ -14,20 +14,20 @@ template <typename T1, typename T2> bool StaticAssertTypeEq() {
     (void)AssertTypeEq<T1, T2>();
     return true;
 }
-
+/*
 // определить позицию бита по маске (часто надо)
 constexpr uint8_t pos (uint32_t mask)
 {
-    uint16_t res = 0;
-    while (mask != 0) {
-        if ((mask & 1) == 1)
-            break;
-        res++;
-        mask >>= 1;
-    };
-    return res;
+   uint16_t res = 0;
+   while (mask != 0) {
+      if ((mask & 1) == 1)
+         break;
+      res++;
+      mask >>= 1;
+   };
+   return res;
 }
-
+*/
 // определить позицию по битовому полю
 
 

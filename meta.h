@@ -12,6 +12,10 @@ template <class T, class ... Types> struct get1stType {
 };
 
 
+#define IS_SAME(T1,T2) (std::is_same<T1,T2>::value)
+
+
+
 
 // определяет количество типов вариадика, пример:
 // const uint8_t qty = QtyTypes<Types...>::value;

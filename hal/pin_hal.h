@@ -22,56 +22,57 @@ template <class PORT, uint8_t pin>
 class Pin_t : protected PORT
 {
 public:
-    using Port = PORT;
-    using Mode = GPIO_t::MODER_t::Mode_t;
-    using OutType = GPIO_t::OTYPER_t::OutType_t;
-    using OutSpeed = GPIO_t::OSPEEDR_t::OutSpeed_t;
-    using PullResistor = GPIO_t::PUPDR_t::PullResistor_t;
-    using AF = GPIO_t::AFR_t::AF;
+   using Port = PORT;
+   using Mode = GPIO_t::MODER_t::Mode_t;
+   using OutType = GPIO_t::OTYPER_t::OutType_t;
+   using OutSpeed = GPIO_t::OSPEEDR_t::OutSpeed_t;
+   using PullResistor = GPIO_t::PUPDR_t::PullResistor_t;
+   using AF = GPIO_t::AFR_t::AF;
 
-    static const unsigned Number = pin;
-    static const bool Inverted = false;
+   static const unsigned Number = pin;
+   static const bool Inverted = false;
 
-    inline static void Configure ( Mode mode,
-                                   OutType type,
-                                   OutSpeed speed,
-                                   PullResistor res)
-    {
-        PORT::mode().reg    &= ~((uint32_t)0b11 << pin*2);
-        PORT::mode().reg    |=  (uint32_t)mode  << pin*2;
-        PORT::otype().reg   &= ~((uint32_t)0b1  << pin);
-        PORT::otype().reg   |=  (uint32_t)type  << pin;
-        PORT::ospeed().reg  &= ~((uint32_t)0b11 << pin*2);
-        PORT::ospeed().reg  |=  (uint32_t)speed << pin*2;
-        PORT::pupd().reg    &= ~((uint32_t)0b1  << pin);
-        PORT::pupd().reg    |=  (uint32_t)res   << pin;
-    }
+   inline static void Configure ( Mode mode,
+                           OutType type,
+                           OutSpeed speed,
+                           PullResistor res)
+   {
+      PORT::mode().reg    &= ~((uint32_t)0b11 << pin*2);
+      PORT::mode().reg    |=  (uint32_t)mode  << pin*2;
+      PORT::otype().reg   &= ~((uint32_t)0b1  << pin);
+      PORT::otype().reg   |=  (uint32_t)type  << pin;
+      PORT::ospeed().reg  &= ~((uint32_t)0b11 << pin*2);
+      PORT::ospeed().reg  |=  (uint32_t)speed << pin*2;
+      PORT::pupd().reg    &= ~((uint32_t)0b1  << pin);
+      PORT::pupd().reg    |=  (uint32_t)res   << pin;
+   }
 
 
-    using PinConf_t = typename Port::PinConf_t;
-    template<PinConf_t pinConf>
-    static void Configure() { Port::template Configure<pinConf, pin>(); }
-    #define CONFIGURE(Pin,Conf) Pin::template Configure<Pin::PinConf_t::Conf>()
+   using PinConf_t = typename Port::PinConf_t;
+   template<PinConf_t pinConf>
+   static void Configure() { Port::template Configure<pinConf, pin>(); }
+   #define CONFIGURE(Pin,Conf) Pin::template Configure<Pin::PinConf_t::Conf>()
 
-    template <AF func> static void SetAltFunc()
-    {
-        Port::template SetAltFunc<func, pin>();
-    }
+   template <AF func> static void SetAltFunc()
+   {
+      Port::template SetAltFunc<func, pin>();
+   }
 
-    static void Set()           { PORT::template Set<1u << pin> (); }
-    static void Clear()         { PORT::template Clear<1u << pin> (); }
-    static void Toggle()        { PORT::template Toggle<1u << pin> (); }
-    static void Set(bool b)
-    {
-        if (b) {
-            Set();
-        } else {
-            Clear();
-        }
-    }
-    static bool IsSet()        { return ( (PORT::PinRead() & (1u << pin) ) != 0); }
-    static void WaitForSet()   { while( IsSet() == 0) {} }
-    static void WaitForClear() { while( IsSet() ) {} }
+   static void Set()           { PORT::template Set<1u << pin> (); }
+   static void Clear()         { PORT::template Clear<1u << pin> (); }
+   static void Toggle()        { PORT::template Toggle<1u << pin> (); }
+   static void Set(bool b)
+   {
+      if (b) {
+         Set();
+      } else {
+         Clear();
+      }
+   }
+   static bool IsSet()        { return ( (PORT::PinRead() & (1u << pin) ) != 0); }
+   static bool IsClear()      { return ( (PORT::PinRead() & (1u << pin) ) == 0); }
+   static void WaitForSet()   { while( IsSet() == 0) {} }
+   static void WaitForClear() { while( IsSet() ) {} }
 
 };
 
