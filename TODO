@@ -1,12 +1,12 @@
 отладить flash_hal для stm32f0
-отладить pin_hal для stm32f0
+[done] отладить pin_hal для stm32f0
 закончить SPI_ral
 написать SPImaster с DMA
 переписать в DMA битбендинг с макросов на констекспр
 отладить DMA для STM32F0
 отладить spi_hal
-отладить zoomer и tim для STM32F0
+[done] отладить zoomer и tim для STM32F0
 отладить buttons
 
-в adc_ral использовать std::is_same по аналогии с TIM
+[done] в adc_ral использовать std::is_same по аналогии с TIM
 

@@ -6,11 +6,11 @@
     #include "DMA_ral.h"
     #include "TIM_ral.h"
     #include "ADC_ral.h"
+    #include "SysTick_ral.h"
 #if defined(STM32F030x6)
     #include "SPI_ral.h"
 #elif defined(STM32F405xx)
     #include "USART_ral.h"
-    #include "SysTick_ral.h"
 #endif
 
 
@@ -27,6 +27,7 @@ MAKE_VAR(DMA1);
 MAKE_VAR(TIM1);
 MAKE_VAR(TIM3);
 MAKE_VAR(ADC1);
+volatile auto SysTick_d = (SysTick_t*) SysTick;
 #if defined(STM32F030x6)
     MAKE_VAR(SPI1);
     MAKE_VAR(DMA1channel1);
@@ -63,7 +64,6 @@ MAKE_VAR(ADC1);
     MAKE_VAR(DMA2stream6);
     MAKE_VAR(DMA2stream7);
     MAKE_VAR(DMA2);
-    volatile auto SysTick_d = (SysTick_t*) SysTick;
 #endif
 
 #undef MAKE_VAR
@@ -75,11 +75,12 @@ inline void makeDebugVar (void)
     GPIOA_d->BSRR_t::reg = 0;
     GPIOB_d->BSRR_t::reg = 0;
     GPIOC_d->BSRR_t::reg = 0;
-    GPIOD_d->BSRR_t::reg = 0;
+    // GPIOD_d->BSRR_t::reg = 0;
     GPIOF_d->BSRR_t::reg = 0;
     TIM1_d->makeDebugVar();
     TIM3_d->makeDebugVar();
     ADC1_d->makeDebugVar();
+    SysTick_d->VAL_t::reg = 0;
 #if defined(STM32F030x6)
     SPI1_d->makeDebugVar();
 #elif defined(STM32F405xx)
@@ -112,7 +113,6 @@ inline void makeDebugVar (void)
     DMA2stream7_d->makeDebugVar();
     DMA1_d->LIFCR_t::bits.res1 = 0;
     DMA2_d->LIFCR_t::bits.res1 = 0;
-    SysTick_d->VAL_t::reg = 0;
 #elif defined(STM32F030x6)
     DMA1channel1_d->makeDebugVar();
     DMA1channel2_d->makeDebugVar();
@@ -122,3 +122,6 @@ inline void makeDebugVar (void)
 #endif
 
 }
+
+
+#undef MAKE_VAR

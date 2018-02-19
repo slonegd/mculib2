@@ -56,25 +56,28 @@ class TIM : private TIM_ral::CR1_t,
             private TIM_ral::PSC_t,
             private TIM_ral::ARR_t,
             private TIM_ral::RCR_t,
-            private TIM_ral::CCR_t
+            private TIM_ral::CCR_t,
+            private TIM_ral::BDTR_t
 {
 public:
    using CompareMode = TIM_ral::CCMR_t::CompareMode;
    using AF = AFR_t::AF;
 
    static const uint32_t Base = TIMbaseAdr;
+
    static constexpr AF AltFunc = 
+#if defined(STM32F030x6)
+      Base == TIM1_BASE ? AF::_2 :
+      Base == TIM3_BASE ? AF::_1 : AF::_0;
+#elif defined(STM32F405xx)
       Base == TIM1_BASE ? AF::_1 :
-#if defined(STM32F405xx)
       Base == TIM2_BASE ? AF::_1 :
-#endif
       Base == TIM3_BASE ? AF::_2 :
-#if defined(STM32F405xx)
       Base == TIM4_BASE ? AF::_2 :
       Base == TIM5_BASE ? AF::_2 :
-      Base == TIM8_BASE ? AF::_3 :
+      Base == TIM8_BASE ? AF::_3 : AF::_0;
 #endif
-                          AF::_0;
+
 
    void makeDebugVar() { conf1().bits.res = 0; }
 
@@ -90,6 +93,16 @@ public:
       MODIFY_REG (captureMode().regs[regN], ClearMask, SetMask);
    }
    template <uint8_t channel>
+   static void PreloadEnable()
+   {  
+      // 0 для каналов 1,2; 1 для каналов 3,4
+      constexpr uint8_t regN = channel / 3;
+      // 3 для каналов 1,3; 11 для каналов 2,4
+      constexpr uint8_t offset = 3 + 8 * (channel / (regN*2 + 2));
+      constexpr uint32_t Mask = (uint32_t) 0b1 << offset;
+      captureMode().regs[regN] |= Mask;
+   }
+   template <uint8_t channel>
    static void CompareEnable ()   { captureEn().reg |= (uint16_t)1 << (channel-1)*4; }
    template <uint8_t channel>
    static void CompareDisable ()  { captureEn().reg &= ~( (uint16_t)1 << (channel-1)*4 ); }
@@ -101,6 +114,7 @@ public:
    static void SetCompareValue (uint32_t val) { capture().regs[channel-1] = val; }
    static void SetAutoReloadValue (uint32_t val) { autoReload().reg = val; }
    static void SetPrescaller (uint32_t val)      { prescaler().reg = val; }
+   static void MainOutputEnable() { bdtr().reg |= TIM_BDTR_MOE_Msk; }
    
 #if defined(STM32F405xx)
    // включает тактирование таймера
@@ -137,6 +151,7 @@ protected:
    static volatile MakeRef (PSC_t,  prescaler   );
    static volatile MakeRef (ARR_t,  autoReload  );
    static volatile MakeRef (CCR_t,  capture     );
+   static volatile MakeRef (BDTR_t, bdtr        );
 #undef MakeRef
 
 

@@ -73,7 +73,9 @@ private:
         Pin::template SetAltFunc <Timer::AltFunc> ();
          
         Timer::template SetCompareMode <Timer::CompareMode::PWMmode, channel> ();
+        Timer::template PreloadEnable <channel> ();
         Timer::AutoReloadEnable();
+        Timer::MainOutputEnable();
         Timer::CounterEnable();
     }
 

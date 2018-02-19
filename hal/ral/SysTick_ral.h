@@ -2,7 +2,11 @@
 /*
 #include <stdint.h>
 #include <stdbool.h>*/
+#if defined(STM32F030x6)
+#include "stm32f0xx.h"
+#elif defined(STM32F405xx)
 #include "stm32f4xx.h"
+#endif
 
 namespace SysTick_ral {
 

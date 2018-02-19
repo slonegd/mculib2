@@ -281,11 +281,11 @@ public:
 #endif
 
 
-   static inline void SetLatency (Latency L)  { accessContr().bits.LATENCY = L; }
+   static inline void SetLatency (Latency L)  { accessContr().reg |= (uint32_t)L << FLASH_ACR_LATENCY_Pos; }
    static inline void Lock()                  { conf().bits.LOCK = true; }
    static inline bool IsLock()                { return conf().bits.LOCK; }
    static inline void SetProgMode()           { conf().bits.PG = true; }
-   static inline void EndOfProgInterruptEn()  { conf().bits.EOPIE = true; }
+   static inline void EndOfProgInterruptEn()  { conf().reg |= FLASH_CR_EOPIE_Msk; }
    static inline bool EndOfProg()             { return status().bits.EOP; }
    static inline void ClearEndOfProgFlag()    { status().bits.EOP = true; }
    static inline bool Busy()                  { return status().bits.BSY; }

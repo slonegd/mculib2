@@ -46,7 +46,7 @@ public:
       Clear(clearMask);
       Set(val);
    }
-   static void Toggle (uint16_t val)       { ClearAndSet (val, ~od().reg & val); }
+   static void Toggle (uint16_t val)       { od().reg ^= val; }
    static uint16_t PinRead()               { return id().reg; }
    template <AF func, uint8_t pin> static void SetAltFunc()
    {
@@ -72,7 +72,7 @@ public:
       Clear(clearMask);
       Set(val);
    }
-   template<uint16_t val> static void Toggle() { ClearAndSet(val,  ~od().reg & val); }
+   template<uint16_t val> static void Toggle() { od().reg ^= val; }
    template<uint16_t val> static void Set()    { bsr().reg = val; }
    template<uint16_t val> static void Clear()  { bsr().reg = val << 16; }
 

@@ -274,5 +274,34 @@ namespace TIM_ral {
       enum { Offset = 0x34 };
       volatile uint32_t regs[4];
    };
+
+
+
+   struct BDTR_t {
+      enum { Offset = 0x44 };
+      struct Bits {
+         // Bits 7:0 DTG[7:0]: Dead-time generator setup
+         volatile uint32_t DTG :8;
+         // Bits 9:8 LOCK[1:0]: Lock configuration
+         volatile uint32_t LOCK :2;
+         // Bit 10 OSSI: Off-state selection for Idle mode
+         volatile uint32_t OSSI :1;
+         // Bit 11 OSSR: Off-state selection for Run mode
+         volatile uint32_t OSSR :1;
+         // Bit 12 BKE: Break enable
+         volatile bool BKE      :1;
+         // Bit 13 BKP: Break polarity
+         volatile uint32_t BKP  :1;
+         // Bit 14 AOE: Automatic output enable
+         volatile uint32_t AOE  :1;
+         // Bit 15 MOE: Main output enable
+         volatile bool MOE      :1;
+         volatile uint32_t res1 :16; 
+      };
+      union {
+         volatile Bits bits;
+         volatile uint32_t reg;
+      };
+   };
 }
 
