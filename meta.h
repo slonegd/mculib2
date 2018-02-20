@@ -26,6 +26,7 @@ template<class T> struct QtyTypes<T> {
    static const uint8_t value = 1;
 };
 
+
 // определяет конкретный тип аргумента вариадика, пример:
 // using Type = At<2, Types...>::Result;
 template<uint8_t n, class T, class ... Types> struct At {

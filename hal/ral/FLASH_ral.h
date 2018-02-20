@@ -31,7 +31,7 @@ namespace FLASH_ral {
          // Bit 5 PRFTBS: Prefetch buffer status
          volatile bool PRFTBS        :1;
          // Bits 31:6 Reserved, must be kept at reset value.
-         volatile uint32_t res2      :27;
+         volatile uint32_t res2      :26;
 #elif defined(STM32F405xx)
          // Bits 7:3 Reserved, must be kept cleared.
          volatile uint32_t res1      :5;
@@ -282,13 +282,13 @@ public:
 
 
    static inline void SetLatency (Latency L)  { accessContr().reg |= (uint32_t)L << FLASH_ACR_LATENCY_Pos; }
-   static inline void Lock()                  { conf().bits.LOCK = true; }
-   static inline bool IsLock()                { return conf().bits.LOCK; }
-   static inline void SetProgMode()           { conf().bits.PG = true; }
+   static inline void Lock()                  { conf().reg |= FLASH_CR_LOCK_Msk; }
+   static inline bool IsLock()                { return (conf().reg & FLASH_CR_LOCK_Msk) != 0; }
+   static inline void SetProgMode()           { conf().reg |= FLASH_CR_PG_Msk; }
    static inline void EndOfProgInterruptEn()  { conf().reg |= FLASH_CR_EOPIE_Msk; }
-   static inline bool EndOfProg()             { return status().bits.EOP; }
-   static inline void ClearEndOfProgFlag()    { status().bits.EOP = true; }
-   static inline bool Busy()                  { return status().bits.BSY; }
+   static inline bool EndOfProg()             { return (status().reg & FLASH_SR_EOP_Msk) != 0; }
+   static inline void ClearEndOfProgFlag()    { status().reg |= FLASH_SR_EOP_Msk; }
+   static inline bool Busy()                  { return (status().reg & FLASH_SR_BSY_Msk) != 0; }
 
 
    static inline void Unlock ()
@@ -303,13 +303,14 @@ public:
 // для F4 номер сектора, для F0 адрес сектора (страницы)
    template <uint32_t sector> static inline void StartEraseSector ()
    {
-      conf().bits.SER = true;
 #if defined(STM32F405xx)
+      conf().reg |= FLASH_CR_SER_Msk;
       conf().bits.SNB = (Sector)sector;
 #elif defined(STM32F030x6)
+      conf().reg |= FLASH_CR_PER_Msk;
       address().reg = sector;
 #endif
-      conf().bits.STRT = true;
+      conf().reg |= FLASH_CR_STRT_Msk;
    }
 
 

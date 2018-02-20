@@ -29,12 +29,11 @@ public:
 
    void startTx()
    {
-      // TODO проверить установлен ли этот бит при старте (вроде да)
-      if ( DMAtx::TransferCompleteInterrupt() ) {
+      if ( DMAtx::TransferCompleteInterrupt() or DMAtx::IsDisable() ) {
          DMAtx::ClearFlagTransferCompleteInterrupt();
          DMAtx::Disable();
          DMAtx::SetQtyTransactions (sizeof(Data));
-         DMAtx::Enable(); 
+         DMAtx::Enable();
       }
    }
 
@@ -43,17 +42,19 @@ public:
 private:
    void init()
    {
-      CONFIGURE (SCK,  AlternateFunc0PushPull);
-      CONFIGURE (MOSI, AlternateFunc0PushPull);
-      CONFIGURE (NSS,  AlternateFunc0PushPull);
+      CONFIGURE (SCK,  AlternateFunc0PushPullHighSpeed);
+      CONFIGURE (MOSI, AlternateFunc0PushPullHighSpeed);
+      CONFIGURE (NSS,  AlternateFunc0PushPullHighSpeed);
 
       SPI_::ClockEnable();
       SPI_::SetAsMaster();
       SPI_::template SetBoudRate<SPI_::Div::Div256>();
       SPI_::SlaveSelectEnable();
+      SPI_::SlaveSelectPulseEnable();
       SPI_::template SetDataSize<SPI_::DataSize::_8bits>();
       SPI_::TxDMAenable();
       SPI_::Enable();
+      
 
       DMAtx::ClockEnable();
       DMAtx::SetMemoryAdr ( (uint32_t)arr );

@@ -75,14 +75,21 @@ inline void makeDebugVar (void)
     GPIOA_d->BSRR_t::reg = 0;
     GPIOB_d->BSRR_t::reg = 0;
     GPIOC_d->BSRR_t::reg = 0;
+    // почему то с ним не работает ЭО86
     // GPIOD_d->BSRR_t::reg = 0;
     GPIOF_d->BSRR_t::reg = 0;
+    DMA1_d->makeDebugVar();
     TIM1_d->makeDebugVar();
     TIM3_d->makeDebugVar();
     ADC1_d->makeDebugVar();
     SysTick_d->VAL_t::reg = 0;
 #if defined(STM32F030x6)
     SPI1_d->makeDebugVar();
+    DMA1channel1_d->makeDebugVar();
+    DMA1channel2_d->makeDebugVar();
+    DMA1channel3_d->makeDebugVar();
+    DMA1channel4_d->makeDebugVar();
+    DMA1channel5_d->makeDebugVar();
 #elif defined(STM32F405xx)
     GPIOE_d->BSRR_t::reg = 0;
     TIM2_d->makeDebugVar();
@@ -111,14 +118,8 @@ inline void makeDebugVar (void)
     DMA2stream5_d->makeDebugVar();
     DMA2stream6_d->makeDebugVar();
     DMA2stream7_d->makeDebugVar();
-    DMA1_d->LIFCR_t::bits.res1 = 0;
-    DMA2_d->LIFCR_t::bits.res1 = 0;
-#elif defined(STM32F030x6)
-    DMA1channel1_d->makeDebugVar();
-    DMA1channel2_d->makeDebugVar();
-    DMA1channel3_d->makeDebugVar();
-    DMA1channel4_d->makeDebugVar();
-    DMA1channel5_d->makeDebugVar();
+    DMA2_d->makeDebugVar();
+
 #endif
 
 }

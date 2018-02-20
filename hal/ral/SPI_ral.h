@@ -228,6 +228,7 @@ public:
    }
    static void TxDMAenable() { conf2().reg |= SPI_CR2_TXDMAEN_Msk; }
    static void Enable() { conf1().reg |= SPI_CR1_SPE; }
+   static void SlaveSelectPulseEnable() { conf2().reg |= SPI_CR2_NSSP_Msk; }
 
 
 

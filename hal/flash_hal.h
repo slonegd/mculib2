@@ -178,12 +178,13 @@ void Flash<Data,sector>::update ()
             byteN = 0;
          }
       } else {
+         FLASH_t::Lock();
          state = StartWrite;
       }
       break;
 
    case StartWrite:
-      if ( !FLASH_t::Busy() && !FLASH_t::IsLock() ) {
+      if ( !FLASH_t::Busy() && FLASH_t::IsLock() ) {
          FLASH_t::Unlock();
          FLASH_t::SetProgMode();
 #if defined(STM32F405xx)
@@ -209,7 +210,7 @@ void Flash<Data,sector>::update ()
       break;
 
    case Errase:
-      if ( !FLASH_t::Busy() && !FLASH_t::IsLock() ) {
+      if ( !FLASH_t::Busy() && FLASH_t::IsLock() ) {
          FLASH_t::Unlock();
 #if defined(STM32F405xx)
          FLASH_t::template StartEraseSector<sector>();

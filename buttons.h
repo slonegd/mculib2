@@ -11,7 +11,7 @@
 
 
 // Types - это список пинов всех кнопок
-template<class ... Types>
+template<bool inverted, class ... Types>
 class Buttons
 {
 public:
@@ -24,7 +24,7 @@ public:
         longPushHandeledFlag(false),
         timer(timer)
    {
-      timer.setTime (100_s);
+      timer.setTime (100_s); // 100 s просто большое время
    }
 
 
@@ -33,7 +33,8 @@ public:
    void operator () ()
    {
       // (Types::IsSet() or ... ); - аналог в 17 стандарте
-      if ( List<Types...>::IsAnyPush() ) {
+      bool tmp = inverted ? List<Types...>::IsAnyClear() : List<Types...>::IsAnySet();
+      if ( tmp ) {
          timer.start();
       } else {
          timer.stop();
@@ -51,7 +52,8 @@ public:
          tmp = false;
       } else {
          // (Buttons_::IsSet() and ... ); - аналог в 17 стандарте
-         tmp = List<Buttons_...>::IsAllPush() and timer.timePassed > MinPressed;
+         tmp = inverted ? List<Buttons_...>::IsAllClear() : List<Buttons_...>::IsAllSet();
+         // tmp = tmp and timer.timePassed > MinPressed;
          if (tmp)
             pushHandeledFlag = true;
       }
@@ -66,7 +68,8 @@ public:
       if (longPushHandeledFlag) {
          tmp = false;
       } else {
-         tmp = List<Buttons_...>::IsAllPush() and timer.timePassed > LongPressed;
+         tmp = inverted ? List<Buttons_...>::IsAllClear() : List<Buttons_...>::IsAllSet();
+         tmp = tmp and timer.timePassed > LongPressed;
          if (tmp)
             longPushHandeledFlag = true;
       }
@@ -83,13 +86,18 @@ private:
 
    // всю эту рекурсивную бяку можно/нужно заменить на fold expression 17 стандарта
    template<class T, class ... Ts> struct List { 
-      static bool IsAnyPush() { return T::IsSet() or List<Ts...>::IsAnyPush(); }
-      static bool IsAllPush() { return T::IsSet() and List<Ts...>::IsAllPush(); }
+      static bool IsAnySet()   { return T::IsSet()   or  List<Ts...>::IsAnySet();   }
+      static bool IsAnyClear() { return T::IsClear() or  List<Ts...>::IsAnyClear(); }
+      static bool IsAllSet()   { return T::IsSet()   and List<Ts...>::IsAllSet();   }
+      static bool IsAllClear() { return T::IsClear() and List<Ts...>::IsAllClear(); }
    };
    template<class T> struct List<T> {
-      static bool IsAnyPush() { return T::IsSet(); }
-      static bool IsAllPush() { return T::IsSet(); }
+      static bool IsAnySet()   { return T::IsSet();   }
+      static bool IsAnyClear() { return T::IsClear(); }
+      static bool IsAllSet()   { return T::IsSet();   }
+      static bool IsAllClear() { return T::IsClear(); }
    };
+
 
 };
 
