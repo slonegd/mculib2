@@ -5,8 +5,9 @@
 // просто отправляет по dma данные из data
 // сигнал CS(NSS) хард
 // пины пока тоже без альтернатив
-template<class SPI_, class Data>
-class SPI : private SPI_
+// dataSize - размер в битах 1 отправки (пока только для 8 и 16)
+template<class SPI_, class Data, uint8_t dataSize = 8>
+class SPIoverDMA : private SPI_
 {
 public:
    union {
@@ -21,7 +22,7 @@ public:
    using DMAtx = typename SPI_::DMAtx;
 
 
-   SPI() : arr()
+   SPIoverDMA() : arr()
    {
       init();
    }
@@ -32,7 +33,7 @@ public:
       if ( DMAtx::TransferCompleteInterrupt() or DMAtx::IsDisable() ) {
          DMAtx::ClearFlagTransferCompleteInterrupt();
          DMAtx::Disable();
-         DMAtx::SetQtyTransactions (sizeof(Data));
+         DMAtx::SetQtyTransactions (sizeof(Data) * 8 / dataSize);
          DMAtx::Enable();
       }
    }
@@ -51,7 +52,10 @@ private:
       SPI_::template SetBoudRate<SPI_::Div::Div256>();
       SPI_::SlaveSelectEnable();
       SPI_::SlaveSelectPulseEnable();
-      SPI_::template SetDataSize<SPI_::DataSize::_8bits>();
+      if (dataSize == 8)
+         SPI_::template SetDataSize<SPI_::DataSize::_8bits>();
+      else if (dataSize == 16)
+         SPI_::template SetDataSize<SPI_::DataSize::_16bits>();
       SPI_::TxDMAenable();
       SPI_::Enable();
       
@@ -62,8 +66,13 @@ private:
       // DMAtx::SetQtyTransactions (sizeof(Data));
       typename DMAtx::Configure_t conf;
       conf.dataDir = DMAtx::DataDirection::MemToPer;
-      conf.memSize = DMAtx::DataSize::byte8;
-      conf.perSize = DMAtx::DataSize::byte8;
+      if (dataSize == 8) {
+         conf.memSize = DMAtx::DataSize::byte8;
+         conf.perSize = DMAtx::DataSize::byte8;
+      } else if (dataSize == 16) {
+         conf.memSize = DMAtx::DataSize::word16;
+         conf.perSize = DMAtx::DataSize::word16;
+      }
       conf.memInc = true;
       conf.perInc = false;
       conf.circularMode = false;

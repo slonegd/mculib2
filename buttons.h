@@ -11,12 +11,13 @@
 
 
 // Types - это список пинов всех кнопок
+// inverted = true, если нажатая кнопка даёт 1 на входе
 template<bool inverted, class ... Types>
 class Buttons
 {
 public:
-   static const uint8_t MinPressed = 10_ms;
-   static const uint8_t LongPressed = 1_s;
+   static const uint16_t MinPressed = 10_ms;
+   static const uint16_t LongPressed = 1_s;
 
 
    Buttons (Timer& timer)
@@ -53,7 +54,7 @@ public:
       } else {
          // (Buttons_::IsSet() and ... ); - аналог в 17 стандарте
          tmp = inverted ? List<Buttons_...>::IsAllClear() : List<Buttons_...>::IsAllSet();
-         // tmp = tmp and timer.timePassed > MinPressed;
+         tmp = tmp and (timer.timePassed > MinPressed);
          if (tmp)
             pushHandeledFlag = true;
       }
@@ -69,11 +70,33 @@ public:
          tmp = false;
       } else {
          tmp = inverted ? List<Buttons_...>::IsAllClear() : List<Buttons_...>::IsAllSet();
-         tmp = tmp and timer.timePassed > LongPressed;
+         tmp = tmp and (timer.timePassed > LongPressed);
          if (tmp)
             longPushHandeledFlag = true;
       }
       return tmp;
+   }
+
+
+   // определяет событие нажатия хоть какой-нибудь кнопки
+   bool anyPush()
+   {
+      return (timer.timePassed > MinPressed) and !pushHandeledFlag;
+   }
+
+
+   // блокирует события нажатия кнопок до отпускания
+   void blockAllEvents()
+   {
+      pushHandeledFlag = true;
+      longPushHandeledFlag = true;
+   }
+
+
+   // блокирует событиt простого нажатия кнопок до отпускания
+   void blockPushEvents()
+   {
+      pushHandeledFlag = true;
    }
 
 

@@ -20,10 +20,12 @@ class Zoomer
 public:
    // freq - частота кварцевой пищалки
    Zoomer(PWM& pwm, Timer& timer, uint32_t freq);
-   // добавляет очередь сигналов/пауз, первый всегда сигнал
+   // добавляет в начало очереди сигналы/паузы, первый всегда сигнал
    // не более QueueSize аргументов
    template<class ... T>
    void addBeepPause (T ... args);
+   // бибикает ms в количестве qty, пауза между ms
+   void beep (uint32_t ms, uint8_t qty = 1);
    // непосредственно включает/выключает пищалку
    // должна периодически вызываться
    void operator () ();
@@ -37,6 +39,8 @@ private:
    PWM& pwm;
    Timer& timer;
 };
+
+
 
 
 
@@ -63,6 +67,19 @@ void Zoomer<PWM, QueueSize>::addBeepPause (T ... args)
    currentN = 0;
    timer.setTimeAndStart (queue[currentN]);
    pwm.outEnable();
+}
+
+
+template<class PWM, uint8_t QueueSize> 
+void Zoomer<PWM, QueueSize>::beep (uint32_t ms, uint8_t qty)
+{
+   qty *= 2;
+   qty = qty < QueueSize ? qty : QueueSize;
+   for (uint8_t i = 0; i < qty; i++)
+      queue[i] = ms;
+   currentN = 0;
+   timer.setTimeAndStart (ms);
+   pwm.outEnable(); 
 }
 
 
