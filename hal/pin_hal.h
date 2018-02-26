@@ -51,24 +51,17 @@ public:
    using PinConf_t = typename Port::PinConf_t;
    template<PinConf_t pinConf>
    static void Configure() { Port::template Configure<pinConf, pin>(); }
-   #define CONFIGURE(Pin,Conf) Pin::template Configure<Pin::PinConf_t::Conf>()
+   #define CONFIGURE_PIN(Pin,Conf) Pin::template Configure<Pin::PinConf_t::Conf>()
 
    template <AF func> static void SetAltFunc()
    {
       Port::template SetAltFunc<func, pin>();
    }
 
-   static void Set()           { PORT::template Set<1u << pin> (); }
-   static void Clear()         { PORT::template Clear<1u << pin> (); }
-   static void Toggle()        { PORT::template Toggle<1u << pin> (); }
-   static void Set(bool b)
-   {
-      if (b) {
-         Set();
-      } else {
-         Clear();
-      }
-   }
+   static void Set()          { PORT::template Set<1u << pin> (); }
+   static void Clear()        { PORT::template Clear<1u << pin> (); }
+   static void Toggle()       { PORT::template Toggle<1u << pin> (); }
+   static void Set(bool b)    { b ? Set() : Clear(); }
    static bool IsSet()        { return ( (PORT::PinRead() & (1u << pin) ) != 0); }
    static bool IsClear()      { return ( (PORT::PinRead() & (1u << pin) ) == 0); }
    static void WaitForSet()   { while( IsSet() == 0) {} }

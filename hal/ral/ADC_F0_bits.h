@@ -110,11 +110,12 @@ namespace ADC_ral {
       enum Resolution { _12bits = 0b00, _10bits, _8bits, _6bits }; 
       enum Trigger { _0 = 0b000, _1, _2, _3, _4, _5, _6, _7 };
       enum TriggerEn { Disable = 0b00, RisingEdge, FallingEdge, BothEdge };
+      enum DMAmode { OneShot = 0b0, Circular };
       struct Bits {
          // Bit 0 DMAEN: Direct memory access enable
          volatile bool DMAEN        :1;
          // Bit 1 DMACFG: Direct memory access configuration
-         volatile uint32_t DMACFG   :1;
+         volatile DMAmode DMACFG    :1;
          // Bit 2 SCANDIR: Scan sequence direction
          volatile uint32_t SCANDIR  :1;
          // Bit 4:3 RES[1:0]: Data resolution
@@ -156,12 +157,12 @@ namespace ADC_ral {
 
    struct CFGR2_t {
       enum { Offset = 0x10 };
-      enum ADCclockDiv { ADCCLK = 0b00, PCLKdiv2, PCLKdiv4 };
+      enum Clock { Dedicated14MHzClock = 0b00, PCLKdiv2, PCLKdiv4 };
       struct Bits {
          // Bits 29:0 Reserved, must be kept at reset value.
-         volatile uint32_t res1        :30;
+         volatile uint32_t res1     :30;
          // Bits 31:30 CKMODE[1:0]: ADC clock mode
-         volatile ADCclockDiv CKMODE   :2;
+         volatile Clock CKMODE   :2;
       };
       union {
          volatile Bits bits;
@@ -233,6 +234,7 @@ namespace ADC_ral {
          volatile bool CHSEL14  :1;
          volatile bool CHSEL15  :1;
          volatile bool CHSEL16  :1;
+         volatile bool CHSEL17  :1;
          // Bits 31:18 Reserved, must be kept at reset value.
          volatile uint32_t res1 :14;
       };

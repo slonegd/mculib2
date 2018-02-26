@@ -64,6 +64,8 @@ public:
          MakeMask(Mode_t::Alternate, OutType_t::PushPull, OutSpeed_t::Low, PullResistor_t::No, AF::_0),
       AlternateFunc0PushPullHighSpeed =
          MakeMask(Mode_t::Alternate, OutType_t::PushPull, OutSpeed_t::High, PullResistor_t::No, AF::_0),
+      AnalogInput = 
+         MakeMask(Mode_t::Analog, OutType_t::PushPull, OutSpeed_t::Low, PullResistor_t::No, AF::_0),
    };
 
 

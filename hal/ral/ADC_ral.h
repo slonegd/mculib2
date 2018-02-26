@@ -1,3 +1,6 @@
+/**
+ *    Пока тут написано только для F0 серии
+ */
 #pragma once
 
 #if defined(STM32F030x6)
@@ -12,7 +15,7 @@
 template <uint32_t ADCadr>
 class ADCx : private ADC_ral::SR_t,
 #if defined(STM32F405xx)
-             private ADC_ral::CR1_t,
+             private ADC_ral::CR_t,
              private ADC_ral::CR2_t,
              private ADC_ral::SMPR1_t,
              private ADC_ral::SMPR2_t,
@@ -47,36 +50,41 @@ class ADCx : private ADC_ral::SR_t,
 public:
    static const uint32_t Base = ADCadr;
 
-   using Channels = DMA_ral::CR_t::Channels;
-
+   using Channels   = DMA_ral::CR_t::Channels;
+   using Clock      = ADC_ral::CFGR2_t::Clock;
+   using Resolution = ADC_ral::CFGR1_t::Resolution;
+   using SampleTime = ADC_ral::SMPR_t::SampleTime;
 
    void makeDebugVar() { status().bits.res1 = 0; }
-   static void ClockEnable() { RCC->APB2ENR |= ClkEnMask; }
+
+   static void ClockEnable();
+   static void Enable()    { control().reg |= ADC_CR_ADEN_Msk; }
+   static void Disable()   { control().reg |= ADC_CR_ADDIS_Msk; }
+   static bool IsDisable() { return (control().reg & ADC_CR_ADEN_Msk) == 0; }
+   static bool IsReady()   { return (status().reg & ADC_ISR_ADRDY_Msk) != 0; }
+   static void SetBusy()   { status().reg |= ADC_ISR_ADRDY_Msk; }
+   static void Stop()      { control().reg |= ADC_CR_ADSTP_Msk; }
+   static void Start()     { control().reg |= ADC_CR_ADSTART_Msk; }
+   static bool IsStoping() { return (control().reg & ADC_CR_ADSTP_Msk) != 0; }
+   static void SetClock ( Clock val );
+   static void DMAenable() { conf1().reg |= ADC_CFGR1_DMAEN_Msk; }
+   static void SetCircularDMA() { conf1().reg |= ADC_CFGR1_DMACFG_Msk; }
+   static void SetResolution (Resolution val);
+   static void SetContinuousMode() { conf1().reg |= ADC_CFGR1_CONT_Msk; }
+   static void SetSampleTime (SampleTime val);
+   static void SetChannel (uint8_t val) { channelSelect().reg |= (1u << val); }
 
 
 
 protected:
 #define MakeRef(Reg,Ref) ADC_ral::Reg& Ref() { return (ADC_ral::Reg&) *(uint32_t*)(Base + ADC_ral::Reg::Offset); }
    static volatile MakeRef(SR_t,    status);
-/*   static volatile MakeRef(CR1_t,   conf1);
-   static volatile MakeRef(CR2_t,   conf2);
-   static volatile MakeRef(SMPR1_t, sampleTime1);
-   static volatile MakeRef(SMPR2_t, sampleTime2);
-   static volatile MakeRef(JOFR1_t, jof1);
-   static volatile MakeRef(JOFR2_t, jof2);
-   static volatile MakeRef(JOFR3_t, jof3);
-   static volatile MakeRef(JOFR4_t, jof4);
-   static volatile MakeRef(HTR_t,   ht);
-   static volatile MakeRef(LTR_t,   lt);
-   static volatile MakeRef(SQR1_t,  sq1);
-   static volatile MakeRef(SQR2_t,  sq2);
-   static volatile MakeRef(SQR3_t,  sq3);
-   static volatile MakeRef(JDR1_t,  jd1);
-   static volatile MakeRef(JDR2_t,  jd2);
-   static volatile MakeRef(JDR3_t,  jd3);
-   static volatile MakeRef(JDR4_t,  jd4);
    static volatile MakeRef(DR_t,    data);
-*/
+   static volatile MakeRef(CR_t,    control);
+   static volatile MakeRef(CFGR1_t, conf1);
+   static volatile MakeRef(CFGR2_t, conf2);
+   static volatile MakeRef(SMPR_t,  sampleTime);
+   static volatile MakeRef(CHSELR_t, channelSelect);
 #undef MakeRef
 
 
@@ -109,3 +117,39 @@ using ADC1 = ADCx<ADC1_BASE>;
 
 #include "ADC_impl.h"
 
+
+
+
+
+
+
+template <uint32_t ADCadr>
+void ADCx<ADCadr>::ClockEnable()
+{
+   RCC->APB2ENR |= ClkEnMask;
+   while ( (RCC->APB2ENR & ClkEnMask) == 0 ) { }
+}
+
+
+template <uint32_t ADCadr>
+void ADCx<ADCadr>::SetClock ( Clock val )
+{
+   conf2().reg &= ~ADC_CFGR2_CKMODE_Msk;
+   conf2().reg |= (uint32_t)val << ADC_CFGR2_CKMODE_Pos;
+}
+
+
+template <uint32_t ADCadr>
+void ADCx<ADCadr>::SetResolution ( Resolution val )
+{
+   conf1().reg &= ~ADC_CFGR1_RES_Msk;
+   conf1().reg |= (uint32_t)val << ADC_CFGR1_RES_Pos;
+}
+
+
+template <uint32_t ADCadr>
+void ADCx<ADCadr>::SetSampleTime ( SampleTime val )
+{
+   sampleTime().reg &= ~ADC_SMPR_SMP_Msk;
+   sampleTime().reg |= (uint32_t)val << ADC_SMPR_SMP_Pos;
+}

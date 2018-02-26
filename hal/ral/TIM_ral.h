@@ -132,7 +132,7 @@ public:
    static void ClockEnable()
    {
       ClockEnReg() |= ClockEnMask;
-      while ( (ClockEnReg() & ClockEnMask) == 0 ) { };
+      while ( (ClockEnReg() & ClockEnMask) == 0 ) { }
    }
    static void CounterEnable()    { conf1().reg |= TIM_CR1_CEN_Msk; }
    static bool IsCount()          { return (conf1().reg & TIM_CR1_CEN_Msk) != 0; }

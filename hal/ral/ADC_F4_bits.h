@@ -56,7 +56,7 @@ namespace ADC_ral {
 
 
 
-   struct CR1_t {
+   struct CR_t {
       static const uint8_t Offset = 0x04;
       enum Resolution {
          _12bit  = 0b00,

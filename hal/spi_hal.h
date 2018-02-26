@@ -43,9 +43,9 @@ public:
 private:
    void init()
    {
-      CONFIGURE (SCK,  AlternateFunc0PushPullHighSpeed);
-      CONFIGURE (MOSI, AlternateFunc0PushPullHighSpeed);
-      CONFIGURE (NSS,  AlternateFunc0PushPullHighSpeed);
+      CONFIGURE_PIN (SCK,  AlternateFunc0PushPullHighSpeed);
+      CONFIGURE_PIN (MOSI, AlternateFunc0PushPullHighSpeed);
+      CONFIGURE_PIN (NSS,  AlternateFunc0PushPullHighSpeed);
 
       SPI_::ClockEnable();
       SPI_::SetAsMaster();
