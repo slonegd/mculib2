@@ -25,6 +25,7 @@ public:
         longPushHandeledFlag(false),
         timer(timer)
    {
+      List<Types...>::ClockEnable();
       timer.setTime (100_s); // 100 s просто большое время
    }
 
@@ -113,12 +114,14 @@ private:
       static bool IsAnyClear() { return T::IsClear() or  List<Ts...>::IsAnyClear(); }
       static bool IsAllSet()   { return T::IsSet()   and List<Ts...>::IsAllSet();   }
       static bool IsAllClear() { return T::IsClear() and List<Ts...>::IsAllClear(); }
+      static void ClockEnable() { T::Port::ClockEnable(); List<Ts...>::ClockEnable(); }
    };
    template<class T> struct List<T> {
       static bool IsAnySet()   { return T::IsSet();   }
       static bool IsAnyClear() { return T::IsClear(); }
       static bool IsAllSet()   { return T::IsSet();   }
       static bool IsAllClear() { return T::IsClear(); }
+      static void ClockEnable() { T::Port::ClockEnable(); }
    };
 
 

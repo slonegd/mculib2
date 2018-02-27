@@ -313,7 +313,7 @@ namespace RCC_ral {
          // Bit 14 ADC prescaler
          volatile bool ADCPRE        :1;
          // Bit 15 Reserved, must be kept at reset value
-         volatile bool dcb8         :1;
+         volatile uint32_t dcb8      :1;
          // Bit 16 PLL entry clock source
          volatile bool PLLSRC        :1;
          // Bit 17 HSE divider for PLL input clock
