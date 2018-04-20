@@ -9,12 +9,13 @@
 
 #pragma once
 
-#include "TIM_ral.h"
+#include "TIM.h"
+
 #include "pin_hal.h"
 #include "literals.h"
 
 
-template <class Timer, class Pin>
+template <class TIM_, class Pin_>
 class PWM
 {
 public:
@@ -26,17 +27,17 @@ public:
         );
         init();
     }
-    inline void outEnable ()  { Timer::template CompareEnable  <channel>(); }
-    inline void outDisable () { Timer::template CompareDisable <channel>(); }
-    inline void outToggle ()  { Timer::template CompareToggle  <channel>(); }
-    inline bool isOutEnable ()    { return Timer::template IsCompareEnable<channel>(); }
+    inline void outEnable ()  { TIM_::template CompareEnable  <channel>(); }
+    inline void outDisable () { TIM_::template CompareDisable <channel>(); }
+    inline void outToggle ()  { TIM_::template CompareToggle  <channel>(); }
+    inline bool isOutEnable ()    { return TIM_::template IsCompareEnable<channel>(); }
     inline void setFreq (uint32_t f)
     {
         extern const uint32_t fCPU;
         if ( (f != this->freq) && (f != 0) ) {
             this->freq = f;
             countTo = fCPU / f - 1;
-            Timer::SetAutoReloadValue (countTo);
+            TIM_::SetAutoReloadValue (countTo);
             setD (d);
         }
     }
@@ -45,7 +46,7 @@ public:
     inline void setD (uint8_t d)
     {
         this->d = d;
-        Timer::template SetCompareValue <channel> (countTo * d / 100);
+        TIM_::template SetCompareValue <channel> (countTo * d / 100);
     }
 
 
@@ -59,24 +60,26 @@ private:
     uint32_t countTo;
 
     // номер канала таймера
-    static const uint8_t channel = PWMchannel<Timer,Pin>();//PWM_HAL::Channel<Timer,Pin>().val;
-
+    static const uint8_t channel = Channel<TIM_,Pin_>();//PWM_HAL::Channel<TIM_,Pin>().val;
+    // static const AFR_t::AF altFun = AltFunc<Timer,Pin>();
     void init (void)
     {
-        Pin::Port::ClockEnable();
-        Timer::ClockEnable();
+        Pin_::Port::ClockEnable();
+        TIM_::clockEnable();
 
-        Pin::Configure ( Pin::Mode::Alternate,
-                         Pin::OutType::PushPull,
-                         Pin::OutSpeed::High,
-                         Pin::PullResistor::No);
-        Pin::template SetAltFunc <Timer::AltFunc> ();
-         
-        Timer::template SetCompareMode <Timer::CompareMode::PWMmode, channel> ();
-        Timer::template PreloadEnable <channel> ();
-        Timer::AutoReloadEnable();
-        Timer::MainOutputEnable();
-        Timer::CounterEnable();
+
+       
+        Pin_::Configure ( Pin_::Mode::Alternate,
+                         Pin_::OutType::PushPull,
+                         Pin_::OutSpeed::High,
+                         Pin_::PullResistor::No);
+        Pin_::template SetAltFunc <AltFunc<TIM_,Pin_>()> ();
+
+        TIM_::template SetCompareMode <TIM_::CompareMode::PWMmode, channel> ();
+        TIM_::template PreloadEnable <channel> ();
+        TIM_::AutoReloadEnable();
+        TIM_::MainOutputEnable();
+        TIM_::CounterEnable();
     }
 
 };

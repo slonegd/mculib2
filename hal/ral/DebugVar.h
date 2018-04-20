@@ -4,7 +4,7 @@
     #include "FLASH_ral.h"
     #include "GPIO_ral.h"
     #include "DMA_ral.h"
-    #include "TIM_ral.h"
+    #include "TIM.h"
     #include "ADC_ral.h"
     #include "SysTick_ral.h"
 #if defined(STM32F030x6)

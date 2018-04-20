@@ -37,6 +37,10 @@ namespace TIM_ral {
 
    struct CR1_t {
       enum { Offset = 0x00 };
+      enum OnePulseMode {
+         notStopped  = 0b0,
+         counterStop = 0b1,
+      };
       struct Bits {
          // Bit 0 CEN: Counter enable
          volatile bool CEN        :1;
@@ -45,7 +49,7 @@ namespace TIM_ral {
          // Bit 2 URS: Update request source
          volatile uint32_t URS    :1;
          // Bit 3 OPM: One-pulse mode
-         volatile uint32_t OPM    :1;
+         volatile OnePulseMode OPM    :1;
          // Bit 4 DIR: Direction
          // 0: Counter used as upcounter
          // 1: Counter used as downcounter
@@ -94,10 +98,35 @@ namespace TIM_ral {
    };
 
 
-
    struct SMCR_t {
       enum { Offset = 0x08 };
-      uint32_t reg;
+      enum ExternalTriggerPolarity {
+         notInverted = 0b0,
+         inverted    = 0b1
+      };
+      enum Trigger {
+         _0 = 0b000, _1, _2, _3, TI1edge, FiltrTI1, FiltrTI2, External
+      };
+      enum SlaveMode {
+         SMDisabled = 0b000, Encoder1, Encoder2, Encoder3, Reset, Gated, TriggerMode, ExternalClock
+      };
+      struct Bits {
+         volatile SlaveMode                SMS            :3;
+         volatile uint32_t                 OCCS           :1;
+         volatile Trigger                  TS             :3;
+         volatile uint32_t                 MSM            :1;
+         volatile uint32_t                 ETF            :4;
+         volatile uint32_t                 ETPS           :2;
+         volatile uint32_t                 ECE            :1;
+         volatile ExternalTriggerPolarity  ETP            :1;
+      };
+      enum {
+         SMS, OCCS = 3, TS, MSM = 7, ETF = 8, ETPS = 12, ECE = 14, ETP
+      };
+      union {
+         volatile Bits bits;
+         volatile uint32_t reg;
+      };
    };
 
 
@@ -172,34 +201,40 @@ namespace TIM_ral {
          PWMmode         = 0b110,
          InvertedPWMmode = 0b111
       };
+      enum SelectionCompareMode {
+         Output         = 0b00,
+         InputTIFirst   = 0b01,
+         InputTISecond  = 0b10,
+         InputTRC       = 0b11
+      };   
       struct Bits {
          // Bits 1:0 CC1S: Capture/Compare 1 selection
-         volatile uint32_t CC1S      :2;
+         volatile SelectionCompareMode CC1S     :2;
          // Bit 2 OC1FE: Output compare 1 fast enable
-         volatile bool OC1FE         :1;
+         volatile bool OC1FE                    :1;
          // Bit 3 OC1PE: Output compare 1 preload enable
-         volatile bool OC1PE         :1;
+         volatile bool OC1PE                    :1;
          // Bits 6:4 OC1M: Output compare 1 mode
-         volatile CompareMode OC1M   :3;
+         volatile CompareMode OC1M              :3;
          // Bit 7 OC1CE: Output compare 1 clear enable
-         volatile bool OC1CE         :1;
-         volatile uint32_t CC2S      :2;
-         volatile bool OC2FE         :1;
-         volatile bool OC2PE         :1;
-         volatile CompareMode OC2M   :3;
-         volatile bool OC2CE         :1;
-         uint32_t res1               :16;
-         volatile uint32_t CC3S      :2;
-         volatile bool OC3FE         :1;
-         volatile bool OC3PE         :1;
-         volatile CompareMode OC3M   :3;
-         volatile bool OC3CE         :1;
-         volatile uint32_t CC4S      :2;
-         volatile bool OC4FE         :1;
-         volatile bool OC4PE         :1;
-         volatile CompareMode OC4M   :3;
-         volatile bool OC4CE         :1;
-         uint32_t res2               :16;
+         volatile bool OC1CE                    :1;
+         volatile SelectionCompareMode CC2S     :2;
+         volatile bool OC2FE                    :1;
+         volatile bool OC2PE                    :1;
+         volatile CompareMode OC2M              :3;
+         volatile bool OC2CE                    :1;
+         uint32_t res1                          :16;
+         volatile SelectionCompareMode CC3S     :2;
+         volatile bool OC3FE                    :1;
+         volatile bool OC3PE                    :1;  
+         volatile CompareMode OC3M              :3;
+         volatile bool OC3CE                    :1;
+         volatile SelectionCompareMode CC4S     :2;
+         volatile bool OC4FE                    :1;
+         volatile bool OC4PE                    :1;
+         volatile CompareMode OC4M              :3;
+         volatile bool OC4CE                    :1;
+         uint32_t res2                          :16;
       };
       union {
          volatile Bits bits;
@@ -211,28 +246,34 @@ namespace TIM_ral {
 
    struct CCER_t {
       enum { Offset = 0x20 };
+      enum  OutputPolarity {
+         rising = 0b0000,
+         faling = 0b0010,
+         both   = 0b1010,
+         reset  = 0b1010
+      };
       struct Bits {
          // Bit 0 CC1E: Capture/Compare 1 output enable.
-         volatile bool CC1E      :1;
+         volatile bool CC1E            :1;
          // Bit 1 CC1P: Capture/Compare 1 output Polarity.
          volatile uint32_t CC1P  :1;
          // Bit 2 Reserved, must be kept at reset value.
-         volatile uint32_t res1  :1;
+         volatile uint32_t res1        :1;
          // Bit 3 CC1NP: Capture/Compare 1 output Polarity.
-         volatile uint32_t CC1NP :1;
-         volatile bool CC2E      :1;
+         volatile uint32_t CC1NP       :1;
+         volatile bool CC2E            :1;
          volatile uint32_t CC2P  :1;
-         volatile uint32_t res2  :1;
-         volatile uint32_t CC2NP :1;
-         volatile bool CC3E      :1;
+         volatile uint32_t res2        :1;
+         volatile uint32_t CC2NP       :1;
+         volatile bool CC3E            :1;
          volatile uint32_t CC3P  :1;
-         volatile uint32_t res3  :1;
-         volatile uint32_t CC3NP :1;
-         volatile bool CC4E      :1;
+         volatile uint32_t res3        :1;
+         volatile uint32_t CC3NP       :1;
+         volatile bool CC4E            :1;
          volatile uint32_t CC4P  :1;
-         volatile uint32_t res4  :1;
-         volatile uint32_t CC4NP :1;
-         volatile uint32_t res5  :16;
+         volatile uint32_t res4        :1;
+         volatile uint32_t CC4NP       :1;
+         volatile uint32_t res5        :16;
       };
       union {
          volatile Bits bits;
