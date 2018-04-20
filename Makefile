@@ -13,10 +13,8 @@
 ######################################
 # target
 ######################################
-TARGET = STM32FX_DISCOVERY
-
-TEST_CATALOG = test_F4
-#TEST_CATALOG = test_F0
+TARGET_F4 = STM32F4_DISCOVERY
+TARGET_F0 = STM32F0_DISCOVERY
 
 
 ######################################
@@ -28,65 +26,40 @@ DEBUG = 1
 OPT = -O2
 CPPSTD =-std=c++1y
 
-
-#######################################
-# paths
-#######################################
-# source path
-SOURCES_DIR =  
-SOURCES_DIR += Application 
-#SOURCES_DIR += . 
-SOURCES_DIR += hal
-SOURCES_DIR += hal/ral
-SOURCES_DIR += $(TEST_CATALOG)
-ifeq ($(TEST_CATALOG), test_F4)
-SOURCES_DIR += STM32F4_files 
-SOURCES_DIR += STM32F4_files/CMSIS
-endif
-ifeq ($(TEST_CATALOG), test_F0)
-SOURCES_DIR += STM32F0_files 
-SOURCES_DIR += STM32F0_files/CMSIS
-endif
-
-
-
-
-
-# firmware library path
-PERIFLIB_PATH = 
-
 # Build path
 BUILD_DIR = build
 
 ######################################
 # source
 ######################################
-# C sources
-ifeq ($(TEST_CATALOG), test_F4)
-C_SOURCES = STM32F4_files/system_stm32f4xx.c 
-endif
-ifeq ($(TEST_CATALOG), test_F0)
-C_SOURCES = STM32F0_files/system_stm32f0xx.c 
-endif
- 
-# C++ sourses
-CPP_SOURCES = 
-CPP_SOURCES += $(TEST_CATALOG)/main.cpp 
+CPP_SOURCES_F4 = test_F4/main_F4.cpp
+CPP_SOURCES_F0 = test_F0/main_F0.cpp
 
+C_SOURCES_F4 = STM32F4_files/system_stm32f4xx.c
+C_SOURCES_F0 = STM32F0_files/system_stm32f0xx.c 
 
-# ASM sources
-ifeq ($(TEST_CATALOG), test_F4)
-ASM_SOURCES = STM32F4_files/startup_stm32f405xx.s
-endif
-ifeq ($(TEST_CATALOG), test_F0)
-ASM_SOURCES = STM32F0_files/startup_stm32f030x6.s
-endif
+ASM_SOURCES_F4 = STM32F4_files/startup_stm32f405xx.s
+ASM_SOURCES_F0 = STM32F0_files/startup_stm32f030x6.s
 
+# C includes
+C_INCLUDES =  
+C_INCLUDES += -I.
+C_INCLUDES += -Ihal
+C_INCLUDES += -Ihal/ral
 
-######################################
-# firmware library
-######################################
-PERIFLIB_SOURCES = 
+C_INCLUDES_F4 =
+C_INCLUDES_F4 += -Itest_F4
+C_INCLUDES_F4 += -ISTM32F4_files 
+C_INCLUDES_F4 += -ISTM32F4_files/CMSIS 
+
+C_INCLUDES_F0 =
+C_INCLUDES_F0 += -Itest_F0
+C_INCLUDES_F0 += -ISTM32F0_files 
+C_INCLUDES_F0 += -ISTM32F0_files/CMSIS 
+
+# C defines
+C_DEFS_F4 = -DSTM32F405xx
+C_DEFS_F0 = -DSTM32F030x6
 
 
 #######################################
@@ -109,117 +82,103 @@ BIN = $(CP) -O binary -S
 #######################################
 # CFLAGS
 #######################################
-# cpu
-ifeq ($(TEST_CATALOG), test_F4)
-CPU = -mcpu=cortex-m4
-endif
-ifeq ($(TEST_CATALOG), test_F0)
-CPU = -mcpu=cortex-m0
-endif
+CPU_F4 = -mcpu=cortex-m4
+CPU_F0 = -mcpu=cortex-m0
 
-# fpu
-ifeq ($(TEST_CATALOG), test_F4)
-FPU = -mfpu=fpv4-sp-d16
-endif
 # NONE for Cortex-M0/M0+/M3
+FPU_F4 = -mfpu=fpv4-sp-d16
+FPU_F0 =
 
-# float-abi
-ifeq ($(TEST_CATALOG), test_F4)
-FLOAT-ABI = -mfloat-abi=hard
-endif
+FLOAT-ABI_F4 = -mfloat-abi=hard
+FLOAT-ABI_F0 =
 
 # mcu
-MCU = $(CPU) -mthumb $(FPU) $(FLOAT-ABI)
-
-# macros for gcc
-# AS defines
-AS_DEFS = 
-
-# C defines
-ifeq ($(TEST_CATALOG), test_F4)
-C_DEFS = -DSTM32F405xx
-endif
-ifeq ($(TEST_CATALOG), test_F0)
-C_DEFS = -DSTM32F030x6
-endif
-
-
-# AS includes
-AS_INCLUDES = 
-
-# C includes
-C_INCLUDES =  
-C_INCLUDES += -I.
-C_INCLUDES += -I$(TEST_CATALOG)
-C_INCLUDES += -Ihal
-C_INCLUDES += -Ihal/ral
-ifeq ($(TEST_CATALOG), test_F4)
-C_INCLUDES += -ISTM32F4_files 
-C_INCLUDES += -ISTM32F4_files/CMSIS 
-endif
-ifeq ($(TEST_CATALOG), test_F0)
-C_INCLUDES += -ISTM32F0_files 
-C_INCLUDES += -ISTM32F0_files/CMSIS 
-endif
-
+MCU_F4 = $(CPU_F4) -mthumb $(FPU_F4) $(FLOAT-ABI_F4)
+MCU_F0 = $(CPU_F0) -mthumb $(FPU_F0) $(FLOAT-ABI_F0)
 
 # compile gcc flags
-ASFLAGS = $(MCU) $(AS_DEFS) $(AS_INCLUDES) $(OPT) -Wall -fdata-sections -ffunction-sections
+ASFLAGS_F4 = $(MCU_F4) $(OPT) -Wall -fdata-sections -ffunction-sections
+ASFLAGS_F0 = $(MCU_F0) $(OPT) -Wall -fdata-sections -ffunction-sections
 
-CFLAGS = $(MCU) $(C_DEFS) $(C_INCLUDES) $(OPT) -Wall -fdata-sections -ffunction-sections 
+CFLAGS_F4 = $(MCU_F4) $(C_DEFS_F4) $(C_INCLUDES) $(C_INCLUDES_F4) $(OPT) -Wall -fdata-sections -ffunction-sections
+CFLAGS_F0 = $(MCU_F0) $(C_DEFS_F0) $(C_INCLUDES) $(C_INCLUDES_F0) $(OPT) -Wall -fdata-sections -ffunction-sections  
 
-ifeq ($(DEBUG), 1)
-CFLAGS += -g -gdwarf-2 
-endif
+CFLAGS_F4 += -g -gdwarf-2 
+CFLAGS_F0 += -g -gdwarf-2 
 
 
 # Generate dependency information
-CFLAGS += -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)"
-
+CFLAGS_F4 += -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)"
+CFLAGS_F0 += -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)"
 
 #######################################
 # LDFLAGS
 #######################################
-# link script
-ifeq ($(TEST_CATALOG), test_F4)
-LDSCRIPT = STM32F4_files/STM32F405RGTx_FLASH.ld
-endif
-ifeq ($(TEST_CATALOG), test_F0)
-LDSCRIPT = STM32F0_files/STM32F030K6Tx_FLASH.ld
-endif
+LDSCRIPT_F4 = STM32F4_files/STM32F405RGTx_FLASH.ld
+LDSCRIPT_F0 = STM32F0_files/STM32F030K6Tx_FLASH.ld
 
 # libraries
 LIBS = -lc -lm -lnosys
-LIBDIR =
-LDFLAGS = $(MCU) -specs=nano.specs -T$(LDSCRIPT) $(LIBDIR) $(LIBS) -Wl,-Map=$(BUILD_DIR)/$(TARGET).map,--cref -Wl,--gc-sections
+
+LDFLAGS_F4 = $(MCU_F4) -specs=nano.specs -T$(LDSCRIPT_F4) $(LIBS) -Wl,-Map=$(BUILD_DIR)/$(TARGET_F4).map,--cref -Wl,--gc-sections
+LDFLAGS_F0 = $(MCU_F0) -specs=nano.specs -T$(LDSCRIPT_F0) $(LIBS) -Wl,-Map=$(BUILD_DIR)/$(TARGET_F0).map,--cref -Wl,--gc-sections
+
 
 # default action: build all
-all: $(BUILD_DIR)/$(TARGET).elf $(BUILD_DIR)/$(TARGET).hex $(BUILD_DIR)/$(TARGET).bin
+all: $(BUILD_DIR)/$(TARGET_F4).elf $(BUILD_DIR)/$(TARGET_F4).hex $(BUILD_DIR)/$(TARGET_F4).bin \
+     $(BUILD_DIR)/$(TARGET_F0).elf $(BUILD_DIR)/$(TARGET_F0).hex $(BUILD_DIR)/$(TARGET_F0).bin
+	
 
 
 #######################################
 # build the application
 #######################################
 # list of objects
-OBJECTS = $(addprefix $(BUILD_DIR)/,$(notdir $(C_SOURCES:.c=.o)))
-vpath %.c $(sort $(dir $(C_SOURCES)))
-OBJECTS += $(addprefix $(BUILD_DIR)/,$(notdir $(CPP_SOURCES:.cpp=.o)))
-vpath %.cpp $(sort $(dir $(CPP_SOURCES)))
+
+OBJECTS_F4 = $(addprefix $(BUILD_DIR)/,$(notdir $(C_SOURCES_F4:.c=.o)))
+vpath %.c $(sort $(dir $(C_SOURCES_F4)))
+OBJECTS_F4 += $(addprefix $(BUILD_DIR)/,$(notdir $(CPP_SOURCES_F4:.cpp=.o)))
+vpath %.cpp $(sort $(dir $(CPP_SOURCES_F4)))
 # list of ASM program objects
-OBJECTS += $(addprefix $(BUILD_DIR)/,$(notdir $(ASM_SOURCES:.s=.o)))
-vpath %.s $(sort $(dir $(ASM_SOURCES)))
+OBJECTS_F4 += $(addprefix $(BUILD_DIR)/,$(notdir $(ASM_SOURCES_F4:.s=.o)))
+vpath %.s $(sort $(dir $(ASM_SOURCES_F4)))
 
-$(BUILD_DIR)/%.o: %.c Makefile | $(BUILD_DIR) 
-	$(CC) -c $(CFLAGS) -std=c99 -Wa,-a,-ad,-alms=$(BUILD_DIR)/$(notdir $(<:.c=.lst)) $< -o $@
+OBJECTS_F0 = $(addprefix $(BUILD_DIR)/,$(notdir $(C_SOURCES_F0:.c=.o)))
+vpath %.c $(sort $(dir $(C_SOURCES_F0)))
+OBJECTS_F0 += $(addprefix $(BUILD_DIR)/,$(notdir $(CPP_SOURCES_F0:.cpp=.o)))
+vpath %.cpp $(sort $(dir $(CPP_SOURCES_F0)))
+# list of ASM program objects
+OBJECTS_F0 += $(addprefix $(BUILD_DIR)/,$(notdir $(ASM_SOURCES_F0:.s=.o)))
+vpath %.s $(sort $(dir $(ASM_SOURCES_F0)))
 
-$(BUILD_DIR)/%.o: %.cpp Makefile | $(BUILD_DIR) 
-	$(CPP) -c $(CFLAGS) $(CPPSTD) -Wa,-a,-ad,-alms=$(BUILD_DIR)/$(notdir $(<:.cpp=.lst)) $< -o $@
 
-$(BUILD_DIR)/%.o: %.s Makefile | $(BUILD_DIR)
-	$(AS) -c $(CFLAGS) $< -o $@
 
-$(BUILD_DIR)/$(TARGET).elf: $(OBJECTS) Makefile
-	$(CC) $(OBJECTS) $(LDFLAGS) -o $@
+
+$(BUILD_DIR)/main_F4.o: $(CPP_SOURCES_F4) Makefile | $(BUILD_DIR) 
+	$(CPP) -c $(CFLAGS_F4) $(CPPSTD) -Wa,-a,-ad,-alms=$(BUILD_DIR)/$(notdir $(<:.cpp=.lst)) $< -o $@
+
+$(BUILD_DIR)/system_stm32f4xx.o: $(C_SOURCES_F4) Makefile | $(BUILD_DIR) 
+	$(CC) -c $(CFLAGS_F4) -std=c99 -Wa,-a,-ad,-alms=$(BUILD_DIR)/$(notdir $(<:.c=.lst)) $< -o $@
+
+$(BUILD_DIR)/startup_stm32f405xx.o: $(ASM_SOURCES_F4) Makefile | $(BUILD_DIR)
+	$(AS) -c $(CFLAGS_F4) $< -o $@
+
+$(BUILD_DIR)/main_F0.o:$(CPP_SOURCES_F0) Makefile | $(BUILD_DIR) 
+	$(CPP) -c $(CFLAGS_F0) $(CPPSTD) -Wa,-a,-ad,-alms=$(BUILD_DIR)/$(notdir $(<:.cpp=.lst)) $< -o $@
+
+$(BUILD_DIR)/system_stm32f0xx.o: $(C_SOURCES_F0) Makefile | $(BUILD_DIR) 
+	$(CC) -c $(CFLAGS_F0) -std=c99 -Wa,-a,-ad,-alms=$(BUILD_DIR)/$(notdir $(<:.c=.lst)) $< -o $@
+
+$(BUILD_DIR)/startup_stm32f030x6.o: $(ASM_SOURCES_F0) Makefile | $(BUILD_DIR)
+	$(AS) -c $(CFLAGS_F0) $< -o $@
+
+
+$(BUILD_DIR)/$(TARGET_F4).elf: $(OBJECTS_F4) Makefile
+	$(CC) $(OBJECTS_F4) $(LDFLAGS_F4) -o $@
+	$(SZ) $@
+
+$(BUILD_DIR)/$(TARGET_F0).elf: $(OBJECTS_F0) Makefile
+	$(CC) $(OBJECTS_F0) $(LDFLAGS_F0) -o $@
 	$(SZ) $@
 
 $(BUILD_DIR)/%.hex: $(BUILD_DIR)/%.elf | $(BUILD_DIR)
@@ -237,11 +196,14 @@ $(BUILD_DIR):
 clean:
 	-rm -fR .dep $(BUILD_DIR)
 
-flash_stlink:
+F4_flash:
 #	/home/dvk/code/stlink/build/Release/st-flash write $(BUILD_DIR)/$(TARGET).bin 0x8000000
 #	/home/slonegd/Code/stlink/build/Release/st-flash write $(BUILD_DIR)/$(TARGET).bin 0x8000000
 #	st-flash write $(BUILD_DIR)/$(TARGET).bin 0x8000000
-	/home/peltikhin/code/EmbeddedArm/stlink/build/Release/st-flash write $(BUILD_DIR)/$(TARGET).bin 0x8000000
+	/home/peltikhin/code/EmbeddedArm/stlink/build/Release/st-flash write $(BUILD_DIR)/$(TARGET_F4).bin 0x8000000
+
+F4_flash:
+	/home/peltikhin/code/EmbeddedArm/stlink/build/Release/st-flash write $(BUILD_DIR)/$(TARGET_F0).bin 0x8000000
 
 util:
 #	/home/dvk/code/stlink/build/Release/src/gdbserver/st-util

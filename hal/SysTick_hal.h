@@ -13,6 +13,10 @@ template <uint16_t ms>
 inline void InitSysTimerInt (void)
 {
     constexpr uint32_t val = F_CPU/(1000*ms)-1;
+    static_assert (
+       val <= 0xFFFFFF,
+       "число 24-битное должно быть"
+    );
     SysTick->LOAD = val;				            //Загрузка значения
     SysTick->VAL = val;				                //Обнуляем таймеры и флаги 
 
