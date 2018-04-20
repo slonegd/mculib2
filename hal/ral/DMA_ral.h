@@ -150,7 +150,7 @@ public:
 #if defined(STM32F405xx)
    static void ClockEnable() { RCC->AHB1ENR |= (uint32_t)1 << (DMAn + 20); }
    static void Enable() { BITBAND_SET(conf(), EN, true); }
-   static bool IsDisable() { return bitBand(Base, conf()::Offset, EN) == 0; }
+   static bool IsDisable() { return BB_REG(conf(), EN) == 0; }
    static void Disable()
    { 
       BITBAND_SET(conf(), EN, false); 

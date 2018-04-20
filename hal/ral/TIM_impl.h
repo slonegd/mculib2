@@ -64,14 +64,15 @@ template<class TIM_, class Pin_> constexpr uint8_t Channel() { return
                                        std::is_same<Pin_,PC6>::value  ? 1 :
                                        std::is_same<Pin_,PC7>::value  ? 2 :
                                        std::is_same<Pin_,PC8>::value  ? 3 :
-                                       std::is_same<Pin_,PC9>::value  ? 4 : 
+                                       std::is_same<Pin_,PC9>::value  ? 4 :
    0 ) :
 #endif
    0;
 }
 
 
-template<class TIM_, class Pin_> constexpr AFR_t::AF AltFunc() { return
+template<class TIM_, class Pin_> constexpr AFR_t::AF AltFunc() {
+   return
  #if defined(STM32F030x6)
    std::is_same<TIM_,TIM1>::value ? AFR_t::AF::_2 :
    std::is_same<TIM_,TIM3>::value ? (  std::is_same<Pin_,PA6>::value ? AFR_t::AF::_1 :
@@ -83,18 +84,15 @@ template<class TIM_, class Pin_> constexpr AFR_t::AF AltFunc() { return
                                        std::is_same<Pin_,PB0>::value ? AFR_t::AF::_1 :
                                        std::is_same<Pin_,PC8>::value ? AFR_t::AF::_0 :
                                        std::is_same<Pin_,PB1>::value ? AFR_t::AF::_1 :
-                                       std::is_same<Pin_,PC9>::value ? AFR_t::AF::_0 :
-   AFR_t::AF::_0 ):
+                                       std::is_same<Pin_,PC9>::value ? AFR_t::AF::_0 : AFR_t::AF::_0 ) :
    std::is_same<TIM_,TIM14>::value ? ( std::is_same<Pin_,PA4>::value ? AFR_t::AF::_4 :
                                        std::is_same<Pin_,PA7>::value ? AFR_t::AF::_4 :
-                                       std::is_same<Pin_,PB1>::value ? AFR_t::AF::_0 :
-   AFR_t::AF::_0 ):
+                                       std::is_same<Pin_,PB1>::value ? AFR_t::AF::_0 : AFR_t::AF::_0 ) :
    std::is_same<TIM_,TIM16>::value ? ( std::is_same<Pin_,PA6>::value ? AFR_t::AF::_5 :
-                                       std::is_same<Pin_,PB8>::value ? AFR_t::AF::_2 :
-   AFR_t::AF::_0 ):
+                                       std::is_same<Pin_,PB8>::value ? AFR_t::AF::_2 : AFR_t::AF::_0 ) :
    std::is_same<TIM_,TIM17>::value ? ( std::is_same<Pin_,PA7>::value ? AFR_t::AF::_5 :
-                                       std::is_same<Pin_,PB9>::value ? AFR_t::AF::_2 :
-   AFR_t::AF::_0 ): AFR_t::AF::_0;
+                                       std::is_same<Pin_,PB9>::value ? AFR_t::AF::_2 : AFR_t::AF::_0 ) :
+   AFR_t::AF::_0;
 #elif defined(STM32F405xx)
    std::is_same<TIM_,TIM1>::value  ? AFR_t::AF::_1 :
    std::is_same<TIM_,TIM2>::value  ? AFR_t::AF::_1 :
@@ -104,9 +102,8 @@ template<class TIM_, class Pin_> constexpr AFR_t::AF AltFunc() { return
    std::is_same<TIM_,TIM8>::value  ? AFR_t::AF::_3 :
    std::is_same<TIM_,TIM9>::value  ? AFR_t::AF::_3 :
    std::is_same<TIM_,TIM10>::value ? AFR_t::AF::_3 :
-   std::is_same<TIM_,TIM11>::value ? AFR_t::AF::_3 : AFR_t::AF::_0:
+   std::is_same<TIM_,TIM11>::value ? AFR_t::AF::_3 : AFR_t::AF::_0;
 #endif
-   AFR_t::AF::_0;
 }
 
 

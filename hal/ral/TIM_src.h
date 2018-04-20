@@ -8,9 +8,10 @@ void TIMx<adr>::clockEnable()
       (adr == TIM1_BASE  ? offsetof(RCC_TypeDef, APB2ENR) :
        adr == TIM3_BASE  ? offsetof(RCC_TypeDef, APB1ENR) :
        adr == TIM14_BASE ? offsetof(RCC_TypeDef, APB1ENR) :
+   #if defined(STM32F030x6)
        adr == TIM16_BASE ? offsetof(RCC_TypeDef, APB2ENR) :
        adr == TIM17_BASE ? offsetof(RCC_TypeDef, APB2ENR) : 
-   #if defined(STM32F405xx)    
+   #elif defined(STM32F405xx)    
        adr == TIM2_BASE  ? offsetof(RCC_TypeDef, APB1ENR) :
        adr == TIM4_BASE  ? offsetof(RCC_TypeDef, APB1ENR) :
        adr == TIM5_BASE  ? offsetof(RCC_TypeDef, APB1ENR) :
@@ -28,9 +29,10 @@ void TIMx<adr>::clockEnable()
    constexpr uint32_t mask = adr == TIM1_BASE  ? RCC_APB2ENR_TIM1EN_Msk :
                              adr == TIM3_BASE  ? RCC_APB1ENR_TIM3EN_Msk :
                              adr == TIM14_BASE ? RCC_APB1ENR_TIM14EN_Msk :
+   #if defined(STM32F030x6)
                              adr == TIM16_BASE ? RCC_APB2ENR_TIM16EN_Msk :
                              adr == TIM17_BASE ? RCC_APB2ENR_TIM17EN_Msk : 
-   #if defined(STM32F405xx)    
+   #elif defined(STM32F405xx)    
                              adr == TIM2_BASE  ? RCC_APB1ENR_TIM2EN_Msk :
                              adr == TIM4_BASE  ? RCC_APB1ENR_TIM4EN_Msk :
                              adr == TIM5_BASE  ? RCC_APB1ENR_TIM5EN_Msk :
@@ -255,24 +257,24 @@ void TIMx<adr>::MainOutputEnable ()
    template<uint32_t adr>
    void TIMx<adr>::CounterEnable()
    {
-       bitBand(Base, controlRegister1().Offset, CEN) = true;
+       BB_REG(controlRegister1(), CEN) = true;
    } 
 
    template<uint32_t adr>
    void TIMx<adr>::CounterDisable() 
    {
-      bitBand(Base, controlRegister1().Offset, CEN) = false;
+      BB_REG(controlRegister1(), CEN) = false;
    }
 
    template<uint32_t adr>
    bool TIMx<adr>::IsCount()
    {
-      return bitBand(Base, controlRegister1().Offset, CEN); 
+      return BB_REG(controlRegister1(), CEN); 
    }
 
    template<uint32_t adr>
    void TIMx<adr>::AutoReloadEnable ()
    {
-      bitBand(Base, controlRegister1().Offset, ARPE) = true;
+      BB_REG(controlRegister1(), ARPE) = true;
    }
 #endif

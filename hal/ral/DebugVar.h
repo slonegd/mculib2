@@ -1,16 +1,16 @@
 #pragma once
 
-    #include "RCC_ral.h"
-    #include "FLASH_ral.h"
-    #include "GPIO_ral.h"
-    #include "DMA_ral.h"
-    #include "TIM.h"
-    #include "ADC_ral.h"
-    #include "SysTick_ral.h"
+   #include "RCC_ral.h"
+   #include "FLASH_ral.h"
+   #include "GPIO_ral.h"
+   #include "DMA_ral.h"
+   #include "TIM.h"
+   #include "SysTick_ral.h"
 #if defined(STM32F030x6)
-    #include "SPI_ral.h"
+   #include "SPI_ral.h"
+   #include "ADC_ral.h"
 #elif defined(STM32F405xx)
-    #include "USART_ral.h"
+   #include "USART_ral.h"
 #endif
 
 
@@ -26,7 +26,6 @@ volatile auto FLASH_d = (FLASH_t*) FLASH;
 MAKE_VAR(DMA1);
 MAKE_VAR(TIM1);
 MAKE_VAR(TIM3);
-MAKE_VAR(ADC1);
 volatile auto SysTick_d = (SysTick_t*) SysTick;
 #if defined(STM32F030x6)
     MAKE_VAR(SPI1);
@@ -35,6 +34,7 @@ volatile auto SysTick_d = (SysTick_t*) SysTick;
     MAKE_VAR(DMA1channel3);
     MAKE_VAR(DMA1channel4);
     MAKE_VAR(DMA1channel5);
+    MAKE_VAR(ADC1);
 #elif defined(STM32F405xx)
     volatile auto GPIOE_d = (GPIO_t*) GPIOE;
     MAKE_VAR(TIM2);
@@ -45,8 +45,6 @@ volatile auto SysTick_d = (SysTick_t*) SysTick;
     volatile auto USART2_d = (USART_t*) USART2;
     volatile auto USART3_d = (USART_t*) USART3;
     volatile auto USART6_d = (USART_t*) USART6;
-    MAKE_VAR(ADC2);
-    MAKE_VAR(ADC3);
     MAKE_VAR(DMA1stream0);
     MAKE_VAR(DMA1stream1);
     MAKE_VAR(DMA1stream2);
@@ -81,7 +79,6 @@ inline void makeDebugVar (void)
     DMA1_d->makeDebugVar();
     TIM1_d->makeDebugVar();
     TIM3_d->makeDebugVar();
-    ADC1_d->makeDebugVar();
     SysTick_d->VAL_t::reg = 0;
 #if defined(STM32F030x6)
     SPI1_d->makeDebugVar();
@@ -90,6 +87,7 @@ inline void makeDebugVar (void)
     DMA1channel3_d->makeDebugVar();
     DMA1channel4_d->makeDebugVar();
     DMA1channel5_d->makeDebugVar();
+    ADC1_d->makeDebugVar();
 #elif defined(STM32F405xx)
     GPIOE_d->BSRR_t::reg = 0;
     TIM2_d->makeDebugVar();
@@ -100,8 +98,6 @@ inline void makeDebugVar (void)
     USART2_d->CR1_t::bits.dcb1 = 0;
     USART3_d->CR1_t::bits.dcb1 = 0;
     USART6_d->CR1_t::bits.dcb1 = 0;
-    ADC2_d->makeDebugVar();
-    ADC3_d->makeDebugVar();
     DMA1stream0_d->makeDebugVar();
     DMA1stream1_d->makeDebugVar();
     DMA1stream2_d->makeDebugVar();

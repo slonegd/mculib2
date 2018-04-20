@@ -11,7 +11,7 @@ public:
    Encoder () 
    {
       static_assert (
-         (std::is_same_v<TIM_,TIM3>) | (std::is_same_v<TIM_,TIM8>),
+         (std::is_same<TIM_,TIM3>::value) | (std::is_same<TIM_,TIM8>::value),
          "Вывод контроллера не поддерживает функцию ШИМ с этим таймером"
       );
       init();
@@ -31,7 +31,7 @@ private:
 
 
 template<class TIM_, class PinA, class PinB>
-void Encoder<TIM_,Pin_>::init()
+void Encoder<TIM_,PinA,PinB>::init()
 {
   
    TIM_::clockEnable();
@@ -43,7 +43,7 @@ void Encoder<TIM_,Pin_>::init()
 }
 
 template<class TIM_, class PinA, class PinB>
-void Encoder<TIM_,Pin_>::operator() ()
+void Encoder<TIM_,PinA,PinB>::operator() ()
 {
    counter = TIM_::getCounter();
 }

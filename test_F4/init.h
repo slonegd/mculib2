@@ -8,13 +8,14 @@
 #include "flash_hal.h"
 #include "pwm_hal.h"
 #include "flash_hal.h"
-#include "adc_hal.h"
 #include "timers.h"
 #include "pinlist.h"
 #include "modbusSlave.h"
 #include "HD44780_hal.h"
 #include "zoomer.h"
 #include "literals.h"
+#include "inputCounter.h"
+#include "encoder.h"
 
 
 // discoveri 

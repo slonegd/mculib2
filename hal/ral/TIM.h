@@ -1,6 +1,5 @@
 #pragma once
 
-#include "stm32f0xx.h"
 #include "TIM_bits.h"
 #include "RCC_ral.h"
 #include "GPIO_ral.h"
@@ -136,13 +135,12 @@ using TIM3 = TIMx<TIM3_BASE>;
 
 #undef TIM14
 using TIM14 = TIMx<TIM14_BASE>;
-// #undef TIM15
-// using TIM15 = TIMx<TIM15_BASE>;
+#if defined (STM32F030x6)
 #undef TIM16
 using TIM16 = TIMx<TIM16_BASE>;
 #undef TIM17
 using TIM17 = TIMx<TIM17_BASE>;
-#if defined(STM32F405xx)
+#elif defined(STM32F405xx)
 #undef TIM2
 using TIM2 = TIMx<TIM2_BASE>;
 #undef TIM4

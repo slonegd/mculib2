@@ -21,6 +21,7 @@
 
 
 #include "stm32f4xx.h"
+#include <type_traits>
 
 #define BITBAND_SET(Rstruct, Bit, Val) (*((volatile uint32_t*)(PERIPH_BB_BASE + (Base-PERIPH_BASE + Rstruct.Offset)*32 + Bit*4)) = Val)
 //#define BITBAND_VAL(Rstruct, Bit) *((volatile uint32_t*)(PERIPH_BB_BASE + (Base-PERIPH_BASE + Rstruct.Offset)*32 + Bit*4))
@@ -36,3 +37,10 @@ constexpr volatile uint32_t& bitBand (uint32_t base, uint32_t offset, uint32_t b
 {
     return (volatile uint32_t&)*((volatile uint32_t*)(PERIPH_BB_BASE + (base-PERIPH_BASE + offset)*32 + bit*4));
 }
+
+template<uint32_t base, uint32_t offset, uint32_t bit>
+constexpr uint32_t bitBandAdr() { return 
+   PERIPH_BB_BASE + (base-PERIPH_BASE + offset)*32 + bit*4;
+}
+
+#define BB_REG(reg, bit) *(uint32_t*)bitBandAdr<Base, std::remove_reference<decltype(reg)>::type::Offset, std::remove_reference<decltype(reg)>::type::bit>()
