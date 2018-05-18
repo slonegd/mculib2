@@ -16,7 +16,7 @@
 
 #include <stdbool.h>
 #include <string.h>
-#include "FLASH_ral.h"
+#include "FLASH.h"
 
 
 // для STM32F0 sector на самом деле page из refmanual

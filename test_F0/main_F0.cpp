@@ -1,11 +1,6 @@
 #include "init.h"
 #include "meta.h"
-// #include "pin_hal.h"
-// #include "pwm_hal.h"
-// #include "TIM.h"
-
-// #include "GPIO_ral.h"
-
+#include "pins_variadic.h"
 
 
 volatile uint32_t f;
@@ -15,9 +10,10 @@ int main(void)
 {
    makeDebugVar();
 
+   Pins<Led,BlueLed>::configure<PinConf_t::Output>();
 
-   CONFIGURE_PIN (Led, OutputPushPullLowSpeedNoResistor);
-   CONFIGURE_PIN (BlueLed, OutputPushPullLowSpeedNoResistor);
+   // CONFIGURE_PIN (Led, Output);
+   // CONFIGURE_PIN (BlueLed, Output);
 
    //test
    TIM1_d->CNT.reg = 0;

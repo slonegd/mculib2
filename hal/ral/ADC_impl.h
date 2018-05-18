@@ -1,7 +1,7 @@
 #pragma once
 
-#include "pin_hal.h"
-#include "DMA_ral.h"
+#include "pin.h"
+#include "DMA.h"
 #include "meta.h"
 #include <type_traits>
 

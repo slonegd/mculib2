@@ -11,7 +11,7 @@
 #elif defined(STM32F405xx)
 #include "stm32f4xx.h"
 #endif
-#include "DMA_ral.h"
+#include "DMA.h"
 
 
 namespace SPI_ral {

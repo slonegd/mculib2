@@ -8,7 +8,7 @@
 
 #include "loki/Typelist.h"
 #include <stdint.h>
-#include "pin_hal.h"
+#include "pin.h"
 
 //using namespace Loki;
 using NullType = Loki::NullType;

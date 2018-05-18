@@ -173,7 +173,7 @@ public:
    static uint32_t getAPB1clock() { return getAPBclock (conf().bits.PPRE1); }
    static uint32_t getAPB2clock() { return getAPBclock (conf().bits.PPRE2); }
 #elif defined (STM32F030x6)
-   static void setPLLsource (bool val) { conf().bits.PLLSRC = val; }
+   static void setPLLsource (PLLsource val) { conf().bits.PLLSRC = val; }
    static void setAPBprecsaler (APBprescaler val) { conf().bits.PPRE = val; }
    static void setPLLmultiplier (PLLmultiplier val) { conf().bits.PLLMUL = val; }
 #endif

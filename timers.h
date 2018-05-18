@@ -9,7 +9,7 @@
 #pragma once
 
 #include <stdint.h>
-#include "SysTick_hal.h"
+#include "SysTick.h"
 
 struct Timer
 {

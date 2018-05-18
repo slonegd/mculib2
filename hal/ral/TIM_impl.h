@@ -1,7 +1,7 @@
 #pragma once
 
 #include <type_traits>
-#include "pin_hal.h"
+#include "pin.h"
 
 // тут ещё не про все таймеры написано
 template<class TIM_, class Pin_> constexpr uint8_t Channel() { return

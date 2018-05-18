@@ -277,28 +277,32 @@ namespace RCC_ral {
          MCOdiv128 = 0b111
       };
       enum AHBprescaler {
-         AHBnotdiv	= 0,
-         AHBdiv2	    = 0b1000,
-         AHBdiv4	    = 0b1001,
-         AHBdiv8	    = 0b1010,
-         AHBdiv16	= 0b1011,
-         AHBdiv64	= 0b1100,
-         AHBdiv128	= 0b1101,
-         AHBdiv256	= 0b1110,
-         AHBdiv512	= 0b1111
+         AHBnotdiv = 0,
+         AHBdiv2   = 0b1000,
+         AHBdiv4   = 0b1001,
+         AHBdiv8   = 0b1010,
+         AHBdiv16  = 0b1011,
+         AHBdiv64  = 0b1100,
+         AHBdiv128 = 0b1101,
+         AHBdiv256 = 0b1110,
+         AHBdiv512 = 0b1111
       };
       enum  APBprescaler {
          APBnotdiv = 0,
-         APBdiv2	  = 0b100,
-         APBdiv4	  = 0b101,
-         APBdiv8	  = 0b110,
+         APBdiv2   = 0b100,
+         APBdiv4   = 0b101,
+         APBdiv8   = 0b110,
          APBdiv16  = 0b111
       };
       enum  SystemClockSwitch {
-         CS_HSI		= 0,
-         CS_HSE		= 0b01,
-         CS_PLL		= 0b10
-      };            
+         CS_HSI = 0,
+         CS_HSE = 0b01,
+         CS_PL = 0b10
+      };
+      enum PLLsource {
+         HSIdiv2 = 0b0,
+         HSEdiv  = 0b1
+      };
       struct Bits_t {
          // Bits 1:0 SW: System clock switch
          volatile SystemClockSwitch SW		:2;
@@ -315,7 +319,7 @@ namespace RCC_ral {
          // Bit 15 Reserved, must be kept at reset value
          volatile uint32_t dcb8      :1;
          // Bit 16 PLL entry clock source
-         volatile bool PLLSRC        :1;
+         volatile PLLsource PLLSRC   :1;
          // Bit 17 HSE divider for PLL input clock
          volatile bool PLLXTPRE      :1;
          // Bits 21:18 PLL  multiplication factor

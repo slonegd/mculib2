@@ -1,16 +1,16 @@
 #pragma once
 
-   #include "RCC_ral.h"
-   #include "FLASH_ral.h"
-   #include "GPIO_ral.h"
-   #include "DMA_ral.h"
+   #include "RCC.h"
+   #include "FLASH.h"
+   #include "GPIO.h"
+   #include "DMA.h"
    #include "TIM.h"
-   #include "SysTick_ral.h"
+   #include "SysTick_.h"
 #if defined(STM32F030x6)
-   #include "SPI_ral.h"
-   #include "ADC_ral.h"
+   #include "SPI.h"
+   #include "ADC.h"
 #elif defined(STM32F405xx)
-   #include "USART_ral.h"
+   #include "USART.h"
 #endif
 
 

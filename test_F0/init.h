@@ -1,11 +1,11 @@
 #pragma once
 
-#include "RCC_ral.h"
+#include "RCC.h"
 #include "DebugVar.h"
 #include "timers.h"
-#include "flash_hal.h"
-#include "pin_hal.h"
-#include "spi_hal.h"
+#include "flash.h"
+#include "pin.h"
+#include "spi.h"
 #include "zoomer.h"
 #include "literals.h"
 #include "buttons.h"
@@ -70,9 +70,9 @@ extern "C" void CLKinit (void)
 {
    FLASH->ACR |= FLASH_ACR_PRFTBE;
    FLASH->ACR &= (uint32_t)((uint32_t)~FLASH_ACR_LATENCY);
-   FLASH->ACR |= (uint32_t) 5;    
+   FLASH->ACR |= (uint32_t) 1;    
 
-   RCC_t::setPLLsource(false);
+   RCC_t::setPLLsource(RCC_t::PLLsource::HSIdiv2);
    RCC_t::setPLLmultiplier(RCC_t::PLLmultiplier::_12);
    RCC_t::PLLon();
    RCC_t::waitPLLready();

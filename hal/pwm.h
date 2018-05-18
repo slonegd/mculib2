@@ -11,7 +11,7 @@
 
 #include "TIM.h"
 
-#include "pin_hal.h"
+#include "pin.h"
 #include "literals.h"
 
 

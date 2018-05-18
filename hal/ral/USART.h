@@ -3,8 +3,8 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "stm32f4xx.h"
-#include "DMA_ral.h"
-#include "RCC_ral.h"
+#include "DMA.h"
+#include "RCC.h"
 #include "bitbanding.h"
 
 namespace USART_ral {

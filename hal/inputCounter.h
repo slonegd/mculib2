@@ -4,7 +4,7 @@
 #pragma once
 
 #include "TIM.h"
-#include "pin_hal.h"
+#include "pin.h"
 #include <type_traits>
 
 
@@ -48,8 +48,9 @@ void InputCounter<TIM_,Pin_>::init()
 
     TIM_::template setOutputPolarity<TIM_::OutputPolarity::both, channel>();
    
-    constexpr typename Pin_::PinConf_t conf =  std::is_same<TIM_,TIM1>::value  ? Pin_::PinConf_t::AlternateFunc2PushPull: 
-	 																									 Pin_::PinConf_t::AlternateFunc1PushPull;
+    constexpr PinConf_t conf =
+      std::is_same<TIM_,TIM1>::value  ? PinConf_t::AlternateFunc2: 
+	 												 PinConf_t::AlternateFunc1;
 
    
    Pin_::template Configure<conf>();

@@ -1,8 +1,8 @@
 #pragma once
 
 #include "TIM_bits.h"
-#include "RCC_ral.h"
-#include "GPIO_ral.h"
+#include "RCC.h"
+#include "GPIO.h"
 #if defined(STM32F405xx)
 #include "bitbanding.h"
 #endif

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "TIM.h"
-#include "pin_hal.h"
+#include "pin.h"
 #include <type_traits>
 
 template<class TIM_, class PinA, class PinB>

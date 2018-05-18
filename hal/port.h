@@ -1,6 +1,6 @@
 #pragma once
 
-#include "GPIO_ral.h"
+#include "GPIO.h"
 
 template <uint32_t PortPtr, int ID>
 class Port_t : protected GPIO_t
@@ -21,7 +21,7 @@ public:
    }
 
 
-   using PinConf_t = GPIO_t::PinConf_t;
+   // using PinConf_t = GPIO_t::PinConf_t;
    template<PinConf_t pinConf, uint8_t pin> static void Configure()
    {
       ClockEnable();

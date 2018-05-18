@@ -9,9 +9,9 @@
 
 #pragma once
 
-#include "pin_hal.h"
+#include "pin.h"
 #include "pinlist.h"
-#include "SysTick_ral.h"
+#include "SysTick_.h"
 
 
 namespace HD44780_HAL {

@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "pwm_hal.h"
+#include "pwm.h"
 #include "timers.h"
 #include "meta.h"
 #include <initializer_list>

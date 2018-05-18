@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SPI_ral.h"
+#include "SPI.h"
 
 // просто отправляет по dma данные из data
 // сигнал CS(NSS) хард
@@ -43,9 +43,9 @@ public:
 private:
    void init()
    {
-      CONFIGURE_PIN (SCK,  AlternateFunc0PushPullHighSpeed);
-      CONFIGURE_PIN (MOSI, AlternateFunc0PushPullHighSpeed);
-      CONFIGURE_PIN (NSS,  AlternateFunc0PushPullHighSpeed);
+      CONFIGURE_PIN (SCK,  AlternateFunc0HighSpeed);
+      CONFIGURE_PIN (MOSI, AlternateFunc0HighSpeed);
+      CONFIGURE_PIN (NSS,  AlternateFunc0HighSpeed);
 
       SPI_::ClockEnable();
       SPI_::SetAsMaster();

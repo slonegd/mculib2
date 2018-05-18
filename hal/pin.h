@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "port_hal.h"
+#include "port.h"
 #include <stdint.h>
 #include <stdbool.h>
 
@@ -48,10 +48,10 @@ public:
    }
 
 
-   using PinConf_t = typename Port::PinConf_t;
+   // using PinConf_t = typename Port::PinConf_t;
    template<PinConf_t pinConf>
    static void Configure() { Port::template Configure<pinConf, pin>(); }
-   #define CONFIGURE_PIN(Pin,Conf) Pin::template Configure<Pin::PinConf_t::Conf>()
+   #define CONFIGURE_PIN(Pin,Conf) Pin::template Configure<PinConf_t::Conf>()
 
    template <AF func> static void SetAltFunc()
    {
