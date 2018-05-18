@@ -10,8 +10,9 @@
 #include "literals.h"
 #include "buttons.h"
 #include "inputCounter.h"
+#include "seven_segment_indicator.h"
 
-const uint8_t timersQty = 7;
+const uint8_t timersQty = 8;
 Timers<timersQty> timers;
 auto& onTimer      = timers.all[0];
 auto& offTimer     = timers.all[1];
@@ -20,8 +21,12 @@ auto& zoomerTimer  = timers.all[3];
 auto& butTimer     = timers.all[4];
 auto& counterTimer = timers.all[5];
 auto& ledTimer     = timers.all[6];
+auto& ssiTimer     = timers.all[7];
 
 using Led = PC8;
+
+// семисегментный индикатор
+auto ssi = SSI<PD0,PD1,PD2,PD4,PD5,PD6,PD7,PC0,PC1,PC2>(ssiTimer);
 
 
 // энергонезависимые данные

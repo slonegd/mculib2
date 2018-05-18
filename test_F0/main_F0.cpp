@@ -44,6 +44,8 @@ int main(void)
       zoomer();
       buttons();
       counter();
+      ssi();
+      
       f = counter.getFrequency();
 
       if (ledTimer.event())

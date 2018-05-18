@@ -1,6 +1,7 @@
 #pragma once
 
 #include "pinlist.h"
+#include "pins_variadic.h"
 
 /// управление семимегментными индикаторами
 /// A_...H_ - классы выводов сегментов, чтобы зажечь подать ноль 
@@ -18,18 +19,12 @@ public:
 
 
    SSI (Timer& timer, uint32_t refreshTime = 2_ms)
-      : buffer      {0},
-        index       (0),
-        timer       (timer)
+      : buffer {0},
+        index  (0),
+        timer  (timer)
    {
-      // CONFIGURE_PIN (A_, OutputHighSpeed);
-      // CONFIGURE_PIN (B_, OutputHighSpeed);
-      // CONFIGURE_PIN (C_, OutputHighSpeed);
-      // CONFIGURE_PIN (D_, OutputHighSpeed);
-      // CONFIGURE_PIN (E_, OutputHighSpeed);
-      // CONFIGURE_PIN (F_, OutputHighSpeed);
-      // CONFIGURE_PIN (G_, OutputHighSpeed);
-      // CONFIGURE_PIN (H_, OutputHighSpeed);
+      Pins<A_,B_,C_,D_,E_,F_,G_,H_,Ks_...>
+         ::template configure<PinConf_t::OutputHighSpeed>();
       timer.setTimeAndStart (refreshTime);
    }
 

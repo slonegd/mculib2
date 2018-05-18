@@ -5,8 +5,8 @@
 
 #pragma once
 
-#include "ADC_ral.h"
-#include "DMA_ral.h"
+#include "ADC.h"
+#include "DMA.h"
 
 
 // класс, который по DMA шлёт данные с АЦП в буфер постоянно циклически

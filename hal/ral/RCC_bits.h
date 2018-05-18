@@ -297,7 +297,7 @@ namespace RCC_ral {
       enum  SystemClockSwitch {
          CS_HSI = 0,
          CS_HSE = 0b01,
-         CS_PL = 0b10
+         CS_PLL = 0b10
       };
       enum PLLsource {
          HSIdiv2 = 0b0,
