@@ -94,10 +94,10 @@ inline void makeDebugVar (void)
     TIM4_d->makeDebugVar();
     TIM5_d->makeDebugVar();
     TIM8_d->makeDebugVar();
-    USART1_d->CR1_t::bits.dcb1 = 0;
-    USART2_d->CR1_t::bits.dcb1 = 0;
-    USART3_d->CR1_t::bits.dcb1 = 0;
-    USART6_d->CR1_t::bits.dcb1 = 0;
+    USART1_d->CR1_t::bits.res1 = 0;
+    USART2_d->CR1_t::bits.res1 = 0;
+    USART3_d->CR1_t::bits.res1 = 0;
+    USART6_d->CR1_t::bits.res1 = 0;
     DMA1stream0_d->makeDebugVar();
     DMA1stream1_d->makeDebugVar();
     DMA1stream2_d->makeDebugVar();

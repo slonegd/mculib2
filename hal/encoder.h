@@ -36,10 +36,10 @@ void Encoder<TIM_,PinA,PinB>::init()
   
    TIM_::clockEnable();
    TIM_::template setSlaveMode<TIM_::SlaveMode::Encoder3>();
-   TIM_::template SelectCompareMode<TIM_::SelectionCompareMode::InputTIFirst, 1_channel>();
-   TIM_::template SelectCompareMode<TIM_::SelectionCompareMode::InputTIFirst, 2_channel>();
+   TIM_::template selectCompareMode<TIM_::SelectionCompareMode::InputTIFirst, 1_channel>();
+   TIM_::template selectCompareMode<TIM_::SelectionCompareMode::InputTIFirst, 2_channel>();
    TIM_::clearCounter();
-   TIM_::CounterEnable();
+   TIM_::counterEnable();
 }
 
 template<class TIM_, class PinA, class PinB>

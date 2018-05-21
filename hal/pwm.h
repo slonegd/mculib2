@@ -27,17 +27,17 @@ public:
         );
         init();
     }
-    inline void outEnable ()  { TIM_::template CompareEnable  <channel>(); }
-    inline void outDisable () { TIM_::template CompareDisable <channel>(); }
-    inline void outToggle ()  { TIM_::template CompareToggle  <channel>(); }
-    inline bool isOutEnable ()    { return TIM_::template IsCompareEnable<channel>(); }
+    inline void outEnable ()  { TIM_::template compareEnable  <channel>(); }
+    inline void outDisable () { TIM_::template compareDisable <channel>(); }
+    inline void outToggle ()  { TIM_::template compareToggle  <channel>(); }
+    inline bool isOutEnable ()    { return TIM_::template isCompareEnable<channel>(); }
     inline void setFreq (uint32_t f)
     {
         extern const uint32_t fCPU;
         if ( (f != this->freq) && (f != 0) ) {
             this->freq = f;
             countTo = fCPU / f - 1;
-            TIM_::SetAutoReloadValue (countTo);
+            TIM_::setAutoReloadValue (countTo);
             setD (d);
         }
     }
@@ -46,7 +46,7 @@ public:
     inline void setD (uint8_t d)
     {
         this->d = d;
-        TIM_::template SetCompareValue <channel> (countTo * d / 100);
+        TIM_::template setCompareValue <channel> (countTo * d / 100);
     }
 
 
@@ -75,11 +75,11 @@ private:
                          Pin_::PullResistor::No);
         Pin_::template SetAltFunc <AltFunc<TIM_,Pin_>()> ();
 
-        TIM_::template SetCompareMode <TIM_::CompareMode::PWMmode, channel> ();
-        TIM_::template PreloadEnable <channel> ();
-        TIM_::AutoReloadEnable();
-        TIM_::MainOutputEnable();
-        TIM_::CounterEnable();
+        TIM_::template setCompareMode <TIM_::CompareMode::PWMmode, channel> ();
+        TIM_::template preloadEnable <channel> ();
+        TIM_::autoReloadEnable();
+        TIM_::mainOutputEnable();
+        TIM_::counterEnable();
     }
 
 };

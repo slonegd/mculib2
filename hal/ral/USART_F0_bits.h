@@ -1,0 +1,77 @@
+#pragma once
+
+#include "registr.h"
+
+namespace USART_ral {
+
+struct CR1bits {
+   __IO bool     UE     :1; // Bit 0 UE: USART enable
+   __IO bool     RE     :1; // Bit 2 RE: Receiver enable
+   __IO bool     TE     :1; // Bit 3 TE: Transmitter enable
+   __IO bool     IDLEIE :1; // Bit 4 IDLEIE: IDLE interrupt enable
+   __IO bool     RXNEIE :1; // Bit 5 RXNEIE: RXNE interrupt enable
+   __IO bool     TCIE   :1; // Bit 6 TCIE: Transmission complete interrupt enable
+   __IO bool     TXEIE  :1; // Bit 7 TXEIE: interrupt enable
+   __IO bool     PEIE   :1; // Bit 8 PEIE: PE interrupt enable
+   __IO bool     PS     :1; // Bit 9 PS: Parity selection
+   __IO bool     PCE    :1; // Bit 10 PCE: Parity control enable
+   __IO uint32_t WAKE   :1; // Bit 11 WAKE: Receiver wakeup method
+   __IO uint32_t M0     :1; // Bit 12 M0: Word length
+   __IO bool     MME    :1; // Bit 13 MME: Mute mode enable
+   __IO bool     CMIE   :1; // Bit 14 CMIE: Character match interrupt enable
+   __IO uint32_t OVER8  :1; // Bit 15 OVER8: Oversampling mode
+   __IO uint32_t DEDT   :5; // Bits 20:16 DEDT[4:0]: Driver Enable de-assertion time
+   __IO uint32_t DEAT   :5; // Bits 25:21 DEAT[4:0]: Driver Enable assertion time
+   __IO bool     RTOIE  :1; // Bit 26 RTOIE: Receiver timeout interrupt enable
+   __IO uint32_t res1   :1; // Bit 27
+   __IO uint32_t M1     :1; // Bit 28 M1: Word length
+   __IO uint32_t res2   :3; // Bits 31:29 Reserved, must be kept at reset value
+};
+
+struct CR2bits {
+   __IO uint32_t res1     :4; // Bits 3:0 Reserved, must be kept at reset value.
+   __IO uint32_t ADDM7    :1; // Bit 4 ADDM7:7-bit Address Detection/4-bit Address Detection
+   __IO uint32_t res2     :3; // Bits 7:5 Reserved, must be kept at reset value.
+   __IO uint32_t LBCL     :1; // Bit 8 LBCL: Last bit clock pulse
+   __IO uint32_t CPHA     :1; // Bit 9 CPHA: Clock phase
+   __IO uint32_t CPOL     :1; // Bit 10 CPOL: Clock polarity
+   __IO bool     CLKEN    :1; // Bit 11 CLKEN: Clock enable
+   __IO uint32_t STOP     :2; // Bits 13:12 STOP[1:0]: STOP bits
+   __IO uint32_t res3     :1; // Bit 14 Reserved, must be kept at reset value.
+   __IO uint32_t SWAP     :1; // Bit 15 SWAP: Swap TX/RX pins
+   __IO bool     RXINV    :1; // Bit 16 RXINV: RX pin active level inversion
+   __IO bool     TXINV    :1; // Bit 17 TXINV: TX pin active level inversion
+   __IO bool     DATAINV  :1; // Bit 18 DATAINV: Binary data inversion
+   __IO uint32_t MSBFIRST :1; // Bit 19 MSBFIRST: Most significant bit first
+   __IO bool     ABREN    :1; // Bit 20 ABREN: Auto baud rate enable
+   __IO uint32_t ABRMOD   :2; // Bits 22:21 ABRMOD[1:0]: Auto baud rate mode
+   __IO uint32_t RTOEN    :1; // Bit 23 RTOEN: Receiver timeout enable
+   __IO uint32_t ADD1     :4; // Bits 27:24 ADD[3:0]: Address of the USART node
+   __IO uint32_t ADD2     :4; // Bits 31:28 ADD[7:4]: Address of the USART node
+};
+
+struct CR3bits {
+   __IO bool     EIE    :1; // Bit 0 EIE: Error interrupt enable
+   __IO uint32_t res1   :2; // Bits 2:1 Reserved, must be kept at reset value.
+   __IO bool     HDSEL  :1; // Bit 3 HDSEL: Half-duplex selection
+   __IO uint32_t res2   :2; // Bits 5:4 Reserved, must be kept at reset value.
+   __IO bool     DMAR   :1; // Bit 6 DMAR: DMA enable receiver
+   __IO bool     DMAT   :1; // Bit 7 DMAT: DMA enable transmitter
+   __IO bool     RTSE   :1; // Bit 8 RTSE: RTS enable
+   __IO bool     CTSE   :1; // Bit 9 CTSE: CTS enable
+   __IO bool     CTSIE  :1; // Bit 10 CTSIE: CTS interrupt enable
+   __IO bool     ONEBIT :1; // Bit 11 ONEBIT: One sample bit method enable
+   __IO bool     OVRDIS :1; // Bit 12 OVRDIS: Overrun Disable
+   __IO bool     DDRE   :1; // Bit 13 DDRE: DMA Disable on Reception Error
+   __IO bool     DEM    :1; // Bit 14 DEM: Driver enable mode
+   __IO bool     DEP    :1; // Bit 15 DEP: Driver enable polarity selection
+   __IO uint32_t res3   :16; // Bits 31:16 Reserved, must be kept at reset value.
+};
+
+
+struct CR1_t  : BitsRegistr<CR1bits>, Offset_t<0x00> {};
+struct CR2_t  : BitsRegistr<CR2bits>, Offset_t<0x04> {};
+struct CR3_t  : BitsRegistr<CR3bits>, Offset_t<0x08> {};
+
+} // namespace USART_ral
+

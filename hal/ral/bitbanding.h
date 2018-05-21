@@ -41,9 +41,9 @@ constexpr volatile uint32_t& bitBand (uint32_t base, uint32_t offset, uint32_t b
 
 // а вот эта будет
 template<uint32_t base, uint32_t offset, uint32_t bit>
-constexpr uint32_t bitBandAdr() { return 
+constexpr uint32_t bitBandAdr() { return
    PERIPH_BB_BASE + (base-PERIPH_BASE + offset)*32 + bit*4;
 }
 
 // макрос для упрощения работы с предыдущей функцией
-#define BB_REG(reg, bit) *(uint32_t*)bitBandAdr<Base, std::remove_reference<decltype(reg)>::type::Offset, std::remove_reference<decltype(reg)>::type::bit>()
+#define BIT_BAND(reg, bit) *(uint32_t*)bitBandAdr<Base, std::remove_reference<decltype(reg)>::type::Offset, std::remove_reference<decltype(reg)>::type::bit>()

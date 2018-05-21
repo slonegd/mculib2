@@ -1,195 +1,18 @@
 #pragma once
 
-#include <stdint.h>
-#include <stdbool.h>
-#include "stm32f4xx.h"
+#if defined(STM32F405xx)
+      #include "USART_F4_bits.h"
+#include "bitbanding.h"
+#elif defined(STM32F030x6)
+   #include "USART_F0_bits.h"
+#endif
 #include "DMA.h"
 #include "RCC.h"
-#include "bitbanding.h"
-
-namespace USART_ral {
-
-   struct SR_t {
-      enum { Offset = 0x00 };
-      struct Bits {
-         // Bit 0 PE: Parity error
-         volatile bool PE    :1;
-         // Bit 1 FE: Framing error
-         volatile bool FE    :1;
-         // Bit 2 NF: Noise detected flag
-         volatile bool NF    :1;
-         // Bit 3 ORE: Overrun error
-         volatile bool ORE   :1;
-         // Bit 4 IDLE: IDLE line detected
-         volatile bool IDLE  :1;
-         // Bit 5 RXNE: Read data register not empty
-         volatile bool RXNE  :1;
-         // Bit 6 TC: Transmission complete
-         volatile bool TC    :1;
-         // Bit 7 TXE: Transmit data register empty
-         volatile bool TXE   :1;
-         // Bit 8 LBD: LIN break detection flag
-         volatile bool LBD   :1;
-         // Bit 9 CTS: CTS flag
-         volatile bool CTS   :1;
-         // Bits 31:10 Reserved, must be kept at reset value
-         volatile uint32_t dcb1  :22;
-      };
-      union {
-         volatile Bits bits;
-         volatile uint32_t reg;
-      };
-   };
 
 
-   struct DR_t {
-      enum { Offset = 0x04 };
-      volatile uint32_t reg;
-   };
 
 
-   struct BRR_t {
-      enum { Offset = 0x08 };
-      volatile uint32_t reg;
-   };
-
-
-   struct CR1_t {
-      enum { Offset = 0x0C };
-      enum Parity { even = 0b0, odd };
-      enum WakeupMethod { idle = 0b0, address };
-      enum DataBits { _8bits = 0b0, _9bits };
-      enum OverSample { by8  = 0b0, by16 };
-      struct Bits {
-         // Bit 0 SBK: Send break
-         volatile bool SBK           :1;
-         // Bit 1 RWU: Receiver wakeup
-         volatile bool RWU           :1;
-         // Bit 2 RE: Receiver enable
-         volatile bool RE            :1;
-         // Bit 3 TE: Transmitter enable
-         volatile bool TE            :1;
-         // Bit 4 IDLEIE: IDLE interrupt enable
-         volatile bool IDLEIE        :1;
-         // Bit 5 RXNEIE: RXNE interrupt enable
-         volatile bool RXNEIE        :1;
-         // Bit 6 TCIE: Transmission complete interrupt enable
-         volatile bool TCIE          :1;
-         // Bit 7 TXEIE: TXE interrupt enable
-         volatile bool TXEIE         :1;
-         // Bit 8 PEIE: PE interrupt enable
-         volatile bool PEIE          :1;
-         // Bit 9 PS: Parity selection
-         volatile Parity PS          :1;
-         // Bit 10 PCE: Parity control enable
-         volatile bool PCE           :1;
-         // Bit 11 WAKE: Wakeup method
-         volatile WakeupMethod WAKE  :1;
-         // Bit 12 M: Word length
-         volatile DataBits M         :1;
-         // Bit 13 UE: USART enable
-         volatile bool UE            :1;
-         // Bit 14 Reserved, must be kept at reset value
-         volatile  uint32_t dcb1     :1;
-         // Bit 15 OVER8: Oversampling mode
-         volatile OverSample OVER8   :1;
-         // Bits 31:16 Reserved, must be kept at reset value
-         volatile uint32_t dcb2      :16;
-      };
-      enum {
-         SBK = 0, RWU, RE, TE, IDLEIE, RXNEIE, TCIE, TXEIE, PEIE,
-         PS, PCE, WAKE, M, UE, OVER8 = 15
-      };
-      union {
-         volatile Bits bits;
-         volatile uint32_t reg;
-      };
-   };
-
-
-   struct CR2_t {
-      enum { Offset = 0x10 };
-      enum BreakDetection { _10bit = 0b0, _11bit = 1 };
-      enum StopBits { _1 = 0b00, _0_5, _2, _1_5 };
-      struct Bits {
-         // Bits 3:0 ADD[3:0]: Address of the USART node
-         volatile uint32_t ADD           :4;
-         // Bit 4 Reserved, must be kept at reset value
-         volatile uint32_t dcb1          :1;
-         // Bit 5 LBDL: lin break detection length
-         volatile BreakDetection LBDL    :1;
-         // Bit 6 LBDIE: LIN break detection interrupt enable
-         volatile bool LBDIE             :1;
-         // Bit 7 Reserved, must be kept at reset value
-         volatile bool dcb2              :1;
-         // Bit 8 LBCL: Last bit clock pulse
-         volatile uint32_t LBCL          :1;
-         // Bit 9 CPHA: Clock phase
-         volatile uint32_t CPHA          :1;
-         // Bit 10 CPOL: Clock polarity
-         volatile uint32_t CPOL          :1;
-         // Bit 11 CLKEN: Clock enable
-         volatile bool CLKEN             :1;
-         // Bits 13:12 STOP: STOP bits
-         volatile StopBits STOP          :2;
-         // Bit 14 LINEN: LIN mode enable
-         volatile bool LINEN             :1;
-         // Bits 31:15 Reserved, must be kept at reset value
-         volatile uint32_t dcb3          :17;
-      };
-      union {
-         volatile Bits bits;
-         volatile uint32_t reg;
-      };
-   };
-
-
-   struct CR3_t {
-      enum { Offset = 0x14 };
-      struct Bits {
-         // Bit 0 EIE: Error interrupt enable
-         volatile bool EIE           :1;
-         // Bit 1 IREN: IrDA mode enable
-         volatile bool IREN          :1;
-         // Bit 2 IRLP: IrDA low-power
-         volatile bool IRLP          :1;
-         // Bit 3 HDSEL: Half-duplex selection
-         volatile bool HDSEL         :1;
-         // Bit 4 NACK: Smartcard NACK enable
-         volatile bool NACK          :1;
-         // Bit 5 SCEN: Smartcard mode enable
-         volatile bool SCEN          :1;
-         // Bit 6 DMAR: DMA enable receiver
-         volatile bool DMAR          :1;
-         // Bit 7 DMAT: DMA enable transmitter
-         volatile bool DMAT          :1;
-         // Bit 8 RTSE: RTS enable
-         volatile bool RTSE          :1;
-         // Bit 9 CTSE: CTS enable
-         volatile bool CTSE          :1;
-         // Bit 10 CTSIE: CTS interrupt enable
-         volatile bool CTSIE         :1;
-         // Bit 11 ONEBIT: One sample bit method enable
-         volatile bool ONEBIT        :1;
-         // Bits 31:12 Reserved, must be kept at reset value
-         volatile uint32_t dcb1      :20;
-      };
-      union {
-         volatile Bits bits;
-         volatile uint32_t reg;
-      };
-   };
-
-
-   struct GTPR_t {
-      enum { Offset = 0x18 };
-      volatile uint32_t reg;
-   };
-
-} // namespace
-
-
-/*
+/* STM32F4
 typedef struct
 {
   __IO uint32_t SR;         // USART Status register,                   Address offset: 0x00 
@@ -201,6 +24,23 @@ typedef struct
   __IO uint32_t GTPR;       // USART Guard time and prescaler register, Address offset: 0x18 
 } USART_TypeDef;
 */
+/* STM32F0
+typedef struct
+{
+  __IO uint32_t CR1;   // USART Control register 1,                 Address offset: 0x00
+  __IO uint32_t CR2;   // USART Control register 2,                 Address offset: 0x04
+  __IO uint32_t CR3;   // USART Control register 3,                 Address offset: 0x08
+  __IO uint32_t BRR;   // USART Baud rate register,                 Address offset: 0x0C
+  __IO uint32_t GTPR;  // USART Guard time and prescaler register,  Address offset: 0x10
+  __IO uint32_t RTOR;  // USART Receiver Time Out register,         Address offset: 0x14 
+  __IO uint32_t RQR;   // USART Request register,                   Address offset: 0x18
+  __IO uint32_t ISR;   // USART Interrupt and status register,      Address offset: 0x1C
+  __IO uint32_t ICR;   // USART Interrupt flag Clear register,      Address offset: 0x20
+  __IO uint16_t RDR;   // USART Receive Data register,              Address offset: 0x24
+  uint16_t  RESERVED1; // Reserved,                                                 0x26
+  __IO uint16_t TDR;   // USART Transmit Data register,             Address offset: 0x28
+  uint16_t  RESERVED2; // Reserved,                                                 0x2A
+} USART_TypeDef;*/
 
 struct USART_t : public USART_ral::SR_t,
                  public USART_ral::DR_t,
@@ -217,7 +57,7 @@ extern const uint32_t fCPU;
 
 // ClkEnOffset оффсет для регистра из структуры RCC, разрешающий тактирование 
 template <uint32_t USARTptr, class DMAstreamRX, class DMAstreamTX, uint32_t ClkEnMask>
-class USARTx : USART_t
+class USARTx// : USART_t
 {
 public:
    enum Boudrate {
@@ -230,8 +70,8 @@ public:
       BR76800  = 76800,
       BR115200 = 115200
    };
-   using Parity = CR1_t::Parity;
-   using StopBits = CR2_t::StopBits;
+   using Parity = USART_ral::Parity;
+   using StopBits = USART_ral::StopBits;
    using DMArx = DMAstreamRX;
    using DMAtx = DMAstreamTX;
    using Channels = DMA_ral::CR_t::Channels;
@@ -253,9 +93,9 @@ public:
 
 
    static void ClockEnable() { *((uint32_t*)(RCC_BASE + ClkEnOffset)) |= ClkEnMask; }
-   static void Enable (bool val)      { BITBAND_SET(conf1(), UE, val); }
-   static void RXenable (bool val)    { BITBAND_SET(conf1(), RE, val); }
-   static void TXenable (bool val)    { BITBAND_SET(conf1(), TE, val); }
+   static void Enable (bool val)      { BIT_BAND(conf1(), UE) = val; }
+   static void RXenable (bool val)    { BIT_BAND(conf1(), RE) = val; }
+   static void TXenable (bool val)    { BIT_BAND(conf1(), TE) = val; }
    static void DMAtxEnable() { conf3().bits.DMAT = true; }
    static void DMArxEnable() { conf3().bits.DMAR = true; }
    static void SetBoudRate (Boudrate val)
@@ -266,10 +106,10 @@ public:
          boudrate().reg = RCC_t::getAPB2clock() / val;
       }
    }
-   static void ParityEnable (bool val)    { BITBAND_SET(conf1(), PCE, val); }
-   static void SetParity (Parity val)     { BITBAND_SET(conf1(), PS, val); }
+   static void ParityEnable (bool val)    { BIT_BAND(conf1(), PCE) = val; }
+   static void SetParity (Parity val)     { BIT_BAND(conf1(), PS)  = val; }
    static void SetStopBits (StopBits val) { conf2().bits.STOP = val; }
-   static void EnableIDLEinterrupt()      { BITBAND_SET(conf1(), IDLEIE, true); }
+   static void EnableIDLEinterrupt()      { BIT_BAND(conf1(), IDLEIE) = true; }
    static bool IDLEinterrupt()            { return status().bits.IDLE; }
    static void ClearIDLEinterruptFlag()
    {
@@ -291,6 +131,17 @@ protected:
 #undef MakeRef
 
 private:
+#if defined(STM32F405xx)
+   USART_ral::SR_t   SR;
+   USART_ral::DR_t   DR;
+   USART_ral::BRR_t  BRR;
+   USART_ral::CR1_t  CR1;
+   USART_ral::CR2_t  CR2;
+   USART_ral::CR3_t  CR3;
+   USART_ral::GTPR_t GTPR;
+#elif defined(STM32F030x6)
+#endif
+
    static constexpr uint32_t ClkEnOffset = 
       bus == RCC_t::Bus::APB1 ? (uint32_t)RCC_ral::APB1ENR_t::Offset :
                                 (uint32_t)RCC_ral::APB2ENR_t::Offset;

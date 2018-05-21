@@ -16,12 +16,12 @@ public:
    {
       static_assert (
          (channel == 1) | (channel == 2),
-         "Вывод контроллера не поддерживает функцию ШИМ с этим таймером"
+         "Вывод контроллера не поддерживает функцию счёта внешнего сигнала"
       );
       init();
    }
 	
-  uint16_t getFrequency()  { return frequency; }
+  uint16_t get()  { return frequency; }
    
    void operator() ();
 
@@ -31,7 +31,7 @@ private:
    uint16_t frequency;
    Timer& timer;
    void init();
-   using Filtr = typename TIM_::Trigger;
+   using Trigger = typename TIM_::Trigger;
 };
 
 
@@ -43,18 +43,17 @@ void InputCounter<TIM_,Pin_>::init()
 {
   
    TIM_::clockEnable();
-   constexpr Filtr filtr = channel == 1 ? Filtr::FiltrTI1 : Filtr::FiltrTI2;
-   TIM_::template setTrigger<filtr>();
+   TIM_::template setTrigger <
+      channel == 1 ? Trigger::FiltrTI1 : Trigger::FiltrTI2
+   >();
+   TIM_::template setOutputPolarity<TIM_::OutputPolarity::both, channel>();
+   TIM_::template setSlaveMode<TIM_::SlaveMode::ExternalClock>();
 
-    TIM_::template setOutputPolarity<TIM_::OutputPolarity::both, channel>();
-   
-    constexpr PinConf_t conf =
+   constexpr PinConf_t conf =
       std::is_same<TIM_,TIM1>::value  ? PinConf_t::AlternateFunc2: 
-	 												 PinConf_t::AlternateFunc1;
-
-   
+                                        PinConf_t::AlternateFunc1;
    Pin_::template Configure<conf>();
-   TIM_::CounterEnable();
+   TIM_::counterEnable();
    timer.setTimeAndStart(500_ms);
 }
 

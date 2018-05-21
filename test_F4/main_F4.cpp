@@ -66,7 +66,7 @@ int main(void)
          zoomer();
 
       if ( modbus.incomingMessage() ) {
-         modbus.handler();
+         modbus(mbRegInAction);
          modbus.foreachRegForActions (mbRegInAction);
       }
 

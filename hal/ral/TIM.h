@@ -68,19 +68,19 @@ struct TIMx {
   void makeDebugVar() { controlRegister1().bits.res = 0; }
 
 
-   static void     CounterEnable();
-   static void     CounterDisable();
-   static bool     IsCount();
-   static void     AutoReloadEnable();
+   static void     counterEnable();
+   static void     counterDisable();
+   static bool     isCount();
+   static void     autoReloadEnable();
    static void     clockEnable();
    template<SelectionCompareMode value, uint8_t channel>
-   static void     SelectCompareMode();
+   static void     selectCompareMode();
    template<CompareMode value, uint8_t channel>
-   static void     SetCompareMode();
+   static void     setCompareMode();
    template<uint8_t channel>
-   static void     PreloadEnable();
+   static void     preloadEnable();
    template<uint8_t channel>
-   static void     PreloadDisable();
+   static void     preloadDisable();
    static uint16_t getCounter();
    static uint16_t clearCounter();
    template<SlaveMode value>
@@ -93,21 +93,21 @@ struct TIMx {
    static void     setOnePulseMode();
    template<ExternalTriggerPolarity value>
    static void     setExternalTriggerPolarity();
-   static void     ExternalClockEnable();
-   static void     ExternalClockDisable();
+   static void     externalClockEnable();
+   static void     externalClockDisable();
    template <uint8_t channel>
-   static void     CompareEnable ();   
+   static void     compareEnable ();   
    template <uint8_t channel>
-   static void     CompareDisable (); 
+   static void     compareDisable (); 
    template <uint8_t channel>
-   static void     CompareToggle ();  
+   static void     compareToggle ();  
    template <uint8_t channel>
-   static bool     IsCompareEnable ();
+   static bool     isCompareEnable ();
    template <uint8_t channel>
-   static void     SetCompareValue (uint32_t val);
-   static void     SetAutoReloadValue (uint32_t val);
-   static void     SetPrescaller (uint32_t val);
-   static void     MainOutputEnable();
+   static void     setCompareValue (uint32_t val);
+   static void     setAutoReloadValue (uint32_t val);
+   static void     setPrescaller (uint32_t val);
+   static void     mainOutputEnable();
 
 
 
@@ -121,7 +121,7 @@ struct TIMx {
   MAKE_REG(TIM_ral::CCR_t,  captureCompareRegister)
   MAKE_REG(TIM_ral::PSC_t,  prescaler)
   MAKE_REG(TIM_ral::ARR_t,  autoReload)
-  MAKE_REG(TIM_ral::BDTR_t, bdtr)
+  MAKE_REG(TIM_ral::BDTR_t, breakAndDeathTime)
   #undef MAKE_REG
 
 

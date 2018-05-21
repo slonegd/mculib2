@@ -11,7 +11,6 @@
 #pragma once
 
 #include "USART.h"
-// #include "constDef.h"
 
 namespace USART_HAL {
 

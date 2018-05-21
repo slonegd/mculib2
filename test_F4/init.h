@@ -39,13 +39,13 @@ auto& zoomerTimer = timers.all[5];
 
 // энергонезависимые данные
 struct FlashData {
-    uint16_t d1;
-    uint16_t d2;
+   uint16_t d1;
+   uint16_t d2;
 };
 const uint8_t flashSector = 2;
 auto flash = Flash<FlashData, flashSector> ( {
-    .d1 = 1,
-    .d2 = 3
+   .d1 = 1,
+   .d2 = 3
 } );
 
 // шим
@@ -81,64 +81,64 @@ USART_ uart;
 
 // модбас
 struct InRegs {
-    uint16_t reg0;
-    uint16_t reg1;
+   uint16_t reg0;
+   uint16_t reg1;
 };
 struct OutRegs {
-    uint16_t reg0;
-    uint16_t reg1;
+   uint16_t reg0;
+   uint16_t reg1;
 };
 auto modbus = MBslave<InRegs, OutRegs, USART_> (uart, mbTimer);
 // действия на входные регистры модбаса
 #define ADR(reg)    GET_ADR(InRegs, reg)
 inline void mbRegInAction ()
 {
-    switch ( modbus.getInRegAdrForAction() ) {
-        case ADR(reg0):
-            ; // сделать чтото
-            break;
-        case ADR(reg1):
-            ; // сделать чтото
-            break;
-        default: ;
-    }
+   switch ( modbus.getInRegAdrForAction() ) {
+      case ADR(reg0):
+         ; // сделать чтото
+         break;
+      case ADR(reg1):
+         ; // сделать чтото
+         break;
+      default: ;
+   }
 }
 
 
 // эта функция вызываеться первой в startup файле
 extern "C" void CLKinit (void)
 {
-    FLASH_t::SetLatency (FLASH_t::Latency::_5);
-    RCC_t::HSEon();
-    RCC_t::waitHSEready();
-    RCC_t::setAHBprescaler (RCC_t::AHBprescaler::AHBnotdiv);
-    RCC_t::setAPB1prescaler (RCC_t::APBprescaler::APBdiv4);
-    RCC_t::setAPB2prescaler (RCC_t::APBprescaler::APBdiv2);
-    RCC_t::systemClockSwitch (RCC_t::SystemClockSwitch::CS_PLL);
-    RCC_t::setPLLM<4>();
-    RCC_t::setPLLN<168>();
-    RCC_t::setPLLP (RCC_t::PLLPdiv::PLLdiv2);
+   FLASH_t::SetLatency (FLASH_t::Latency::_5);
+   RCC_t::HSEon();
+   RCC_t::waitHSEready();
+   RCC_t::setAHBprescaler (RCC_t::AHBprescaler::AHBnotdiv);
+   RCC_t::setAPB1prescaler (RCC_t::APBprescaler::APBdiv4);
+   RCC_t::setAPB2prescaler (RCC_t::APBprescaler::APBdiv2);
+   RCC_t::systemClockSwitch (RCC_t::SystemClockSwitch::CS_PLL);
+   RCC_t::setPLLM<4>();
+   RCC_t::setPLLN<168>();
+   RCC_t::setPLLP (RCC_t::PLLPdiv::PLLdiv2);
 //  RCC_t::setPLLQ<4>();
-    RCC_t::setPLLsource (RCC_t::PLLsource::sHSE);
-    RCC_t::PLLon();
-    RCC_t::waitPLLready();
+   RCC_t::setPLLsource (RCC_t::PLLsource::sHSE);
+   RCC_t::PLLon();
+   RCC_t::waitPLLready();
 }
 
 
 inline void PortsInit (void)
 {
-    LedPort::ClockEnable();
+   LedPort::ClockEnable();
 
-    Bled::Configure (Bled::Mode::Output,
-                     Bled::OutType::PushPull,
-                     Bled::OutSpeed::High,
-                     Bled::PullResistor::No);
-    Oled::Configure (Oled::Mode::Output,
-                     Oled::OutType::PushPull,
-                     Oled::OutSpeed::High,
-                     Oled::PullResistor::No);
+   Bled::Configure (Bled::Mode::Output,
+                Bled::OutType::PushPull,
+                Bled::OutSpeed::High,
+                Bled::PullResistor::No);
+   Oled::Configure (Oled::Mode::Output,
+                Oled::OutType::PushPull,
+                Oled::OutSpeed::High,
+                Oled::PullResistor::No);
 
-    Button::Port::ClockEnable();
+   Button::Port::ClockEnable();
 }
 
 
