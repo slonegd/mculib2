@@ -38,15 +38,17 @@
                 "${workspaceRoot}/hal",
                 "${workspaceRoot}/hal/ral",
                 "${workspaceRoot}/loki",
-                "${workspaceRoot}/STMF4_files",
-                "${workspaceRoot}/STMF4_files/CMSIS",
-                "${workspaceRoot}/test_F4",
+                "${workspaceRoot}/STMF0_files",
+                "${workspaceRoot}/STMF0_files/CMSIS",
+                "${workspaceRoot}/test_F0",
                 "/usr/include/c++/5/tr1",
                 "/usr/lib/llvm-3.8/lib/clang/3.8.0/include",
                 "/usr/include/c++/5",
                 "/usr/include/x86_64-linux-gnu/c++/5"
             ],
-            "defines": [],
+            "defines": [
+               "STM32F030x6"
+            ],
             "intelliSenseMode": "clang-x64",
             "browse": {
                 "path": [
@@ -62,9 +64,9 @@
                     "${workspaceRoot}/hal",
                     "${workspaceRoot}/hal/ral",
                     "${workspaceRoot}/loki",
-                    "${workspaceRoot}/STMF4_files",
-                    "${workspaceRoot}/STMF4_files/CMSIS",
-                    "${workspaceRoot}/test_F4"
+                    "${workspaceRoot}/STMF0_files",
+                    "${workspaceRoot}/STMF0_files/CMSIS",
+                    "${workspaceRoot}/test_F0"
                 ],
                 "limitSymbolsToIncludedHeaders": true,
                 "databaseFilename": ""
@@ -94,5 +96,5 @@
             }
         }
     ],
-    "version": 3
+    "version": 4
 }

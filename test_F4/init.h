@@ -18,6 +18,7 @@
 #include "encoder.h"
 
 
+
 // discoveri 
 using LedPort = PD;
 using Bled = PD15;
@@ -76,7 +77,7 @@ using TXpin = PA2;
 using RTSpin = PA6; // временно изменил с PA5 для отладки LCD
 using LEDpin = Gled;
 const uint8_t bufSize = 30;
-using USART_ = USART<USART2_t, bufSize, RXpin, TXpin, RTSpin, LEDpin>;
+using USART_ = USART<USART2, bufSize, RXpin, TXpin, RTSpin, LEDpin>;
 USART_ uart;
 
 // модбас
@@ -103,6 +104,8 @@ inline void mbRegInAction ()
       default: ;
    }
 }
+
+
 
 
 // эта функция вызываеться первой в startup файле

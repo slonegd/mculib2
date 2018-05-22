@@ -1,3 +1,5 @@
+#pragma once
+
 #include <stddef.h>
 
 
@@ -52,17 +54,17 @@ void TIMx<adr>::clockEnable()
 }
 
 template<uint32_t adr>
-template<TIM_ral::CCMR_t::SelectionCompareMode value, uint8_t channel>
+template<TIM_ral::SelectionCompareMode value, uint8_t channel>
 void TIMx<adr>::selectCompareMode()
 {
     constexpr uint8_t regN = channel == 1 or channel == 2 ? 0 :
                              channel == 3 or channel == 4 ? 1 : 0;
     constexpr uint8_t position = channel == 1 or channel == 3 ? 0 :
                                  channel == 2 or channel == 4 ? 8 : 0;
-    uint32_t tmp = captureCompareMode().regs[regN];
+    uint32_t tmp = captureCompareMode().reg[regN];
     tmp &= ~((uint32_t)0b11 << position);
     tmp |= ((uint32_t)value << position);
-    captureCompareMode().regs[regN] = tmp;
+    captureCompareMode().reg[regN] = tmp;
 }
 
 template<uint32_t adr>
@@ -73,7 +75,7 @@ void TIMx<adr>::preloadEnable()
                             channel == 3 or channel == 4 ? 1 : 0;
    constexpr uint8_t position = channel == 1 or channel == 3 ? 3  :
                                 channel == 2 or channel == 4 ? 11 : 32;
-   captureCompareMode().regs[regN] |= ((uint32_t)0b1 << position);
+   captureCompareMode().reg[regN] |= ((uint32_t)0b1 << position);
 }
 
 template<uint32_t adr>
@@ -88,17 +90,17 @@ void TIMx<adr>::preloadDisable()
 }
 
 template<uint32_t adr>
-template <TIM_ral::CCMR_t::CompareMode value, uint8_t channel>
+template <TIM_ral::CompareMode value, uint8_t channel>
 void TIMx<adr>::setCompareMode()
 {
    constexpr uint8_t regN = channel == 1 or channel == 2 ? 0 :
                             channel == 3 or channel == 4 ? 1 : 0;
    constexpr uint8_t position = channel == 1 or channel == 3 ? 4  :
                                 channel == 2 or channel == 4 ? 12 : 32;
-   uint32_t tmp = captureCompareMode().regs[regN];
+   uint32_t tmp = captureCompareMode().reg[regN];
    tmp &= ~((uint32_t)0b111 << position);
    tmp |=  ((uint32_t)value << position);
-   captureCompareMode().regs[regN] = tmp;
+   captureCompareMode().reg[regN] = tmp;
 
 }
 
@@ -111,7 +113,7 @@ uint16_t TIMx<adr>::clearCounter() { return  count().reg = 0; }
 
 
 template<uint32_t adr>
-template<TIM_ral::SMCR_t::Trigger value>
+template<TIM_ral::Trigger value>
 void TIMx<adr>::setTrigger ()
 {
    uint32_t tmp = slaveModeControl().reg;
@@ -121,7 +123,7 @@ void TIMx<adr>::setTrigger ()
 }
 
 template<uint32_t adr>
-template<TIM_ral::SMCR_t::SlaveMode value>
+template<TIM_ral::SlaveMode value>
 void TIMx<adr>::setSlaveMode()
 {
    uint32_t tmp = slaveModeControl().reg;
@@ -132,7 +134,7 @@ void TIMx<adr>::setSlaveMode()
 
 
 template<uint32_t adr>
-template<TIM_ral::CCER_t::OutputPolarity value, uint8_t channel>
+template<TIM_ral::OutputPolarity value, uint8_t channel>
 void TIMx<adr>::setOutputPolarity()
 {
    uint32_t tmp = captureCompareEnable().reg;
@@ -143,7 +145,7 @@ void TIMx<adr>::setOutputPolarity()
 
 
 template<uint32_t adr>
-template<TIM_ral::CR1_t::OnePulseMode value>
+template<TIM_ral::OnePulseMode value>
 void TIMx<adr>::setOnePulseMode()
 {
     uint32_t tmp = controlRegister1().reg;
@@ -154,7 +156,7 @@ void TIMx<adr>::setOnePulseMode()
 
 
 template<uint32_t adr>
-template<TIM_ral::SMCR_t::ExternalTriggerPolarity value>
+template<TIM_ral::ExternalTriggerPolarity value>
 void TIMx<adr>::setExternalTriggerPolarity()
 {
     uint32_t tmp = slaveModeControl().reg;
@@ -209,7 +211,7 @@ template<uint32_t adr>
 template<uint8_t channel>
 void TIMx<adr>::setCompareValue (uint32_t val) 
 {
-    captureCompareRegister().regs[channel-1] = val; 
+    captureCompareRegister().reg[channel-1] = val; 
 }
 
 template<uint32_t adr>

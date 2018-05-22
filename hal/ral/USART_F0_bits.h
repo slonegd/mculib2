@@ -68,10 +68,66 @@ struct CR3bits {
    __IO uint32_t res3   :16; // Bits 31:16 Reserved, must be kept at reset value.
 };
 
+struct RQRbits {
+   __IO uint32_t ABRRQ :1; // Bit 0 ABRRQ: Auto baud rate request
+   __IO uint32_t SBKRQ :1; // Bit 1 SBKRQ: Send break request
+   __IO uint32_t MMRQ  :1; // Bit 2 MMRQ: Mute mode request
+   __IO uint32_t RXFRQ :1; // Bit 3 RXFRQ: Receive data flush request
+   __IO uint32_t res1  :28; // Bits 31:4 Reserved, must be kept at reset value
+};
+
+struct ISRbits {
+   __IO bool     PE    :1; // Bit 0 PE: Parity error
+   __IO bool     FE    :1; // Bit 1 FE: Framing error
+   __IO bool     NF    :1; // Bit 2 NF: START bit Noise detection flag
+   __IO bool     ORE   :1; // Bit 3 ORE: Overrun error
+   __IO bool     IDLE  :1; // Bit 4 IDLE: Idle line detected
+   __IO bool     RXNE  :1; // Bit 5 RXNE: Read data register not empty
+   __IO bool     TC    :1; // Bit 6 TC: Transmission complete
+   __IO bool     TXE   :1; // Bit 7 TXE: Transmit data register empty
+   __IO uint32_t res1  :1; // Bit 8 Reserved, must be kept at reset value.
+   __IO bool     CTSIF :1; // Bit 9 CTSIF: CTS interrupt flag
+   __IO bool     CTS   :1; // Bit 10 CTS: CTS flag
+   __IO bool     RTOF  :1; // Bit 11 RTOF: Receiver timeout
+   __IO uint32_t res2  :2; // Bits 13:12 Reserved, must be kept at reset value.
+   __IO bool     ABRE  :1; // Bit 14 ABRE: Auto baud rate error
+   __IO bool     ABRF  :1; // Bit 15 ABRF: Auto baud rate flag
+   __IO bool     BUSY  :1; // Bit 16 BUSY: Busy flag
+   __IO bool     CMF   :1; // Bit 17 CMF: Character match flag
+   __IO bool     SBKF  :1; // Bit 18 SBKF: Send break flag
+   __IO bool     RWU   :1; // Bit 19 RWU: Receiver wakeup from Mute mode
+   __IO uint32_t res3  :12; // Bits 31:20 Reserved, must be kept at reset value.
+};
+
+struct ICRbits {
+   __IO bool     PECF   :1; // Bit 0 PECF: Parity error clear flag
+   __IO bool     FECF   :1; // Bit 1 FECF: Framing error clear flag
+   __IO bool     NCF    :1; // Bit 2 NCF: Noise detected clear flag
+   __IO bool     ORECF  :1; // Bit 3 ORECF: Overrun error clear flag
+   __IO bool     IDLECF :1; // Bit 4 IDLECF: Idle line detected clear flag
+   __IO uint32_t res1   :1; // Bit 5 Reserved, must be kept at reset value.
+   __IO bool     TCCF   :1; // Bit 6 TCCF: Transmission complete clear flag
+   __IO uint32_t res2   :1; // Bits 8:7 Reserved, must be kept at reset value.
+   __IO bool     CTSCF  :1; // Bit 9 CTSCF: CTS clear flag
+   __IO uint32_t res3   :1; // Bit 10 Reserved, must be kept at reset value.
+   __IO bool     RTOCF  :1; // Bit 11 RTOCF: Receiver timeout clear flag
+   __IO uint32_t res4   :1; // Bits 16:12 Reserved, must be kept at reset value.
+   __IO bool     CMCF   :1; // Bit 17 CMCF: Character match clear flag
+   __IO uint32_t res5   :1; // Bits 31:18 Reserved, must be kept at reset value.
+   
+};
+
 
 struct CR1_t  : BitsRegistr<CR1bits>, Offset_t<0x00> {};
 struct CR2_t  : BitsRegistr<CR2bits>, Offset_t<0x04> {};
 struct CR3_t  : BitsRegistr<CR3bits>, Offset_t<0x08> {};
+struct BRR_t  : DataRegistr,          Offset_t<0x0C> {};
+struct RTOR_t : DataRegistr,          Offset_t<0x14> {};
+struct RQR_t  : BitsRegistr<RQRbits>, Offset_t<0x18> {};
+struct ISR_t  : BitsRegistr<ISRbits>, Offset_t<0x1C> {};
+struct ICR_t  : BitsRegistr<ICRbits>, Offset_t<0x20> {};
+struct RDR_t  : DataRegistr,          Offset_t<0x24> {};
+struct TDR_t  : DataRegistr,          Offset_t<0x28> {};
 
 } // namespace USART_ral
 

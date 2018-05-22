@@ -7,66 +7,21 @@
 #include "bitbanding.h"
 #endif
 
-/* STM32F4 STM32F0
-typedef struct
-{
-   __IO uint32_t CR1;   // TIM control register 1,              Address offset: 0x00
-   __IO uint32_t CR2;   // TIM control register 2,              Address offset: 0x04
-   __IO uint32_t SMCR;  // TIM slave mode control register,     Address offset: 0x08
-   __IO uint32_t DIER;  // TIM DMA/interrupt enable register,   Address offset: 0x0C
-   __IO uint32_t SR;    // TIM status register,                 Address offset: 0x10
-   __IO uint32_t EGR;   // TIM event generation register,       Address offset: 0x14
-   __IO uint32_t CCMR1; // TIM capture/compare mode register 1, Address offset: 0x18
-   __IO uint32_t CCMR2; // TIM capture/compare mode register 2, Address offset: 0x1C
-   __IO uint32_t CCER;  // TIM capture/compare enable register, Address offset: 0x20
-   __IO uint32_t CNT;   // TIM counter register,                Address offset: 0x24
-   __IO uint32_t PSC;   // TIM prescaler,                       Address offset: 0x28
-   __IO uint32_t ARR;   // TIM auto-reload register,            Address offset: 0x2C
-   __IO uint32_t RCR;   // TIM repetition counter register,     Address offset: 0x30
-   __IO uint32_t CCR1;  // TIM capture/compare register 1,      Address offset: 0x34
-   __IO uint32_t CCR2;  // TIM capture/compare register 2,      Address offset: 0x38
-   __IO uint32_t CCR3;  // TIM capture/compare register 3,      Address offset: 0x3C
-   __IO uint32_t CCR4;  // TIM capture/compare register 4,      Address offset: 0x40
-   __IO uint32_t BDTR;  // TIM break and dead-time register,    Address offset: 0x44
-   __IO uint32_t DCR;   // TIM DMA control register,            Address offset: 0x48
-   __IO uint32_t DMAR;  // TIM DMA address for full transfer,   Address offset: 0x4C
-   __IO uint32_t OR;    // TIM option register,                 Address offset: 0x50
-} TIM_TypeDef;
-*/
-
 template<uint32_t adr>
-struct TIMx {
-   TIM_ral::CR1_t   CR1;
-   TIM_ral::CR2_t   CR2;
-   TIM_ral::SMCR_t  SMCR;
-   TIM_ral::DIER_t  DIER;
-   TIM_ral::SR_t    SR;
-   TIM_ral::EGR_t   EGR;
-   TIM_ral::CCMR_t  CCMR;
-   TIM_ral::CCER_t  CCER;
-   TIM_ral::CNT_t   CNT;
-   TIM_ral::PSC_t   PSC;
-   TIM_ral::ARR_t   ARR;
-   TIM_ral::RCR_t   RCR;
-   TIM_ral::CCR_t   CCR;
-   TIM_ral::BDTR_t  BDTR;
+class TIMx
+{
+public:
+   using OnePulseMode            = TIM_ral::OnePulseMode;
+   using Trigger                 = TIM_ral::Trigger;
+   using SlaveMode               = TIM_ral::SlaveMode;
+   using ExternalTriggerPolarity = TIM_ral::ExternalTriggerPolarity;
+   using SelectionCompareMode    = TIM_ral::SelectionCompareMode;
+   using CompareMode             = TIM_ral::CompareMode;
+   using OutputPolarity          = TIM_ral::OutputPolarity;
 
+   static const uint32_t Base = adr;
 
-  using OnePulseMode            = TIM_ral::CR1_t::OnePulseMode;
-  using Trigger                 = TIM_ral::SMCR_t::Trigger;
-  using SlaveMode               = TIM_ral::SMCR_t::SlaveMode;
-  using ExternalTriggerPolarity = TIM_ral::SMCR_t::ExternalTriggerPolarity;
-  using SelectionCompareMode    = TIM_ral::CCMR_t::SelectionCompareMode;
-  using CompareMode             = TIM_ral::CCMR_t::CompareMode;
-  using OutputPolarity          = TIM_ral::CCER_t::OutputPolarity;
-
- // using AF = AFR_t::AF;
-
-  static const uint32_t Base = adr;
-  
-
-  void makeDebugVar() { controlRegister1().bits.res = 0; }
-
+   void makeDebugVar() { controlRegister1().bits.res = 0; }
 
    static void     counterEnable();
    static void     counterDisable();
@@ -111,7 +66,7 @@ struct TIMx {
 
 
 
-
+protected:
   #define MAKE_REG(Type, name) static Type& name() { return *((Type *)(adr + Type::Offset));}
   MAKE_REG(TIM_ral::CCMR_t, captureCompareMode)
   MAKE_REG(TIM_ral::SMCR_t, slaveModeControl)
@@ -124,7 +79,31 @@ struct TIMx {
   MAKE_REG(TIM_ral::BDTR_t, breakAndDeathTime)
   #undef MAKE_REG
 
+private:
+   TIM_ral::CR1_t  CR1;  // TIM control register 1
+   TIM_ral::CR2_t  CR2;  // TIM control register 2
+   TIM_ral::SMCR_t SMCR; // TIM slave mode control register
+   TIM_ral::DIER_t DIER; // TIM DMA/interrupt enable register
+   TIM_ral::SR_t   SR;   // TIM status register
+   TIM_ral::EGR_t  EGR;  // TIM event generation register
+   TIM_ral::CCMR_t CCMR; // TIM capture/compare mode register
+   TIM_ral::CCER_t CCER; // TIM capture/compare enable register
+   TIM_ral::CNT_t  CNT;  // TIM counter register
+   TIM_ral::PSC_t  PSC;  // TIM prescaler
+   TIM_ral::ARR_t  ARR;  // TIM auto-reload register
+   TIM_ral::RCR_t  RCR;  // TIM repetition counter register
+   TIM_ral::CCR_t  CCR;  // TIM capture/compare register
+   TIM_ral::BDTR_t BDTR; // TIM break and dead-time register
+   TIM_ral::DCR_t  DCR;  // TIM DMA control register
+/* STM32F4 STM32F0
+typedef struct
+{
 
+   __IO uint32_t DCR;   // TIM DMA control register,            Address offset: 0x48
+   __IO uint32_t DMAR;  // TIM DMA address for full transfer,   Address offset: 0x4C
+   __IO uint32_t OR;    // TIM option register,                 Address offset: 0x50
+} TIM_TypeDef;
+*/
 
 };
 
