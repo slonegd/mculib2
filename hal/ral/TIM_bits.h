@@ -123,6 +123,7 @@ struct CCERbits {
    __IO uint32_t res5  :16;
 };
 
+
 struct BDTRbits {
    __IO uint32_t DTG  :8; // Bits 7:0 DTG[7:0]: Dead-time generator setup
    __IO uint32_t LOCK :2; // Bits 9:8 LOCK[1:0]: Lock configuration
@@ -141,22 +142,22 @@ struct DCRbits {
    __IO uint32_t res2 :19; // Bits 31:13 Reserved, must be kept at reset value.
 };
 
-struct CR1_t  : BitsRegistr<CR1bits>,  Offset_t<0x00>, CR1position {};
-struct CR2_t  : BitsRegistr<CR2bits>,  Offset_t<0x04> {};
-struct SMCR_t : BitsRegistr<SMCRbits>, Offset_t<0x08>, SMCRposition {};
-struct DIER_t : BitsRegistr<DIERbits>, Offset_t<0x0C> {};
-struct SR_t   : DataRegistr,           Offset_t<0x10> {};
-struct EGR_t  : DataRegistr,           Offset_t<0x14> {};
-struct CCMR_t : BitsRegistr<CCMRbits>, Offset_t<0x18> {};
-struct CCER_t : BitsRegistr<CCERbits>, Offset_t<0x20> {};
-struct CNT_t  : DataRegistr,           Offset_t<0x24> {};
-struct PSC_t  : DataRegistr,           Offset_t<0x28> {};
-struct ARR_t  : DataRegistr,           Offset_t<0x2C> {};
-struct RCR_t  : DataRegistr,           Offset_t<0x30> {};
-struct CCR_t  : ArrayDataRegistr<4>,   Offset_t<0x34> {};
-struct BDTR_t : BitsRegistr<BDTRbits>, Offset_t<0x44> {};
-struct DCR_t  : BitsRegistr<DCRbits>,  Offset_t<0x48> {};
-struct DMAR_t : DataRegistr,           Offset_t<0x4C> {};
+struct CR1_t  : BitsRegistr<CR1bits>,   Offset_t<0x00>, CR1position {};
+struct CR2_t  : BitsRegistr<CR2bits>,   Offset_t<0x04> {};
+struct SMCR_t : BitsRegistr<SMCRbits>,  Offset_t<0x08>, SMCRposition {};
+struct DIER_t : BitsRegistr<DIERbits>,  Offset_t<0x0C> {};
+struct SR_t   : DataRegistr,            Offset_t<0x10> {};
+struct EGR_t  : DataRegistr,            Offset_t<0x14> {};
+struct CCMR_t : BitsRegistrs<CCMRbits>, Offset_t<0x18> {};
+struct CCER_t : BitsRegistr<CCERbits>,  Offset_t<0x20> {};
+struct CNT_t  : DataRegistr,            Offset_t<0x24> {};
+struct PSC_t  : DataRegistr,            Offset_t<0x28> {};
+struct ARR_t  : DataRegistr,            Offset_t<0x2C> {};
+struct RCR_t  : DataRegistr,            Offset_t<0x30> {};
+struct CCR_t  : ArrayDataRegistr<4>,    Offset_t<0x34> {};
+struct BDTR_t : BitsRegistr<BDTRbits>,  Offset_t<0x44> {};
+struct DCR_t  : BitsRegistr<DCRbits>,   Offset_t<0x48> {};
+struct DMAR_t : DataRegistr,            Offset_t<0x4C> {};
 
 } // namespace
 

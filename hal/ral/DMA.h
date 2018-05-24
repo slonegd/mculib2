@@ -21,23 +21,29 @@ typedef struct
 } DMA_TypeDef;        */
 
 
-template<uint32_t BaseAdr> struct DMAx : 
-#if defined(STM32F405xx)
-   public DMA_ral::LISR_t,
-   public DMA_ral::HISR_t,
-   public DMA_ral::LIFCR_t,
-   public DMA_ral::HIFCR_t
-#elif defined(STM32F030x6)
-   public DMA_ral::ISR_t,
-   public DMA_ral::IFCR_t
-#endif
+template<uint32_t BaseAdr>
+class DMAx 
 {
+public:
    static const uint32_t Base = BaseAdr;
 #if defined(STM32F405xx)
    using ISR_t = DMA_ral::LISR_t;
    using IFCR_t = DMA_ral::LIFCR_t;
+   void makeDebugVar() { LISR.bits.res1 = 0; }
+#elif defined(STM32F030x6)
+   void makeDebugVar() { ISR.bits.res1 = 0; }
 #endif
-   void makeDebugVar() { ISR_t::bits.res1 = 0; }
+   
+private:
+#if defined(STM32F405xx)
+   DMA_ral::LISR_t LISR;
+   DMA_ral::HISR_t HISR;
+   DMA_ral::LIFCR_t LIFCR;
+   DMA_ral::HIFCR_t HIFCR;
+#elif defined(STM32F030x6)
+   DMA_ral::ISR_t ISR;
+   DMA_ral::IFCR_t IFCR;
+#endif
 };
 
 
@@ -71,27 +77,19 @@ typedef struct
 } DMA_Channel_TypeDef; */
 
 
-template <uint32_t DMAstreamAdr> class DMAstream : 
-   public DMA_ral::CR_t,
-   public DMA_ral::NDTR_t,
-   public DMA_ral::PAR_t,
-   public DMA_ral::M0AR_t
-#if defined(STM32F405xx)
-   ,
-   public DMA_ral::M1AR_t,
-   public DMA_ral::FCR_t
-#endif
+template <uint32_t DMAstreamAdr> 
+class DMAstream
 {
 public:
    void makeDebugVar() { conf().bits.res1 = 0; }
 
    static const uint32_t Base = DMAstreamAdr;
 
-   using DataDirection = DMA_ral::CR_t::DataDirection;
-   using DataSize = DMA_ral::CR_t::DataSize;
+   using DataDirection = DMA_ral::DataDirection;
+   using DataSize      = DMA_ral::DataSize;
 
 #if defined(STM32F405xx)
-   using Channels = DMA_ral::CR_t::Channels;
+   using Channels = DMA_ral::Channels;
    static constexpr IRQn_Type IRQn = 
       Base == DMA1_Stream0_BASE ? DMA1_Stream0_IRQn :
       Base == DMA1_Stream1_BASE ? DMA1_Stream1_IRQn :
@@ -133,7 +131,8 @@ public:
    static void Configure (Configure_t& c)
    {
       conf().reg = 0;
-      DMA_ral::CR_t tmp = {0};
+      DMA_ral::CR_t tmp;
+      tmp.reg = 0;
       tmp.bits.DIR = c.dataDir;
       tmp.bits.MSIZE = c.memSize;
       tmp.bits.PSIZE = c.perSize;
@@ -149,14 +148,14 @@ public:
 
 #if defined(STM32F405xx)
    static void ClockEnable() { RCC->AHB1ENR |= (uint32_t)1 << (DMAn + 20); }
-   static void Enable() { BITBAND_SET(conf(), EN, true); }
-   static bool IsDisable() { return BB_REG(conf(), EN) == 0; }
+   static void Enable() { BIT_BAND(conf(), EN) = true; }
+   static bool IsDisable() { return BIT_BAND(conf(), EN) == 0; }
    static void Disable()
    { 
-      BITBAND_SET(conf(), EN, false); 
-      while (conf().reg & ENmask) {}
+      BIT_BAND(conf(), EN) = false;
+      while (BIT_BAND(conf(), EN)) {}
    }
-   static void EnableTransferCompleteInterrupt() { BITBAND_SET(conf(), TCIE, true); }
+   static void EnableTransferCompleteInterrupt() { BIT_BAND(conf(), TCIE) = true; }
    static bool TransferCompleteInterrupt()
    {
       return  (interruptStatus().reg & TCImask) != 0;
@@ -164,14 +163,14 @@ public:
    static void ClearFlagTransferCompleteInterrupt() { BITBAND_SET(conf(), TCIpos, true); }
 #elif defined(STM32F030x6)
    static void ClockEnable() { RCC->AHBENR |= RCC_AHBENR_DMAEN_Msk; }
-   static void Enable() { conf().reg |= ENmask; }
-   static bool IsDisable() { return (conf().reg & ENmask) == 0; }
+   static void Enable() { SET(conf(), EN); }
+   static bool IsDisable() { return IS_CLEAR(conf(), EN); } // (conf().reg & ((uint32_t)1 << CR_t::EN) == 0; }
    static void Disable()
    {
-      conf().reg &= ~ENmask;; 
-      while (conf().reg & ENmask) {}
+      CLEAR(conf(), EN); 
+      while (IS_SET(conf(), EN)) {}
    }
-   static void EnableTransferCompleteInterrupt() { conf().reg |= TCIEmask; }
+   static void EnableTransferCompleteInterrupt() { SET(conf().reg, EN); } // |= ((uint32_t)1 << CR_t::TCIE); }
    static bool TransferCompleteInterrupt()
    {
       return  (interruptStatus().reg & TCImask) != 0;
@@ -199,15 +198,23 @@ protected:
    { return (DMA_ral::LIFCR_t&) *((uint32_t*)IFCRadr); }
 #elif defined(STM32F030x6)
    static volatile DMA_ral::ISR_t& interruptStatus()
-   { return (DMA_ral::ISR_t&)  *((uint32_t*)(DMA1::Base + DMA1::ISR_t::Offset)); }
+   { return (DMA_ral::ISR_t&)  *((uint32_t*)(DMA1::Base + DMA_ral::ISR_t::Offset)); }
    static volatile DMA_ral::IFCR_t& clearInterruptFlag()
-   { return (DMA_ral::IFCR_t&) *((uint32_t*)(DMA1::Base + DMA1::IFCR_t::Offset)); }
+   { return (DMA_ral::IFCR_t&) *((uint32_t*)(DMA1::Base + DMA_ral::IFCR_t::Offset)); }
 #endif
 #undef MakeRef
 
 
 
 private:
+   DMA_ral::CR_t CR;
+   DMA_ral::NDTR_t NDTR;
+   DMA_ral::PAR_t PAR;
+   DMA_ral::M0AR_t MOAR;
+#if defined(STM32F405xx)
+   DMA_ral::M1AR_t M1AR;
+   DMA_ral::FCR_t FCR;
+#endif
 #if defined(STM32F405xx)
    static constexpr uint8_t DMAn =
         Base == DMA1_Stream0_BASE

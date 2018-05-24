@@ -18,7 +18,7 @@ class ADCx
 public:
    static const uint32_t Base = ADCadr;
 
-   using Channels   = DMA_ral::CR_t::Channels;
+   using Channels   = DMA_ral::Channels;
    using Clock      = ADC_ral::Clock;
    using Resolution = ADC_ral::Resolution;
    using SampleTime = ADC_ral::SampleTime;

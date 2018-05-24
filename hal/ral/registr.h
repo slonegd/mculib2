@@ -8,25 +8,21 @@
 
 #include <type_traits>
 
-/// определение типа регистра (одиночный или массив) по размеру Bits
-namespace Magic {
-   template<class Bits, class T = typename std::enable_if<sizeof(Bits) == 4>::type>
-   auto type() { uint32_t res; return res; }
-
-   template<class Bits, class T = typename std::enable_if<sizeof(Bits) != 4>::type, class U = void>
-   auto type() { static uint32_t res[sizeof(Bits)]; return res; }
-
-   template<class Bits>
-   using T = decltype(type<Bits>());
-}
-
-
-
 template<class Bits>
 struct BitsRegistr {
    union {
-      __IO Bits           bits;
-      __IO Magic::T<Bits> reg;
+      __IO Bits     bits;
+      __IO uint32_t reg;
+   };
+   static_assert (sizeof(Bits) == sizeof(uint32_t), "use BitsRegistrs");
+};
+
+
+template<class Bits, uint32_t n = sizeof(Bits)/4+1>
+struct BitsRegistrs {
+   union {
+      __IO Bits     bits;
+      __IO uint32_t reg[n];
    };
 };
 
@@ -34,6 +30,7 @@ struct BitsRegistr {
 struct DataRegistr {
    __IO uint32_t reg;
 };
+
 
 template<int n>
 struct ArrayDataRegistr {
@@ -49,3 +46,10 @@ class Reserve_t {
 
 template <uint32_t offset>
 struct Offset_t { enum { Offset = offset }; };
+
+
+#define _1BIT_TO_MASK(reg, pos) ((uint32_t)1 << std::remove_reference<decltype(reg)>::type::pos)
+#define SET(reg_,pos)           (reg_.reg  |=  _1BIT_TO_MASK(reg_, pos))
+#define CLEAR(reg_,pos)         (reg_.reg  &= ~_1BIT_TO_MASK(reg_, pos))
+#define IS_CLEAR(reg_,pos)      ((reg_.reg &   _1BIT_TO_MASK(reg_, pos)) == 0)
+#define IS_SET(reg_,pos)        ((reg_.reg &   _1BIT_TO_MASK(reg_, pos)) != 0)

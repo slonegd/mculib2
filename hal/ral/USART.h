@@ -11,7 +11,6 @@
 
 extern const uint32_t fCPU;
 
-// ClkEnOffset оффсет для регистра из структуры RCC, разрешающий тактирование 
 template <uint32_t Adr, class DMArx_, class DMAtx_>
 class USARTx
 {
@@ -30,49 +29,28 @@ public:
    using StopBits = USART_ral::StopBits;
    using DMArx    = DMArx_;
    using DMAtx    = DMAtx_;
-   using Channels = DMA_ral::CR_t::Channels;
+   using Channels = DMA_ral::Channels;
 
    void makeDebugVar() { CR1.bits.res1 = 0; }
 
-   static constexpr Channels DMAChannel = 
-      Adr == USART6_BASE ? Channels::_5 : Channels::_4;
-   static constexpr RCC_t::Bus bus =
-      Adr == USART1_BASE ? RCC_t::Bus::APB2 :
-      Adr == USART6_BASE ? RCC_t::Bus::APB2 : RCC_t::Bus::APB1;
    static constexpr uint32_t Base = Adr;
-
-   static constexpr IRQn_Type IRQn = 
-      Adr == USART1_BASE ? USART1_IRQn :
-      Adr == USART2_BASE ? USART2_IRQn :
-      Adr == USART3_BASE ? USART3_IRQn :
-      Adr == USART6_BASE ? USART6_IRQn : NonMaskableInt_IRQn;
-
+   static constexpr Channels DMAChannel();
+   static constexpr IRQn_Type IRQn();
 
    static void ClockEnable();
-   static void Enable (bool val)      { BIT_BAND(conf1(), UE) = val; }
-   static void RXenable (bool val)    { BIT_BAND(conf1(), RE) = val; }
-   static void TXenable (bool val)    { BIT_BAND(conf1(), TE) = val; }
-   static void DMAtxEnable() { conf3().bits.DMAT = true; }
-   static void DMArxEnable() { conf3().bits.DMAR = true; }
-   static void SetBoudRate (Boudrate val)
-   {
-      if (bus == RCC_t::Bus::APB1) {
-         boudrate().reg = RCC_t::getAPB1clock() / val;
-      } else if (bus == RCC_t::Bus::APB2) {
-         boudrate().reg = RCC_t::getAPB2clock() / val;
-      }
-   }
-   static void ParityEnable (bool val)    { BIT_BAND(conf1(), PCE) = val; }
-   static void SetParity (Parity val)     { BIT_BAND(conf1(), PS)  = val; }
-   static void SetStopBits (StopBits val) { conf2().bits.STOP = val; }
-   static void EnableIDLEinterrupt()      { BIT_BAND(conf1(), IDLEIE) = true; }
-   static bool IDLEinterrupt()            { return status().bits.IDLE; }
-   static void ClearIDLEinterruptFlag()
-   {
-      status().reg;
-      data().reg;
-   }
-   static void sendByte (uint8_t val) { data().reg = val; }
+   static void Enable (bool val);
+   static void RXenable (bool val);
+   static void TXenable (bool val);
+   static void DMAtxEnable();
+   static void DMArxEnable();
+   static void SetBoudRate (Boudrate val);
+   static void ParityEnable (bool val);
+   static void SetParity (Parity val);
+   static void SetStopBits (StopBits val);
+   static void EnableIDLEinterrupt();
+   static bool IDLEinterrupt();
+   static void ClearIDLEinterruptFlag();
+   static void sendByte (uint8_t val);
 
 
 protected:
@@ -108,6 +86,10 @@ private:
    USART_ral::RDR_t  RDR;  // USART Receive Data register
    USART_ral::TDR_t  TDR;  // USART Transmit Data register
 #endif
+
+   static constexpr RCC_t::Bus bus =
+      Adr == USART1_BASE ? RCC_t::Bus::APB2 :
+      Adr == USART6_BASE ? RCC_t::Bus::APB2 : RCC_t::Bus::APB1;
 
 
 };

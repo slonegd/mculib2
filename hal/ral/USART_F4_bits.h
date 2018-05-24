@@ -18,6 +18,10 @@ struct SRbits {
    __IO uint32_t res1 :22; // Bits 31:10 Reserved, must be kept at reset value
 };
 
+struct SRposition {
+   enum { PE = 0, FE, NF, ORE, IDLE, RXNE, TC, TXE, LBD, CTS };
+};
+
 enum Parity     { even = 0b0, odd     };
 enum WakeMethod { idle = 0b0, address };
 enum DataBits   { _8   = 0b0, _9      };
@@ -67,6 +71,10 @@ struct CR2bits {
    __IO uint32_t       res3  :17; // Bits 31:15 Reserved, must be kept at reset value
 };
 
+struct CR2position {
+   enum { ADD = 0, LBDL = 5, LBDIE, LBCL = 8, CPHA, CPOL, CLKEN, STOP, LINEN = 14 };
+};
+
 struct CR3bits {
    __IO bool     EIE    :1; // Bit 0 EIE: Error interrupt enable
    __IO bool     IREN   :1; // Bit 1 IREN: IrDA mode enable
@@ -83,13 +91,17 @@ struct CR3bits {
    __IO uint32_t res1   :20; // Bits 31:12 Reserved, must be kept at reset value
 };
 
+struct CR3position {
+   enum { EIE = 0, IREN, IRLP, HDSEL, NACK, SCEN, DMAR, DMAT, RTSE, CTSE, CTSIE, ONEBIT };
+};
 
-struct SR_t   : BitsRegistr<SRbits> , Offset_t<0x00> {};
+
+struct SR_t   : BitsRegistr<SRbits> , Offset_t<0x00>, SRposition  {};
 struct DR_t   : DataRegistr         , Offset_t<0x04> {};
 struct BRR_t  : DataRegistr         , Offset_t<0x08> {};
 struct CR1_t  : BitsRegistr<CR1bits>, Offset_t<0x0C>, CR1position {};
-struct CR2_t  : BitsRegistr<CR2bits>, Offset_t<0x10> {};
-struct CR3_t  : BitsRegistr<CR3bits>, Offset_t<0x14> {};
+struct CR2_t  : BitsRegistr<CR2bits>, Offset_t<0x10>, CR2position {};
+struct CR3_t  : BitsRegistr<CR3bits>, Offset_t<0x14>, CR3position {};
 struct GTPR_t : DataRegistr         , Offset_t<0x18> {};
 
 } // namespace

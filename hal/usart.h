@@ -152,7 +152,7 @@ void USART<USART_, bufSize, RX, TX, RTS, LED>::init (Settings set)
     configureRx.memInc = true;
     configureRx.perInc = false;
     configureRx.circularMode = true;
-    configureRx.channel = USART_::DMAChannel;
+    configureRx.channel = USART_::DMAChannel();
     DMArx::Configure (configureRx);
     //DMAenableRX(); для отладки закомент
 
@@ -176,7 +176,7 @@ void USART<USART_, bufSize, RX, TX, RTS, LED>::init (Settings set)
 
     // прерывания
     USART_::EnableIDLEinterrupt();
-    NVIC_EnableIRQ(USART_::IRQn);
+    NVIC_EnableIRQ(USART_::IRQn());
     DMAtx::EnableTransferCompleteInterrupt();
     NVIC_EnableIRQ(DMAtx::IRQn);
 }
