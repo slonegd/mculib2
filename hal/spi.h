@@ -30,7 +30,7 @@ public:
 
    void startTx()
    {
-      if ( DMAtx::TransferCompleteInterrupt() or DMAtx::IsDisable() ) {
+      if ( DMAtx::IsTransferCompleteInterrupt() or DMAtx::IsDisable() ) {
          DMAtx::ClearFlagTransferCompleteInterrupt();
          DMAtx::Disable();
          DMAtx::SetQtyTransactions (sizeof(Data) * 8 / dataSize);

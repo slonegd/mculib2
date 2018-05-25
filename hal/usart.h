@@ -70,7 +70,7 @@ public:
     }
     inline void txCompleteHandler()
     {
-        if ( DMAtx::TransferCompleteInterrupt() ) {
+        if ( DMAtx::IsTransferCompleteInterrupt() ) {
             LED::Clear();
             //DMAtx::Disable();
 //            DMAenableRX();
@@ -178,7 +178,7 @@ void USART<USART_, bufSize, RX, TX, RTS, LED>::init (Settings set)
     USART_::EnableIDLEinterrupt();
     NVIC_EnableIRQ(USART_::IRQn());
     DMAtx::EnableTransferCompleteInterrupt();
-    NVIC_EnableIRQ(DMAtx::IRQn);
+    NVIC_EnableIRQ(DMAtx::IRQn());
 }
 
 
