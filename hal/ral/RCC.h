@@ -176,6 +176,7 @@ public:
    static void setPLLsource (PLLsource val) { conf().bits.PLLSRC = val; }
    static void setAPBprecsaler (APBprescaler val) { conf().bits.PPRE = val; }
    static void setPLLmultiplier (PLLmultiplier val) { conf().bits.PLLMUL = val; }
+   static uint32_t getAPB2clock() { return getAPBclock (conf().bits.PPRE); }
 #endif
    static void systemClockSwitch (SystemClockSwitch val) { conf().bits.SW = val; }
    

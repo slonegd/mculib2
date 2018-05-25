@@ -11,9 +11,9 @@
 #include "buttons.h"
 #include "inputCounter.h"
 #include "seven_segment_indicator.h"
-// #include "modbusSlave.h"
+#include "modbusSlave.h"
 
-const uint8_t timersQty = 8;
+const uint8_t timersQty = 9;
 Timers<timersQty> timers;
 auto& onTimer      = timers.all[0];
 auto& offTimer     = timers.all[1];
@@ -23,6 +23,7 @@ auto& butTimer     = timers.all[4];
 auto& counterTimer = timers.all[5];
 auto& ledTimer     = timers.all[6];
 auto& ssiTimer     = timers.all[7];
+auto& mbTimer      = timers.all[8];
 
 using BlueLed = PC8;
 
@@ -70,39 +71,39 @@ using GreenLed = PC9;
 // частотометр
 auto counter = InputCounter<TIM1, PA9> (counterTimer);
 
-// // уарт модбаса
-// using RXpin = PA3;
-// using TXpin = PA2;
-// using RTSpin = PA5;
-// using LEDpin = GreenLed;
-// const uint8_t bufSize = 30;
-// using USART_ = USART<USART2_t, bufSize, RXpin, TXpin, RTSpin, LEDpin>;
-// USART_ uart;
+// уарт модбаса
+using RXpin = PA3;
+using TXpin = PA2;
+using RTSpin = PA5;
+using LEDpin = BlueLed;
+const uint8_t bufSize = 30;
+using USART_ = USART<USART1, bufSize, RXpin, TXpin, RTSpin, LEDpin>;
+USART_ uart;
 
-// // модбас
-// struct InRegs {
-//    uint16_t reg0;
-//    uint16_t reg1;
-// };
-// struct OutRegs {
-//    uint16_t reg0;
-//    uint16_t reg1;
-// };
-// auto modbus = MBslave<InRegs, OutRegs, USART_> (uart, mbTimer);
-// // действия на входные регистры модбаса
-// #define ADR(reg)    GET_ADR(InRegs, reg)
-// inline void mbRegInAction ()
-// {
-//    switch ( modbus.getInRegAdrForAction() ) {
-//       case ADR(reg0):
-//          ; // сделать чтото
-//          break;
-//       case ADR(reg1):
-//          ; // сделать чтото
-//          break;
-//       default: ;
-//    }
-// }
+// модбас
+struct InRegs {
+   uint16_t reg0;
+   uint16_t reg1;
+};
+struct OutRegs {
+   uint16_t reg0;
+   uint16_t reg1;
+};
+auto modbus = MBslave<InRegs, OutRegs, USART_> (uart, mbTimer);
+// действия на входные регистры модбаса
+#define ADR(reg)    GET_ADR(InRegs, reg)
+inline void mbRegInAction ()
+{
+   switch ( modbus.getInRegAdrForAction() ) {
+      case ADR(reg0):
+         ; // сделать чтото
+         break;
+      case ADR(reg1):
+         ; // сделать чтото
+         break;
+      default: ;
+   }
+}
 
 
 // эта функция вызывается первой в startup файле

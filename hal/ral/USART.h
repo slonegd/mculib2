@@ -33,8 +33,8 @@ public:
 
    void makeDebugVar() { CR1.bits.res1 = 0; }
 
-   static constexpr uint32_t Base = Adr;
-   static constexpr Channels DMAChannel();
+   static constexpr uint32_t  Base = Adr;
+   static constexpr Channels  DMAChannel();
    static constexpr IRQn_Type IRQn();
 
    static void ClockEnable();
@@ -48,20 +48,29 @@ public:
    static void SetParity (Parity val);
    static void SetStopBits (StopBits val);
    static void EnableIDLEinterrupt();
-   static bool IDLEinterrupt();
+   static bool IsIDLEinterrupt();
    static void ClearIDLEinterruptFlag();
    static void sendByte (uint8_t val);
 
 
 protected:
 #define MakeRef(Reg,Ref) USART_ral::Reg& Ref() { return (USART_ral::Reg&) *(uint32_t*)(Base + USART_ral::Reg::Offset); }
-   static volatile MakeRef (SR_t,   status  );
-   static volatile MakeRef (DR_t,   data    );
    static volatile MakeRef (BRR_t,  boudrate);
    static volatile MakeRef (CR1_t,  conf1   );
    static volatile MakeRef (CR2_t,  conf2   );
    static volatile MakeRef (CR3_t,  conf3   );
+#if defined(STM32F405xx)
+   static volatile MakeRef (SR_t,   status  );
+   static volatile MakeRef (DR_t,   data    );
    static volatile MakeRef (GTPR_t, gtp     );
+#elif defined(STM32F030x6)
+   static volatile MakeRef (RTOR_t, recieverTmeout );
+   static volatile MakeRef (RQR_t,  request );
+   static volatile MakeRef (ISR_t,  interrupt );
+   static volatile MakeRef (ISR_t,  clear );
+   static volatile MakeRef (ISR_t,  receiveData );
+   static volatile MakeRef (ISR_t,  transmitData );
+#endif
 #undef MakeRef
 
 private:
@@ -87,17 +96,20 @@ private:
    USART_ral::TDR_t  TDR;  // USART Transmit Data register
 #endif
 
+#if defined(STM32F405xx)
    static constexpr RCC_t::Bus bus =
       Adr == USART1_BASE ? RCC_t::Bus::APB2 :
       Adr == USART6_BASE ? RCC_t::Bus::APB2 : RCC_t::Bus::APB1;
-
+#endif
 
 };
+
+#if defined(STM32F405xx)
 
 #undef USART1
 using USART1        = USARTx<USART1_BASE, DMA2stream5, DMA2stream7>;
 // альтернатива с другим потоком дма
-using USART1alt_t   = USARTx<USART1_BASE, DMA2stream2, DMA2stream7>;
+using USART1alt   = USARTx<USART1_BASE, DMA2stream2, DMA2stream7>;
 
 #undef USART2
 using USART2        = USARTx<USART2_BASE, DMA1stream5, DMA1stream6>;
@@ -105,13 +117,21 @@ using USART2        = USARTx<USART2_BASE, DMA1stream5, DMA1stream6>;
 #undef USART3
 using USART3        = USARTx<USART3_BASE, DMA1stream1, DMA1stream3>;
 // альтернатива с другим потоком дма
-using USART3alt_t   = USARTx<USART3_BASE, DMA1stream1, DMA1stream4>;
+using USART3alt   = USARTx<USART3_BASE, DMA1stream1, DMA1stream4>;
 
 #undef USART6
 using USART6        = USARTx<USART6_BASE, DMA2stream1, DMA2stream6>;
 // альтернативы с другим потоком дма
-using USART6alt17_t = USARTx<USART6_BASE, DMA2stream1, DMA2stream7>;
-using USART6alt27_t = USARTx<USART6_BASE, DMA2stream2, DMA2stream7>;
-using USART6alt26_t = USARTx<USART6_BASE, DMA2stream2, DMA2stream6>;
+using USART6alt17 = USARTx<USART6_BASE, DMA2stream1, DMA2stream7>;
+using USART6alt27 = USARTx<USART6_BASE, DMA2stream2, DMA2stream7>;
+using USART6alt26 = USARTx<USART6_BASE, DMA2stream2, DMA2stream6>;
+
+#elif defined(STM32F030x6)
+
+#undef USART1
+using USART1    = USARTx<USART1_BASE, DMA1channel3, DMA1channel2>;
+using USART1alt = USARTx<USART1_BASE, DMA1channel5, DMA1channel4>;
+
+#endif
 
 #include "USART_src.h"

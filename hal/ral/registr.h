@@ -48,8 +48,11 @@ template <uint32_t offset>
 struct Offset_t { enum { Offset = offset }; };
 
 
-#define _1BIT_TO_MASK(reg, pos) ((uint32_t)1 << std::remove_reference<decltype(reg)>::type::pos)
+#define _1BIT_TO_MASK(reg, pos) ((uint32_t)0b1  << std::remove_reference<decltype(reg)>::type::pos)
+#define _2BIT_TO_MASK(reg, pos) ((uint32_t)0b11 << std::remove_reference<decltype(reg)>::type::pos)
+#define VAL_TO_MASK(reg, pos, val) ((uint32_t)val << std::remove_reference<decltype(reg)>::type::pos)
 #define SET(reg_,pos)           (reg_.reg  |=  _1BIT_TO_MASK(reg_, pos))
 #define CLEAR(reg_,pos)         (reg_.reg  &= ~_1BIT_TO_MASK(reg_, pos))
 #define IS_CLEAR(reg_,pos)      ((reg_.reg &   _1BIT_TO_MASK(reg_, pos)) == 0)
 #define IS_SET(reg_,pos)        ((reg_.reg &   _1BIT_TO_MASK(reg_, pos)) != 0)
+

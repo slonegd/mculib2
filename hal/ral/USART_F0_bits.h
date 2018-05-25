@@ -4,6 +4,8 @@
 
 namespace USART_ral {
 
+enum Parity     { even = 0b0, odd     };
+
 struct CR1bits {
    __IO bool     UE     :1; // Bit 0 UE: USART enable
    __IO bool     RE     :1; // Bit 2 RE: Receiver enable
@@ -13,7 +15,7 @@ struct CR1bits {
    __IO bool     TCIE   :1; // Bit 6 TCIE: Transmission complete interrupt enable
    __IO bool     TXEIE  :1; // Bit 7 TXEIE: interrupt enable
    __IO bool     PEIE   :1; // Bit 8 PEIE: PE interrupt enable
-   __IO bool     PS     :1; // Bit 9 PS: Parity selection
+   __IO Parity   PS     :1; // Bit 9 PS: Parity selection
    __IO bool     PCE    :1; // Bit 10 PCE: Parity control enable
    __IO uint32_t WAKE   :1; // Bit 11 WAKE: Receiver wakeup method
    __IO uint32_t M0     :1; // Bit 12 M0: Word length
@@ -28,6 +30,8 @@ struct CR1bits {
    __IO uint32_t res2   :3; // Bits 31:29 Reserved, must be kept at reset value
 };
 
+enum StopBits       { _1 = 0b00, _2 = 0b10 };
+
 struct CR2bits {
    __IO uint32_t res1     :4; // Bits 3:0 Reserved, must be kept at reset value.
    __IO uint32_t ADDM7    :1; // Bit 4 ADDM7:7-bit Address Detection/4-bit Address Detection
@@ -36,7 +40,7 @@ struct CR2bits {
    __IO uint32_t CPHA     :1; // Bit 9 CPHA: Clock phase
    __IO uint32_t CPOL     :1; // Bit 10 CPOL: Clock polarity
    __IO bool     CLKEN    :1; // Bit 11 CLKEN: Clock enable
-   __IO uint32_t STOP     :2; // Bits 13:12 STOP[1:0]: STOP bits
+   __IO StopBits STOP     :2; // Bits 13:12 STOP[1:0]: STOP bits
    __IO uint32_t res3     :1; // Bit 14 Reserved, must be kept at reset value.
    __IO uint32_t SWAP     :1; // Bit 15 SWAP: Swap TX/RX pins
    __IO bool     RXINV    :1; // Bit 16 RXINV: RX pin active level inversion
@@ -107,14 +111,17 @@ struct ICRbits {
    __IO bool     IDLECF :1; // Bit 4 IDLECF: Idle line detected clear flag
    __IO uint32_t res1   :1; // Bit 5 Reserved, must be kept at reset value.
    __IO bool     TCCF   :1; // Bit 6 TCCF: Transmission complete clear flag
-   __IO uint32_t res2   :1; // Bits 8:7 Reserved, must be kept at reset value.
+   __IO uint32_t res2   :2; // Bits 8:7 Reserved, must be kept at reset value.
    __IO bool     CTSCF  :1; // Bit 9 CTSCF: CTS clear flag
    __IO uint32_t res3   :1; // Bit 10 Reserved, must be kept at reset value.
    __IO bool     RTOCF  :1; // Bit 11 RTOCF: Receiver timeout clear flag
-   __IO uint32_t res4   :1; // Bits 16:12 Reserved, must be kept at reset value.
+   __IO uint32_t res4   :5; // Bits 16:12 Reserved, must be kept at reset value.
    __IO bool     CMCF   :1; // Bit 17 CMCF: Character match clear flag
-   __IO uint32_t res5   :1; // Bits 31:18 Reserved, must be kept at reset value.
-   
+   __IO uint32_t res5   :14; // Bits 31:18 Reserved, must be kept at reset value.
+};
+
+struct ICRposition {
+   enum { PECF = 0, FECF, NCF, ORECF, IDLECF, TCCF = 6, CTSCF = 9, RTOCF = 11, CMCF = 17 };
 };
 
 
@@ -125,7 +132,7 @@ struct BRR_t  : DataRegistr,          Offset_t<0x0C> {};
 struct RTOR_t : DataRegistr,          Offset_t<0x14> {};
 struct RQR_t  : BitsRegistr<RQRbits>, Offset_t<0x18> {};
 struct ISR_t  : BitsRegistr<ISRbits>, Offset_t<0x1C> {};
-struct ICR_t  : BitsRegistr<ICRbits>, Offset_t<0x20> {};
+struct ICR_t  : BitsRegistr<ICRbits>, Offset_t<0x20>, ICRposition {};
 struct RDR_t  : DataRegistr,          Offset_t<0x24> {};
 struct TDR_t  : DataRegistr,          Offset_t<0x28> {};
 

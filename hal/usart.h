@@ -61,7 +61,7 @@ public:
     // но в этом приложении пофиг
     inline bool idleHandler()
     {
-        bool tmp = USART_::IDLEinterrupt();
+        bool tmp = USART_::IsIDLEinterrupt();
         if (tmp) {
            disableRx();
            USART_::ClearIDLEinterruptFlag();
