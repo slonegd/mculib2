@@ -31,20 +31,20 @@ struct CR2bits {
    __IO uint32_t res2  :24; // Bits 15:8 Reserved, must be kept at reset value.
 };
 
-enum ExternalTriggerPolarity { notInverted = 0b0, inverted };
+enum ExtTriggerPolarity { notInverted = 0b0, inverted };
 enum Trigger { _0 = 0b000, _1, _2, _3, TI1edge, FiltrTI1, FiltrTI2, External };
 enum SlaveMode { SMDisabled = 0b000, Encoder1, Encoder2, Encoder3, Reset, Gated, TriggerMode, ExternalClock };
 
 struct SMCRbits {
-   __IO SlaveMode               SMS  :3; // Bits 2:0 SMS: Slave mode selection
-   __IO uint32_t                OCCS :1; // Bit 3 OCCS: OCREF clear selection.
-   __IO Trigger                 TS   :3; // Bits 6:4 TS[2:0]: Trigger selection
-   __IO uint32_t                MSM  :1; // Bit 7 MSM: Master/slave mode
-   __IO uint32_t                ETF  :4; // Bits 11:8 ETF[3:0]: External trigger filter
-   __IO uint32_t                ETPS :2; // Bits 13:12 ETPS[1:0]: External trigger prescaler
-   __IO uint32_t                ECE  :1; // Bit 14 ECE: External clock enable
-   __IO ExternalTriggerPolarity ETP  :1; // Bit 15 ETP: External trigger polarity
-   __IO uint32_t                res1 :16;
+   __IO SlaveMode          SMS  :3; // Bits 2:0 SMS: Slave mode selection
+   __IO uint32_t           OCCS :1; // Bit 3 OCCS: OCREF clear selection.
+   __IO Trigger            TS   :3; // Bits 6:4 TS[2:0]: Trigger selection
+   __IO uint32_t           MSM  :1; // Bit 7 MSM: Master/slave mode
+   __IO uint32_t           ETF  :4; // Bits 11:8 ETF[3:0]: External trigger filter
+   __IO uint32_t           ETPS :2; // Bits 13:12 ETPS[1:0]: External trigger prescaler
+   __IO uint32_t           ECE  :1; // Bit 14 ECE: External clock enable
+   __IO ExtTriggerPolarity ETP  :1; // Bit 15 ETP: External trigger polarity
+   __IO uint32_t           res1 :16;
 };
 
 struct SMCRposition {

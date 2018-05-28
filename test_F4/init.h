@@ -74,7 +74,7 @@ LCD_ LCD;
 // уарт модбаса
 using RXpin = PA3;
 using TXpin = PA2;
-using RTSpin = PA6; // временно изменил с PA5 для отладки LCD
+using RTSpin = PD4; // временно изменил с PA5 для отладки LCD
 using LEDpin = Gled;
 const uint8_t bufSize = 30;
 using USART_ = USART<USART2, bufSize, RXpin, TXpin, RTSpin, LEDpin>;

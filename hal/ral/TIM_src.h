@@ -156,11 +156,11 @@ void TIMx<adr>::setOnePulseMode()
 
 
 template<uint32_t adr>
-template<TIM_ral::ExternalTriggerPolarity value>
+template<TIM_ral::ExtTriggerPolarity value>
 void TIMx<adr>::setExternalTriggerPolarity()
 {
     uint32_t tmp = slaveModeControl().reg;
-    tmp &= ~((uint32_t)ExternalTriggerPolarity::notInverted << TIM_ral::SMCR_t::ETP);
+    tmp &= ~((uint32_t)ExtTriggerPolarity::notInverted << TIM_ral::SMCR_t::ETP);
     tmp |= ((uint32_t)value << TIM_ral::SMCR_t::ETP);
     slaveModeControl().reg = tmp;
 }

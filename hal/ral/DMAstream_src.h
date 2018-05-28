@@ -185,7 +185,30 @@ void DMAstream<adr>::EnableTransferCompleteInterrupt()
    SET(conf(), EN);
 }
 
+
+template<uint32_t adr>
+constexpr IRQn_Type DMAstream<adr>::IRQn()
+{
+   return
+      adr == DMA1_Channel1_BASE ? DMA1_Channel1_IRQn       :
+      adr == DMA1_Channel2_BASE ? DMA1_Channel2_3_IRQn     :
+      adr == DMA1_Channel3_BASE ? DMA1_Channel2_3_IRQn     :
+      adr == DMA1_Channel4_BASE ? DMA1_Channel4_5_6_7_IRQn :
+      adr == DMA1_Channel5_BASE ? DMA1_Channel4_5_6_7_IRQn : NonMaskableInt_IRQn;
+}
+
+
+template<> struct DMAn<DMA1_Channel1_BASE> { using type = DMA1; };
+template<> struct DMAn<DMA1_Channel2_BASE> : DMAn<DMA1_Channel1_BASE> {};
+template<> struct DMAn<DMA1_Channel3_BASE> : DMAn<DMA1_Channel1_BASE> {};
+template<> struct DMAn<DMA1_Channel4_BASE> : DMAn<DMA1_Channel1_BASE> {};
+template<> struct DMAn<DMA1_Channel5_BASE> : DMAn<DMA1_Channel1_BASE> {};
+
 #endif
+
+
+
+
 
 template<uint32_t adr>
 void DMAstream<adr>::Configure (DMAstream<adr>::Configure_t& c)

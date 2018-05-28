@@ -11,13 +11,13 @@ template<uint32_t adr>
 class TIMx
 {
 public:
-   using OnePulseMode            = TIM_ral::OnePulseMode;
-   using Trigger                 = TIM_ral::Trigger;
-   using SlaveMode               = TIM_ral::SlaveMode;
-   using ExternalTriggerPolarity = TIM_ral::ExternalTriggerPolarity;
-   using SelectionCompareMode    = TIM_ral::SelectionCompareMode;
-   using CompareMode             = TIM_ral::CompareMode;
-   using OutputPolarity          = TIM_ral::OutputPolarity;
+   using OnePulseMode         = TIM_ral::OnePulseMode;
+   using Trigger              = TIM_ral::Trigger;
+   using SlaveMode            = TIM_ral::SlaveMode;
+   using ExtTriggerPolarity   = TIM_ral::ExtTriggerPolarity;
+   using SelectionCompareMode = TIM_ral::SelectionCompareMode;
+   using CompareMode          = TIM_ral::CompareMode;
+   using OutputPolarity       = TIM_ral::OutputPolarity;
 
    static const uint32_t Base = adr;
 
@@ -28,42 +28,30 @@ public:
    static bool     isCount();
    static void     autoReloadEnable();
    static void     clockEnable();
-   template<SelectionCompareMode value, uint8_t channel>
-   static void     selectCompareMode();
-   template<CompareMode value, uint8_t channel>
-   static void     setCompareMode();
-   template<uint8_t channel>
-   static void     preloadEnable();
-   template<uint8_t channel>
-   static void     preloadDisable();
    static uint16_t getCounter();
    static uint16_t clearCounter();
-   template<SlaveMode value>
-   static void     setSlaveMode();
-   template<OutputPolarity value, uint8_t channel>
-   static void     setOutputPolarity();
-   template<Trigger value>
-   static void     setTrigger ();
-   template<OnePulseMode value>
-   static void     setOnePulseMode();
-   template<ExternalTriggerPolarity value>
-   static void     setExternalTriggerPolarity();
    static void     externalClockEnable();
    static void     externalClockDisable();
-   template <uint8_t channel>
-   static void     compareEnable ();   
-   template <uint8_t channel>
-   static void     compareDisable (); 
-   template <uint8_t channel>
-   static void     compareToggle ();  
-   template <uint8_t channel>
-   static bool     isCompareEnable ();
-   template <uint8_t channel>
-   static void     setCompareValue (uint32_t val);
    static void     setAutoReloadValue (uint32_t val);
    static void     setPrescaller (uint32_t val);
    static void     mainOutputEnable();
 
+
+   template<uint8_t channel>          static void preloadEnable();
+   template<uint8_t channel>          static void preloadDisable();
+   template<uint8_t channel>          static void compareEnable ();   
+   template<uint8_t channel>          static void compareDisable (); 
+   template<uint8_t channel>          static void compareToggle ();  
+   template<uint8_t channel>          static bool isCompareEnable ();
+   template<uint8_t channel>          static void setCompareValue (uint32_t val);
+   template<SlaveMode value>          static void setSlaveMode();
+   template<Trigger value>            static void setTrigger ();
+   template<OnePulseMode value>       static void setOnePulseMode();
+   template<ExtTriggerPolarity value> static void setExternalTriggerPolarity();
+
+   template<SelectionCompareMode value, uint8_t channel> static void selectCompareMode();
+   template<CompareMode value,          uint8_t channel> static void setCompareMode();
+   template<OutputPolarity value,       uint8_t channel> static void setOutputPolarity();
 
 
 protected:
@@ -98,7 +86,6 @@ private:
 /* STM32F4 STM32F0
 typedef struct
 {
-
    __IO uint32_t DCR;   // TIM DMA control register,            Address offset: 0x48
    __IO uint32_t DMAR;  // TIM DMA address for full transfer,   Address offset: 0x4C
    __IO uint32_t OR;    // TIM option register,                 Address offset: 0x50
@@ -114,11 +101,13 @@ using TIM3 = TIMx<TIM3_BASE>;
 
 #undef TIM14
 using TIM14 = TIMx<TIM14_BASE>;
+
 #if defined (STM32F030x6)
 #undef TIM16
 using TIM16 = TIMx<TIM16_BASE>;
 #undef TIM17
 using TIM17 = TIMx<TIM17_BASE>;
+
 #elif defined(STM32F405xx)
 #undef TIM2
 using TIM2 = TIMx<TIM2_BASE>;

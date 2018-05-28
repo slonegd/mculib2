@@ -74,7 +74,7 @@ auto counter = InputCounter<TIM1, PA9> (counterTimer);
 // уарт модбаса
 using RXpin = PA3;
 using TXpin = PA2;
-using RTSpin = PA5;
+using RTSpin = PA1;
 using LEDpin = BlueLed;
 const uint8_t bufSize = 30;
 using USART_ = USART<USART1, bufSize, RXpin, TXpin, RTSpin, LEDpin>;

@@ -43,12 +43,14 @@ public:
    
    
    
-   MBslave (
-      UART_& uart_,
-      Timer& timer_
-   ) : arInRegs{0}, arOutRegs{0}, arInRegsMin{0},arInRegsMax{0},
-      uart(uart_), timer(timer_),
-      inRegAdrForAction(InRegQty)
+   MBslave ( UART_& uart_, Timer& timer_)
+      : arInRegs    {0},
+        arOutRegs   {0},
+        arInRegsMin {0},
+        arInRegsMax {0},
+        uart        (uart_),
+        timer       (timer_),
+        inRegAdrForAction(InRegQty)
    { }
 
 

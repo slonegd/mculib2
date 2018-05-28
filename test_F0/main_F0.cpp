@@ -27,6 +27,13 @@ int main(void)
 
    buttons.push<But1>();
 
+   modbus.uart.init ( {
+      USART_::Boudrate::BR9600,
+      USART_::ParityEn::disable,
+      USART_::Parity::even,
+      USART_::StopBits::_1
+   } );
+
    while (1)
    {
       timers.update();

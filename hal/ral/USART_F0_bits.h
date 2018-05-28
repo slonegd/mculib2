@@ -30,6 +30,12 @@ struct CR1bits {
    __IO uint32_t res2   :3; // Bits 31:29 Reserved, must be kept at reset value
 };
 
+struct CR1position {
+   enum { UE = 0, RE, TE, IDLEIE, RXNEIE, TCIE, TXEIE, PEIE, PS, PCE, WAKE,
+      M0, MME, CMIE, OVER8, DEDT, DEAT = 21, RTOIE = 26, M1 = 28
+   };
+};
+
 enum StopBits       { _1 = 0b00, _2 = 0b10 };
 
 struct CR2bits {
@@ -54,6 +60,12 @@ struct CR2bits {
    __IO uint32_t ADD2     :4; // Bits 31:28 ADD[7:4]: Address of the USART node
 };
 
+struct CR2position {
+   enum { ADDM7 = 4, LBCL = 8, CPHA, CPOL, CLKEN, STOP, SWAP = 15,
+      RXINV, TXINV, DATAINV, MSBFIRST, ABREN, ABRMOD, RTOEN = 23, ADD1, ADD2 = 28
+   };
+};
+
 struct CR3bits {
    __IO bool     EIE    :1; // Bit 0 EIE: Error interrupt enable
    __IO uint32_t res1   :2; // Bits 2:1 Reserved, must be kept at reset value.
@@ -70,6 +82,10 @@ struct CR3bits {
    __IO bool     DEM    :1; // Bit 14 DEM: Driver enable mode
    __IO bool     DEP    :1; // Bit 15 DEP: Driver enable polarity selection
    __IO uint32_t res3   :16; // Bits 31:16 Reserved, must be kept at reset value.
+};
+
+struct CR3position {
+   enum { EIE = 0, HDSEL = 3, DMAR = 6, DMAT, RTSE, CTSE, CTSIE, ONEBIT, OVRDIS, DDRE, DEM, DEP };
 };
 
 struct RQRbits {
@@ -103,6 +119,12 @@ struct ISRbits {
    __IO uint32_t res3  :12; // Bits 31:20 Reserved, must be kept at reset value.
 };
 
+struct ISRposition {
+   enum { PE = 0, FE, NF, ORE, IDLE, RXNE, TC, TXE, CTSIF = 9,
+      CTS, RTOF, ABRE = 14, ABRF, BUSY, CMF, SBKF, RWU
+   };
+};
+
 struct ICRbits {
    __IO bool     PECF   :1; // Bit 0 PECF: Parity error clear flag
    __IO bool     FECF   :1; // Bit 1 FECF: Framing error clear flag
@@ -125,13 +147,13 @@ struct ICRposition {
 };
 
 
-struct CR1_t  : BitsRegistr<CR1bits>, Offset_t<0x00> {};
-struct CR2_t  : BitsRegistr<CR2bits>, Offset_t<0x04> {};
-struct CR3_t  : BitsRegistr<CR3bits>, Offset_t<0x08> {};
+struct CR1_t  : BitsRegistr<CR1bits>, Offset_t<0x00>, CR1position {};
+struct CR2_t  : BitsRegistr<CR2bits>, Offset_t<0x04>, CR2position {};
+struct CR3_t  : BitsRegistr<CR3bits>, Offset_t<0x08>, CR3position {};
 struct BRR_t  : DataRegistr,          Offset_t<0x0C> {};
 struct RTOR_t : DataRegistr,          Offset_t<0x14> {};
 struct RQR_t  : BitsRegistr<RQRbits>, Offset_t<0x18> {};
-struct ISR_t  : BitsRegistr<ISRbits>, Offset_t<0x1C> {};
+struct ISR_t  : BitsRegistr<ISRbits>, Offset_t<0x1C>, ISRposition {};
 struct ICR_t  : BitsRegistr<ICRbits>, Offset_t<0x20>, ICRposition {};
 struct RDR_t  : DataRegistr,          Offset_t<0x24> {};
 struct TDR_t  : DataRegistr,          Offset_t<0x28> {};

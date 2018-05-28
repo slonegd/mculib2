@@ -36,11 +36,19 @@ public:
    static constexpr uint32_t  Base = Adr;
    static constexpr Channels  DMAChannel();
    static constexpr IRQn_Type IRQn();
+   static constexpr PinConf_t PinConfigure();
+   static constexpr uint32_t  ReceiveDataAdr();
+   static constexpr uint32_t  TransmitDataAdr();
+
+   template<class RXpin>  static constexpr bool IsRXsupport();
+   template<class TXpin>  static constexpr bool IsTXsupport();
+   template<class RTSpin> static constexpr bool IsRTSsupport();
 
    static void ClockEnable();
    static void Enable (bool val);
    static void RXenable (bool val);
    static void TXenable (bool val);
+   static void RTSenable();
    static void DMAtxEnable();
    static void DMArxEnable();
    static void SetBoudRate (Boudrate val);
@@ -51,6 +59,14 @@ public:
    static bool IsIDLEinterrupt();
    static void ClearIDLEinterruptFlag();
    static void sendByte (uint8_t val);
+
+#if defined(STM32F030x6)
+   static void SetTimeOutBitQty (uint32_t val);
+   static void EnableReceiveTimeout();
+   static void EnableReceiveTimeoutInterupt();
+   static bool IsReceiveTimeoutInterrupt();
+   static void ClearReceiveTimeoutInterruptFlag();
+#endif
 
 
 protected:

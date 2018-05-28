@@ -77,6 +77,13 @@ enum class PinConf_t {
       PUPDR_t::PullResistor_t::No,
       AFR_t::AF              ::_1
    ),
+   AlternateFunc1HighSpeed = GPIO::MakeMask (
+      MODER_t::Mode_t        ::Alternate,
+      OTYPER_t::OutType_t    ::PushPull,
+      OSPEEDR_t::OutSpeed_t  ::High,
+      PUPDR_t::PullResistor_t::No,
+      AFR_t::AF              ::_1
+   ),
    AlternateFunc2 = GPIO::MakeMask (
       MODER_t::Mode_t        ::Alternate,
       OTYPER_t::OutType_t    ::PushPull,
@@ -98,4 +105,34 @@ enum class PinConf_t {
       PUPDR_t::PullResistor_t::No,
       AFR_t::AF              ::_5
    ),
+   AlternateFunc7 = GPIO::MakeMask (
+      MODER_t::Mode_t        ::Alternate,
+      OTYPER_t::OutType_t    ::PushPull,
+      OSPEEDR_t::OutSpeed_t  ::Low,
+      PUPDR_t::PullResistor_t::No,
+      AFR_t::AF              ::_7
+   ),
+   AlternateFunc7HighSpeed = GPIO::MakeMask (
+      MODER_t::Mode_t        ::Alternate,
+      OTYPER_t::OutType_t    ::PushPull,
+      OSPEEDR_t::OutSpeed_t  ::High,
+      PUPDR_t::PullResistor_t::No,
+      AFR_t::AF              ::_7
+   ),
+#if defined(STM32F405xx)
+   AlternateFunc8 = GPIO::MakeMask (
+      MODER_t::Mode_t        ::Alternate,
+      OTYPER_t::OutType_t    ::PushPull,
+      OSPEEDR_t::OutSpeed_t  ::Low,
+      PUPDR_t::PullResistor_t::No,
+      AFR_t::AF              ::_8
+   ),
+   AlternateFunc8HighSpeed = GPIO::MakeMask (
+      MODER_t::Mode_t        ::Alternate,
+      OTYPER_t::OutType_t    ::PushPull,
+      OSPEEDR_t::OutSpeed_t  ::High,
+      PUPDR_t::PullResistor_t::No,
+      AFR_t::AF              ::_8
+   ),
+#endif
 };

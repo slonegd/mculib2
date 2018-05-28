@@ -21,15 +21,13 @@ public:
    using DataSize      = DMA_ral::DataSize;
 #if defined(STM32F405xx)
    using Channels = DMA_ral::Channels;
-   using DMA = typename DMAn<Base>::type;
-#elif defined(STM32F030x6)
-   using DMA = DMA1;
 #endif
+   using DMA = typename DMAn<Base>::type;
+
 
    static constexpr int stream();
-#if defined(STM32F405xx)
    static constexpr IRQn_Type IRQn();
-#endif
+
 
    struct Configure_t { 
       DataDirection dataDir;
