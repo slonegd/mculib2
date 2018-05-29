@@ -21,12 +21,14 @@ int main(void)
 
    PortsInit ();
 
-   modbus.uart.init ( {
+   modbus.init ( {
       USART_::Boudrate::BR9600,
       USART_::ParityEn::disable,
       USART_::Parity::even,
       USART_::StopBits::_1
    } );
+   modbus.address = 1;
+
 
    // таймер с шим
    // прескаллер спецом, чтбы было видно на индикаторе высокие частоты
@@ -46,8 +48,8 @@ int main(void)
    txTimer.setTimeAndStart  (100);
    lcdTimer.setTimeAndStart (5);
 
-   //для отладки
-   modbus.uart.disableRx();
+   // для отладки
+   // modbus.uart.disableRx();
 
    char string[] = "ПрЁ";
    string[1] = 'i';
@@ -58,26 +60,13 @@ int main(void)
    while (1)
    {
       timers.update();
+      modbus (reaction);
 
       N = encoder.getCounter();
 
       if (std::is_same<PWMout,Rled>::value)
          zoomer();
 
-      if ( modbus.incomingMessage() ) {
-         modbus(mbRegInAction);
-         modbus.foreachRegForActions (mbRegInAction);
-      }
-
-      if ( txTimer.event() ) {
-         modbus.uart.buffer[4] = string[0];
-         modbus.uart.buffer[5] = string[1];
-         modbus.uart.buffer[6] = string[2];
-         modbus.uart.buffer[7] = size(string);
-         modbus.uart.buffer[8] = StaticAssertTypeEq<PA2,TXpin>();
-         modbus.uart.buffer[9] = i;
-         modbus.uart.startTX(15);
-      }
 
       if ( lcdTimer.event() ) {
          LCD.setLine("0123456789abcdef",0);
@@ -128,10 +117,10 @@ extern "C" void SysTick_Handler()
 
 extern "C" void USART1_IRQHandler()
 {
-   modbus.idleHandler();
+   modbus.recieveInterruptHandler();
 }
 
 extern "C" void DMA1_Stream6_IRQHandler()
 {
-   modbus.uart.txCompleteHandler();
+   modbus.transmitInterruptHandler();
 }

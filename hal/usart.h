@@ -34,7 +34,8 @@ public:
       USART_::template IsRTSsupport<RTS>(),
       "выбранный вывод не поддерживает функцию RTS"
    );
-   volatile uint8_t buffer[bufSize];
+   // volatile uint8_t buffer[bufSize];
+   uint8_t buffer[bufSize];
 
    using DMArx    = typename USART_::DMArx;
    using DMAtx    = typename USART_::DMAtx;
@@ -50,7 +51,7 @@ public:
    };
 
 
-   void init (Settings set);
+   void init (const Settings& set);
    void DMAenableRX();
    void disableRx();
    uint32_t byteQtyRX();
@@ -76,38 +77,12 @@ private:
 
 
 
-// void UARTInit (	struct UARTSettingsStruc Set,
-// 				struct UartBufSt* pBuf )
-// {
-
-
-	
-// 	/**************************************************************************
-// 	 * прерывания
-// 	 */
-// 	//по молчанию на прием, если признак конца пакета по модбасу
-// 	if (Set.PackEnd == PE_MBRTU) {
-// 		UARTSetTimeOutBitQty (42);	// 3.5 слова в битах
-// 		UARTEnableReceiveTimeOut();
-// 		UARTEnableInteruptReceiveTimeOut();
-
-// //		SET_MASK (USART1->CR1, USART_CR1_RXNEIE_Msk);
-// //		SET_MASK (USART1->RQR, USART_RQR_RXFRQ_Msk);
-
-// 		NVIC_EnableIRQ(USART1_IRQn);
-// 	}
-// 	//по дма на отправку
-// 	DMAEnableInterruptTransferComplete(DMA_UART_TRANSMIT);
-// 	NVIC_EnableIRQ(DMA1_Channel2_3_IRQn);
-
-// }//void UARTInit()	
-
 
 
 
 
 template <class USART_, uint32_t bufSize, class RX, class TX, class RTS, class LED>
-void USART<USART_, bufSize, RX, TX, RTS, LED>::init (Settings set)
+void USART<USART_, bufSize, RX, TX, RTS, LED>::init (const Settings& set)
 {
    // пины
    Pins<RX,TX,RTS>::template configure<USART_::PinConfigure()>();

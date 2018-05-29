@@ -27,12 +27,13 @@ int main(void)
 
    buttons.push<But1>();
 
-   modbus.uart.init ( {
+   modbus.init ( {
       USART_::Boudrate::BR9600,
       USART_::ParityEn::disable,
       USART_::Parity::even,
       USART_::StopBits::_1
    } );
+   modbus.address = 1;
 
    while (1)
    {
@@ -41,7 +42,7 @@ int main(void)
       buttons();
       counter();
       // ssi();
-      // modbus(mbRegInAction);
+      modbus (reaction);
       
       f = counter.get();
 

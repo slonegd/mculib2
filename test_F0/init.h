@@ -89,12 +89,12 @@ struct OutRegs {
    uint16_t reg0;
    uint16_t reg1;
 };
-auto modbus = MBslave<InRegs, OutRegs, USART_> (uart, mbTimer);
+auto modbus = MBslave<InRegs, OutRegs, USART_> (uart);
 // действия на входные регистры модбаса
 #define ADR(reg)    GET_ADR(InRegs, reg)
-inline void mbRegInAction ()
+inline void reaction (uint16_t regAdr)
 {
-   switch ( modbus.getInRegAdrForAction() ) {
+   switch ( regAdr ) {
       case ADR(reg0):
          ; // сделать чтото
          break;

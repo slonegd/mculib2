@@ -100,8 +100,8 @@ MCU_F0 = $(CPU_F0) -mthumb $(FPU_F0) $(FLOAT-ABI_F0)
 ASFLAGS_F4 = $(MCU_F4) $(OPT) -Wall -fdata-sections -ffunction-sections
 ASFLAGS_F0 = $(MCU_F0) $(OPT) -Wall -fdata-sections -ffunction-sections
 
-CFLAGS_F4 = $(MCU_F4) $(C_DEFS_F4) $(C_INCLUDES) $(C_INCLUDES_F4) $(OPT) -Wall -fdata-sections -ffunction-sections
-CFLAGS_F0 = $(MCU_F0) $(C_DEFS_F0) $(C_INCLUDES) $(C_INCLUDES_F0) $(OPT) -Wall -fdata-sections -ffunction-sections  
+CFLAGS_F4 = $(MCU_F4) $(C_DEFS_F4) $(C_INCLUDES) $(C_INCLUDES_F4) $(OPT) -Wall -fdata-sections -ffunction-sections -fno-exceptions
+CFLAGS_F0 = $(MCU_F0) $(C_DEFS_F0) $(C_INCLUDES) $(C_INCLUDES_F0) $(OPT) -Wall -fdata-sections -ffunction-sections -fno-exceptions
 
 CFLAGS_F4 += -g -gdwarf-2 
 CFLAGS_F0 += -g -gdwarf-2 
