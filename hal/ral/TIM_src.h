@@ -86,7 +86,7 @@ void TIMx<adr>::preloadDisable()
                             channel == 3 or channel == 4 ? 1 : 0;
    constexpr uint8_t position = channel == 1 or channel == 3 ? 3 :
                                 channel == 2 or channel == 4 ? 11: 32;
-   captureCompareMode().regs[regN] &= ~((uint32_t)0b1 << position);
+   captureCompareMode().reg[regN] &= ~((uint32_t)0b1 << position);
 }
 
 template<uint32_t adr>

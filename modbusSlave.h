@@ -191,7 +191,9 @@ void MBslave<In,Out,UART>::operator() (function reaction)
       } step = Step::AddrCheck;
       uint32_t byteQty {uart.byteQtyRX()};
       uint16_t crc {0};
-      uint16_t LowAddr{0}, HighAddr{0}, RegQty{0};
+      uint16_t LowAddr{0};
+      uint16_t HighAddr{0};
+      uint16_t RegQty{0};
       bool allGood = true;
       uint16_t* registrValue = nullptr;
       while (step) {
@@ -249,7 +251,7 @@ void MBslave<In,Out,UART>::operator() (function reaction)
             break;
 
          case Step::RegCheck16:
-            if (byteQty != RegQty * 2 + 9) {	//длина пакета не соответсвует спецификации ModBus
+            if (byteQty != (uint32_t)RegQty * 2 + 9) {	//длина пакета не соответсвует спецификации ModBus
                step = Step::Done;
             } else if (HighAddr > (InRegQty - 1)) {
                error = ErrorCode::RegErr;

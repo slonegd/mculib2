@@ -46,6 +46,6 @@ constexpr uint32_t bitBandAdr() { return
 }
 
 // макрос для упрощения работы с предыдущей функцией
-#define BIT_BAND(reg, bit) *(uint32_t*)bitBandAdr<Base, std::remove_reference<decltype(reg)>::type::Offset, std::remove_reference<decltype(reg)>::type::bit>()
+#define BIT_BAND(reg, bit) *(uint32_t*)bitBandAdr<Base, std::decay<decltype(reg)>::type::Offset, std::decay<decltype(reg)>::type::bit>()
 
 #define BIT_BAND_NEXT(current_ref) *(reinterpret_cast<volatile uint32_t*>(&current_ref) + 1)
