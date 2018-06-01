@@ -13,26 +13,8 @@
 
 #include "usart.h"
 #include "timers.h"
+#include "crc.h"
 #include <cstring>
-
-// это с форума ОВЕНа - для ARM
-uint16_t crc16(uint8_t* data, uint8_t length)
-{
-   int j;
-   uint16_t reg_crc = 0xFFFF;
-   while(length--)	{
-      reg_crc ^= *data++;
-      for(j = 0; j < 8; j++) {
-         if (reg_crc & 0x01) {
-            reg_crc=(reg_crc>>1) ^ 0xA001; // LSB(b0)=1
-         } else {
-            reg_crc=reg_crc>>1;
-         }	
-      }
-   }
-   return reg_crc;
-}
-
 
 
 template <class InRegs_t, class OutRegs_t, class UART>
@@ -61,9 +43,6 @@ public:
    };
 
 
-   
-
-
 #if defined(STM32F405xx)
    MBslave ( UART& uart, Timer& timer );
 #elif defined(STM32F030x6)
@@ -77,19 +56,17 @@ public:
    void recieveInterruptHandler();
 
    // вызываеться в прерывании по передаче данных
-   // для серии А4 DMAn_Streamx_IRQHandler
+   // для серии F4 DMAn_Streamx_IRQHandler
    // где x - номер канала ДМА, n - номер ДМА
    void transmitInterruptHandler();
 
    // обрабатывает поступивший запрос, по необходимости формирует ответ
    // если надо ответить, то переводит уарт на отправку зажигает индикатор
    // если ответа не надо, то переводит уарт на приём
-   // function f - функция, описывающая реакцию на изменение входных регистров
-   // единственный параметр function f - адрес входного регистра
+   // function reaction - функция, описывающая реакцию на изменение входных регистров
+   // единственный параметр function - адрес входного регистра
    template <class function>
    void operator() (function reaction);
-
-
 
 
 
@@ -101,7 +78,13 @@ private:
    bool endMessage;
 };
 
+/// для определения адреса регистра по его положению в структуре
 #define GET_ADR(struct, reg)     (offsetof(struct, reg) / 2)
+
+
+
+
+
 
 
 
@@ -149,6 +132,8 @@ void MBslave<In,Out,UART>::init (const typename UART::Settings& val)
 
 
 
+
+
 template <class In, class Out, class UART>
 void MBslave<In,Out,UART>::recieveInterruptHandler()
 {
@@ -156,12 +141,12 @@ void MBslave<In,Out,UART>::recieveInterruptHandler()
    if ( uart.idleHandler() )
       timer.start();
 #elif defined(STM32F030x6)
-   if ( UART::IsReceiveTimeoutInterrupt() ) {
+   if ( uart.rxTimeOutHandler() )
       endMessage = true;
-      UART::ClearReceiveTimeoutInterruptFlag();
-   }
 #endif
 }
+
+
 
 
 
@@ -170,6 +155,8 @@ void MBslave<In,Out,UART>::transmitInterruptHandler()
 {
    uart.txCompleteHandler();
 }
+
+
 
 
 
@@ -199,11 +186,12 @@ void MBslave<In,Out,UART>::operator() (function reaction)
          RegCheck03,
          RegCheck16,
          ValCheck,
-         ErrAnswer
+         ErrSet,
+         Answer
       } step = Step::AddrCheck;
-      uint8_t byteQty = uart.byteQtyRX();
-      uint16_t crc = 0;
-      uint16_t LowAddr, HighAddr, RegQty;
+      uint32_t byteQty {uart.byteQtyRX()};
+      uint16_t crc {0};
+      uint16_t LowAddr{0}, HighAddr{0}, RegQty{0};
       bool allGood = true;
       uint16_t* registrValue = nullptr;
       while (step) {
@@ -222,8 +210,8 @@ void MBslave<In,Out,UART>::operator() (function reaction)
 
          case Step::CRCcheck:
             crc = crc16 (uart.buffer, byteQty - 2);
-            if (    crc       != uart.buffer[byteQty-2]
-                or (crc >> 8) != uart.buffer[byteQty-1] )
+            if (   (uint8_t) crc       != uart.buffer[byteQty-2]
+                or (uint8_t)(crc >> 8) != uart.buffer[byteQty-1] )
             {
                step = Step::CRCcheck;
             } else {
@@ -232,37 +220,40 @@ void MBslave<In,Out,UART>::operator() (function reaction)
             break;
 
          case Step::FuncCheck:
+            LowAddr = (uint16_t)uart.buffer[2] << 8 | uart.buffer[3];
+            RegQty  = (uint16_t)uart.buffer[4] << 8 | uart.buffer[5];
+            HighAddr = LowAddr + RegQty - 1;	
             if (uart.buffer[1] == 3)
                step = Step::RegCheck03;
             else if (uart.buffer[1] == 16)
                step = Step::RegCheck16;
             else {
                error = ErrorCode::FuncErr;
-               step = Step::ErrAnswer;
+               step = Step::ErrSet;
             }
             break;	
 
          case Step::RegCheck03:
-            LowAddr = (uint16_t)uart.buffer[2] << 8 | uart.buffer[3];
-            RegQty  = (uint16_t)uart.buffer[4] << 8 | uart.buffer[5];
-            HighAddr = LowAddr + RegQty - 1;	
             if (byteQty != 8) { //длина пакета не соответсвует спецификации ModBus
                step = Step::Done;
             } else if (HighAddr > (OutRegQty - 1)) {
                error = ErrorCode::RegErr;
-               step = Step::ErrAnswer;
+               step = Step::ErrSet;
+            } else {
+               byteQty =  RegQty * 2;
+               uart.buffer[2] = byteQty;
+               registrValue = reinterpret_cast<uint16_t*>(uart.buffer + 3);
+               std::memcpy (registrValue, arOutRegs + LowAddr, byteQty);
+               byteQty += 3;
             }
             break;
 
          case Step::RegCheck16:
-            LowAddr = (uint16_t)uart.buffer[2] << 8 | uart.buffer[3];
-            RegQty  = (uint16_t)uart.buffer[4] << 8 | uart.buffer[5];
-            HighAddr = LowAddr + RegQty - 1;
             if (byteQty != RegQty * 2 + 9) {	//длина пакета не соответсвует спецификации ModBus
                step = Step::Done;
             } else if (HighAddr > (InRegQty - 1)) {
                error = ErrorCode::RegErr;
-               step = Step::ErrAnswer;
+               step = Step::ErrSet;
             } else {
                step = Step::ValCheck;
             }
@@ -276,137 +267,36 @@ void MBslave<In,Out,UART>::operator() (function reaction)
                        or arInRegsMax[i+LowAddr] == 0
                );
             if (allGood) {
-               std::memcpy (arInRegs, registrValue + LowAddr, RegQty * 2);
+               std::memcpy (arInRegs + LowAddr, registrValue, RegQty * 2);
                while (LowAddr++ <= HighAddr)
                   reaction(LowAddr);
+               byteQty = 6;
+               step = Step::Answer;
+            } else {
+               error = ErrorCode::ValueErr;
+               step = Step::ErrSet;
             }
+            break;
+
+         case Step::ErrSet:
+            uart.buffer[1] |= 0b10000000;
+            uart.buffer[2]  = error;
+            byteQty = 3;
+            step = Step::Answer;
+            break;
+
+         case Step::Answer:
+            crc = crc16 (uart.buffer, byteQty);
+            uart.buffer[byteQty++] = crc;
+            uart.buffer[byteQty++] = crc >> 8;
+            uart.startTX (byteQty);
+            step = Step::Done;
             break;
 
          case Step::Done:
             break;
          } // switch (step) {
       } // while (step) {
-
-
    } // if (endMessage) {
 }
 
-   //  uint16_t LowAddr = 0;
-   //  uint16_t RegQty = 0;
-   //  uint16_t HighAddr = 0;
-   //  uint16_t RegVal[QTY_IN_REG];
-   //  uint16_t CRC;
-   //  uint8_t CRC1st;
-   //  uint8_t CRC2nd;
-
-   //  enum MBSlaveStep{	//по порядку в switch
-   //      StartCheck,
-   //      MinMesCheck,
-   //      AddrCheck,
-   //      FuncCheck,
-   //      RegCheck,
-   //      ValueCheck,
-   //      CRCCheck,
-   //      AnswerErr,
-   //      AnswerMB03,
-   //      AnswerMB16,
-   //      AnswerCRC,
-   //      FuncDone,
-   //  } Step = StartCheck;
-
-        
-   //  while (Step!=FuncDone) {
-   //      switch (Step) {
-
-   //      case RegCheck:
-
-   //      case ValueCheck:
-   //          if (MBFUNC16) {
-   //              bool AllGood;
-   //              AllGood = true;
-   //              for (uint16_t i = 0; i < RegQty; i++) {
-   //                  RegVal[i] = (uint16_t)Buf->Buf[i*2+7] << 8 | Buf->Buf[i*2+8];
-   //                  AllGood = AllGood && RegVal[i] >= Reg->RegInMinVal[i+LowAddr]
-   //                                  && (RegVal[i] <= Reg->RegInMaxVal[i+LowAddr] 
-   //                                      || Reg->RegInMaxVal[i+LowAddr] == 0);
-   //              }
-   //              Err = AllGood ? Err : ValueErr;
-   //              Step = CRCCheck;
-   //          } else {
-   //              Step=CRCCheck;
-   //          }
-   //          break;	
-   //      case CRCCheck:
-   //          CRC = crc16(&Buf->Buf[0], Buf->QtyByteRxTx - 2);
-   //          CRC1st = CRC % 256;
-   //          CRC2nd = CRC / 256;
-   //          if ((CRC1st != Buf->Buf[Buf->QtyByteRxTx-2]) || (CRC2nd != Buf->Buf[Buf->QtyByteRxTx-1])) {
-   //              Buf->EndMes = false;
-   //              Buf->QtyByteRxTx = 0;
-   //              Step = FuncDone;
-   //          } else {
-   //              if (Err != NoErr) {
-   //                  Step = AnswerErr;
-   //              } else if (MBFUNC03) {
-   //                  Step = AnswerMB03;
-   //              } else if (MBFUNC16) {
-   //                  Step = AnswerMB16;
-   //              } else {
-   //                  Step=FuncDone; 
-   //              }
-   //          }	
-   //          break;	
-   //      case AnswerErr:
-   //          if (ALLADDR) {
-   //              Buf->EndMes = false;
-   //              Buf->QtyByteRxTx = 0;
-   //              Step = FuncDone; 
-   //          } else {
-   //              SetBit(Buf->Buf[1], 7);	//из спецификации MODBUS
-   //              Buf->Buf[2] = Err;
-   //              Buf->NeedSend = 3;		//адрес, функция, код ошибки
-   //              Step = AnswerCRC; 
-   //          }
-   //          break;	
-   //      case AnswerMB03:
-   //          if (ALLADDR) {
-   //              Buf->EndMes = false;
-   //              Buf->QtyByteRxTx = 0;
-   //              Step = FuncDone;
-   //          } else {
-   //              Buf->Buf[2] = RegQty * 2;
-   //              for (uint16_t i = 0; i < RegQty; i++) {
-   //                  Buf->Buf[2*i+3] = (uint8_t)(Reg->RegOut[LowAddr+i] >> 8);
-   //                  Buf->Buf[2*i+4] = (uint8_t)Reg->RegOut[LowAddr+i];	
-   //              }
-   //              Buf->NeedSend = 3 + Buf->Buf[2];	//адрес, функция, qty байт данных, данные (в количестве qty	байт)
-   //              Step = AnswerCRC;
-   //          }
-   //          break;
-   //      case AnswerMB16:
-   //          memcpy( (void*)(Reg->RegIn + LowAddr),
-   //                  (void*)RegVal,
-   //                  (size_t)(RegQty*2)
-   //          );
-   //          if (ALLADDR) {
-   //              Buf->EndMes = false;
-   //              Buf->QtyByteRxTx = 0;
-   //              Step = FuncDone;
-   //          } else {
-   //              Buf->NeedSend = 6;	//ответ как запрос, только обрезаем данные
-   //              Step = AnswerCRC;
-   //          }
-   //          break;	
-   //      case AnswerCRC:
-   //          CRC = crc16(&Buf->Buf[0], Buf->NeedSend);
-   //          Buf->Buf[Buf->NeedSend] = CRC % 256;
-   //          Buf->Buf[Buf->NeedSend+1] = CRC / 256;
-   //          Buf->NeedSend = Buf->NeedSend + 2;
-   //          Buf->EndMes = false;
-   //          Buf->QtyByteRxTx = 0;
-   //          Step = FuncDone;
-   //          break;
-   //      case FuncDone:
-   //          break;											
-   //      }//switch (Step) 
-   //  }//while (Step != FuncDone) 

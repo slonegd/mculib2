@@ -83,9 +83,9 @@ protected:
    static volatile MakeRef (RTOR_t, recieverTmeout );
    static volatile MakeRef (RQR_t,  request );
    static volatile MakeRef (ISR_t,  interrupt );
-   static volatile MakeRef (ISR_t,  clear );
-   static volatile MakeRef (ISR_t,  receiveData );
-   static volatile MakeRef (ISR_t,  transmitData );
+   static volatile MakeRef (ICR_t,  clear );
+   static volatile MakeRef (RDR_t,  receiveData );
+   static volatile MakeRef (TDR_t,  transmitData );
 #endif
 #undef MakeRef
 

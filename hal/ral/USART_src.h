@@ -1,7 +1,7 @@
 #pragma once
+
 #include <type_traits>
 
-// пока тут всё для f4 серии, а надо бы сначала для f0 сделать
 #if defined(STM32F405xx) or defined(STM32F030x6)
 
 

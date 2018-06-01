@@ -19,10 +19,12 @@ template<class ADC_, class PIN, uint16_t bufSize,
 class ADCaverage : private ADC_
 {
 public:
-   using Channels = DMA_ral::CR_t::Channels;
-   using Clock = typename ADC_::Clock;
+   using Clock      = typename ADC_::Clock;
    using Resolution = typename ADC_::Resolution;
    using SampleTime = typename ADC_::SampleTime;
+#if defined(STM32F405xx)
+   using Channels   = typename DMA_ral::Channels;
+#endif
 
    // mul - множитель для вычисления среднего
    // div - частное для вычисления среднего
@@ -35,7 +37,7 @@ public:
    // расчитывает сумму всех элементов буфера
    uint32_t computeSum();
    // возвращает ранее рассчитаную сумму буфера
-   uint32_t getSum()    { return sum; }
+   uint32_t getSum()         { return sum; }
    uint32_t computeAverage() { avg = computeSum() * mul / div / bufSize; return avg; }
    uint32_t getAverage()     { return avg; }
 
@@ -113,7 +115,6 @@ template<class ADC_, class PIN, uint16_t bufSize, class DMA_>
 void ADCaverage<ADC_, PIN, bufSize, DMA_>::
 init(Clock clock, Resolution resolution, SampleTime sampleTime)
 {
-   PIN::Port::ClockEnable();
    CONFIGURE_PIN (PIN, AnalogInput);
 
    ADC_::ClockEnable();

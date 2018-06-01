@@ -68,7 +68,7 @@ volatile auto SysTick_d = (SysTick_t*) SysTick;
 
 inline void makeDebugVar (void)
 {
-    RCC_d->CR_t::bits.dcb1 = 0;
+    RCC_d->makeDebugVar();
     FLASH_d->makeDebugVar();
     GPIOA_d->BSRR_t::reg = 0;
     GPIOB_d->BSRR_t::reg = 0;

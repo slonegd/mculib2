@@ -37,7 +37,7 @@ int main(void)
 
    while (1)
    {
-      timers.update();
+      timers();
       zoomer();
       buttons();
       counter();
@@ -51,7 +51,7 @@ int main(void)
 
 
       if ( spiTimer.event() ) {
-         flash.update();
+         flash();
          spi.data.time++;
          spi.startTx();
       }

@@ -70,7 +70,7 @@ public:
         TickCount++;
     }
     // обновляет все созданные структуры Timer, если необходимо
-    inline void update (void)
+    inline void operator() ()
     {
         if (TickCount > 0) {
             for (uint8_t i = 0; i < qty; i++) {

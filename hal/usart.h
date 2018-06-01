@@ -61,7 +61,9 @@ public:
    bool isCompleteTX();
    bool idleHandler();
    void txCompleteHandler();
-
+#if defined(STM32F030x6)
+   bool rxTimeOutHandler();
+#endif
 
 
 private:
@@ -227,6 +229,23 @@ void USART<USART_, bufSize, RX, TX, RTS, LED>::txCompleteHandler()
       DMAtx::ClearFlagTransferCompleteInterrupt();
    }
 }
+
+
+
+#if defined(STM32F030x6)
+
+   bool rxTimeOutHandler();
+template <class USART_, uint32_t bufSize, class RX, class TX, class RTS, class LED>
+bool USART<USART_, bufSize, RX, TX, RTS, LED>::rxTimeOutHandler()
+{
+   bool tmp = USART_::IsReceiveTimeoutInterrupt();
+   if (tmp) {
+      USART_::ClearReceiveTimeoutInterruptFlag();
+   }
+   return tmp;
+}
+   
+#endif
 
 
 

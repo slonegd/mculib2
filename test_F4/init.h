@@ -114,15 +114,15 @@ extern "C" void CLKinit (void)
    FLASH_t::SetLatency (FLASH_t::Latency::_5);
    RCC_t::HSEon();
    RCC_t::waitHSEready();
-   RCC_t::setAHBprescaler (RCC_t::AHBprescaler::AHBnotdiv);
-   RCC_t::setAPB1prescaler (RCC_t::APBprescaler::APBdiv4);
-   RCC_t::setAPB2prescaler (RCC_t::APBprescaler::APBdiv2);
-   RCC_t::systemClockSwitch (RCC_t::SystemClockSwitch::CS_PLL);
+   RCC_t::setAHBprescaler (RCC_ral::AHBprescaler::AHBnotdiv);
+   RCC_t::setAPB1prescaler (RCC_ral::APBprescaler::APBdiv4);
+   RCC_t::setAPB2prescaler (RCC_ral::APBprescaler::APBdiv2);
+   RCC_t::systemClockSwitch (RCC_ral::SystemClockSwitch::CS_PLL);
    RCC_t::setPLLM<4>();
    RCC_t::setPLLN<168>();
-   RCC_t::setPLLP (RCC_t::PLLPdiv::PLLdiv2);
+   RCC_t::setPLLP (RCC_ral::PLLPdiv::PLLdiv2);
 //  RCC_t::setPLLQ<4>();
-   RCC_t::setPLLsource (RCC_t::PLLsource::sHSE);
+   RCC_t::setPLLsource (RCC_ral::PLLsource::sHSE);
    RCC_t::PLLon();
    RCC_t::waitPLLready();
 }

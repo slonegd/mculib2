@@ -31,7 +31,7 @@ public:
 
    // метод должен периодически вызываться в программе
    // запускает запись во флэш, если данные изменились
-   void update();
+   void operator() ();
 
 
    // конструктор принимает значения, которые необходимо записать
@@ -153,7 +153,7 @@ bool Flash<Data,sector>::readFromFlash ()
 
 
 template <class Data, uint8_t sector>
-void Flash<Data,sector>::update ()
+void Flash<Data,sector>::operator() ()
 {
    // реализация автоматом
    enum State {

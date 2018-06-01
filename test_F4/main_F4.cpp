@@ -59,7 +59,7 @@ int main(void)
    
    while (1)
    {
-      timers.update();
+      timers();
       modbus (reaction);
 
       N = encoder.getCounter();
@@ -78,7 +78,7 @@ int main(void)
          Leds::Write(i++);
 
       if ( butTimer.event() ) {
-         flash.update();
+         flash();
          static bool butActDone = false;
          if ( !Button::IsSet() ) {
             butActDone = false;
