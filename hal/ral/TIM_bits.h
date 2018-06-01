@@ -8,15 +8,15 @@ enum OnePulseMode { notStopped  = 0b0, counterStop };
 enum Direction { up  = 0b0, down };
 
 struct CR1bits {
-   __IO bool CEN         :1; // Bit 0 CEN: Counter enable
-   __IO uint32_t UDIS    :1; // Bit 1 UDIS: Update disable
-   __IO uint32_t URS     :1; // Bit 2 URS: Update request source
-   __IO OnePulseMode OPM :1; // Bit 3 OPM: One-pulse mode
-   __IO Direction DIR    :1; // Bit 4 DIR: Direction
-   __IO uint32_t CMS     :2; // Bits 6:5 CMS: Center-aligned mode selection
-   __IO bool ARPE        :1; // Bit 7 ARPE: Auto-reload preload enable
-   __IO uint32_t CKD     :2; // Bits 9:8 CKD: Clock division
-   __IO uint32_t res     :22; // Bits 31:10 Reserved, must be kept at reset value.
+   __IO bool         CEN  :1; // Bit 0 CEN: Counter enable
+   __IO uint32_t     UDIS :1; // Bit 1 UDIS: Update disable
+   __IO uint32_t     URS  :1; // Bit 2 URS: Update request source
+   __IO OnePulseMode OPM  :1; // Bit 3 OPM: One-pulse mode
+   __IO Direction    DIR  :1; // Bit 4 DIR: Direction
+   __IO uint32_t     CMS  :2; // Bits 6:5 CMS: Center-aligned mode selection
+   __IO bool         ARPE :1; // Bit 7 ARPE: Auto-reload preload enable
+   __IO uint32_t     CKD  :2; // Bits 9:8 CKD: Clock division
+   __IO uint32_t     res  :22; // Bits 31:10 Reserved, must be kept at reset value.
 };
 
 struct CR1position {

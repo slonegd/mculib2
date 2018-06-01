@@ -47,7 +47,7 @@
                 "/usr/include/x86_64-linux-gnu/c++/5"
             ],
             "defines": [
-               "STM32F030x6"
+                "STM32F030x6"
             ],
             "intelliSenseMode": "clang-x64",
             "browse": {
@@ -96,5 +96,5 @@
             }
         }
     ],
-    "version": 4
+    "version": 3
 }
