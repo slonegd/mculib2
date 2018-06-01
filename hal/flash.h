@@ -21,14 +21,9 @@
 
 // для STM32F0 sector на самом деле page из refmanual
 template <class DATA, uint8_t sector>
-class Flash 
+class Flash : public DATA
 {
 public:
-   // обязательно должен быть первым
-   // потому что использую this как указатель к структуре
-   DATA data;
-
-
    // метод должен периодически вызываться в программе
    // запускает запись во флэш, если данные изменились
    void operator() ();
@@ -48,7 +43,7 @@ public:
       );
       FLASH_t::EndOfProgInterruptEn(); // уже не помню зачем это
       if ( !readFromFlash() ) {
-         memcpy (&data, &d, sizeof(DATA));
+         memcpy (this, &d, sizeof(DATA));
       }
    }
 

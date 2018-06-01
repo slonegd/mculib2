@@ -139,9 +139,9 @@ init(Clock clock, Resolution resolution, SampleTime sampleTime)
    conf.circularMode = true;
    DMA_::Configure (conf);
 
+   DMA_::Enable();
    Enable();
    ADC_::Start();
-   DMA_::Enable();
 }
 
 

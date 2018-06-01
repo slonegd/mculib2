@@ -97,7 +97,7 @@ private:
 
 #if defined(STM32F405xx)
 template <class In, class Out, class UART>
-MBslave<In,Out,UART>::MBslave ( UART& uart, Timer& timer)
+MBslave<In,Out,UART>::MBslave (UART& uart, Timer& timer)
    : address     {1},
      arInRegs    {0},
      arOutRegs   {0},
@@ -109,7 +109,7 @@ MBslave<In,Out,UART>::MBslave ( UART& uart, Timer& timer)
 { }
 #elif defined(STM32F030x6)
 template <class In, class Out, class UART>
-MBslave<In,Out,UART>::MBslave ( UART& uart)
+MBslave<In,Out,UART>::MBslave (UART& uart)
    : address     {1},
      arInRegs    {0},
      arOutRegs   {0},
@@ -119,6 +119,7 @@ MBslave<In,Out,UART>::MBslave ( UART& uart)
      endMessage  {false}
 { }
 #endif
+
 
 
 
