@@ -6,70 +6,54 @@
 #include "stm32f4xx.h"
 #endif
 
-struct MODER_t
-{
-   enum Mode_t {
-      Input     = 0b00,
-      Output    = 0b01,
-      Alternate = 0b10,
-      Analog    = 0b11
-   };
-   struct Bits {
-      volatile Mode_t MODER0	:2;
-      volatile Mode_t MODER1	:2;
-      volatile Mode_t MODER2	:2;
-      volatile Mode_t MODER3	:2;
-      volatile Mode_t MODER4	:2;
-      volatile Mode_t MODER5	:2;
-      volatile Mode_t MODER6	:2;
-      volatile Mode_t MODER7	:2;
-      volatile Mode_t MODER8	:2;
-      volatile Mode_t MODER9	:2;
-      volatile Mode_t MODER10	:2;
-      volatile Mode_t MODER11	:2;
-      volatile Mode_t MODER12	:2;
-      volatile Mode_t MODER13	:2;
-      volatile Mode_t MODER14	:2;
-      volatile Mode_t MODER15	:2;        
-   };
-   union {
-      volatile Bits bits;
-      volatile uint32_t reg;
-   };
+namespace GPIO_ral {
+   enum  Mode_t {Input = 0b00, Output = 0b01, Alternate = 0b10, Analog = 0b11};
+
+struct MODERbits {
+   __IO Mode_t MODER0	:2;
+   __IO Mode_t MODER1	:2;
+   __IO Mode_t MODER2	:2;
+   __IO Mode_t MODER3	:2;
+   __IO Mode_t MODER4	:2;
+   __IO Mode_t MODER5	:2;
+   __IO Mode_t MODER6	:2;
+   __IO Mode_t MODER7	:2;
+   __IO Mode_t MODER8	:2;
+   __IO Mode_t MODER9	:2;
+   __IO Mode_t MODER10	:2;
+   __IO Mode_t MODER11	:2;
+   __IO Mode_t MODER12	:2;
+   __IO Mode_t MODER13	:2;
+   __IO Mode_t MODER14	:2;
+   __IO Mode_t MODER15	:2;        
 };
 
-struct OTYPER_t
-{
-   enum  OutType_t {
-      PushPull	= 0b0,
-      OpenDrain	= 0b1
-   };
-   struct Bits {
-      volatile OutType_t OT0	:1;
-      volatile OutType_t OT1	:1;
-      volatile OutType_t OT2	:1;
-      volatile OutType_t OT3	:1;
-      volatile OutType_t OT4	:1;
-      volatile OutType_t OT5	:1;
-      volatile OutType_t OT6	:1;
-      volatile OutType_t OT7	:1;
-      volatile OutType_t OT8	:1;
-      volatile OutType_t OT9	:1;
-      volatile OutType_t OT10	:1;
-      volatile OutType_t OT11	:1;
-      volatile OutType_t OT12	:1;
-      volatile OutType_t OT13	:1;
-      volatile OutType_t OT14	:1;
-      volatile OutType_t OT15	:1;
-      // Bits 31:16 Reserved, must be kept at reset value.
-      uint32_t dcb1	:16;
-   };
-   union {
-      volatile Bits bits;
-      volatile uint32_t reg;
-   };
-};
 
+enum  OutType_t {PushPull = 0b0, OpenDrain = 0b1};
+
+struct OTYPERbits {
+   __IO OutType_t OT0	:1;
+   __IO OutType_t OT1	:1;
+   __IO OutType_t OT2	:1;
+   __IO OutType_t OT3	:1;
+   __IO OutType_t OT4	:1;
+   __IO OutType_t OT5	:1;
+   __IO OutType_t OT6	:1;
+   __IO OutType_t OT7	:1;
+   __IO OutType_t OT8	:1;
+   __IO OutType_t OT9	:1;
+   __IO OutType_t OT10	:1;
+   __IO OutType_t OT11	:1;
+   __IO OutType_t OT12	:1;
+   __IO OutType_t OT13	:1;
+   __IO OutType_t OT14	:1;
+   __IO OutType_t OT15	:1;
+   // Bits 31:16 Reserved, must be kept at reset value.
+   uint32_t dcb1	:16;
+};
+struct MODER_t    : BitsRegistr<MODERbits>,  Offset_t<0x00>{};
+struct OTYPER_t   : BitsRegistr<OTYPERbits>, Offset_t<0x04>{};
+};
 struct OSPEEDR_t
 {
    enum OutSpeed_t {

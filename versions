@@ -155,3 +155,8 @@ v2.011  добавлен STM32F1_files
 
 v2.012  remove_reference => decay 
         make для f1
+
+
+
+
+v2.014  MODERbits и OTYPERbits

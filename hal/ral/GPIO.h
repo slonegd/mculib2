@@ -26,9 +26,9 @@ __IO uint32_t AFR[2];   // GPIO alternate function registers,     Address offset
 */
 
 
-class GPIO_t : public MODER_t,
-            public OTYPER_t,
-            public OSPEEDR_t,
+
+
+class GPIO_t : public OSPEEDR_t,
             public PUPDR_t,
             public IDR_t,
             public ODR_t,
@@ -36,10 +36,12 @@ class GPIO_t : public MODER_t,
             public LCKR_t,
             public AFR_t
 //LCKR AFR пока не нужны
+
+
 {
 public:
-   using Mode_t = MODER_t::Mode_t;
-   using OutType_t = OTYPER_t::OutType_t;
+   using Mode_t = GPIO_ral::Mode_t;
+   using OutType_t = GPIO_ral::OutType_t;
    using OutSpeed_t = OSPEEDR_t::OutSpeed_t;
    using PullResistor_t = PUPDR_t::PullResistor_t;
    using AF = AFR_t::AF;
@@ -54,6 +56,8 @@ protected:
    static constexpr AF         getAltFunc(PinConf_t val) { return static_cast<AF>(static_cast<uint32_t>(val) >> 7); }
 
 private:
+   GPIO_ral::MODER_t  MODER;
+   GPIO_ral::OTYPER_t OTYPER;
 };
 
 

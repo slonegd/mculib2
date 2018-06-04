@@ -74,10 +74,10 @@ C_DEFS_F1 = -DSTM32F103xB
 #######################################
 # binaries
 #######################################
-#PREFIX = arm-none-eabi-
+PREFIX = arm-none-eabi-
 #PREFIX = /home/slonegd/Code/gcc-arm-none-eabi-6-2017-q2-update/bin/arm-none-eabi-
 #PREFIX = /home/dvk/code/gcc-arm-none-eabi-6-2017-q1-update/bin/arm-none-eabi-
-PREFIX = /home/peltikhin/code/gcc-arm-none-eabi-7-2017-q4-major/bin/arm-none-eabi-
+#PREFIX = /home/peltikhin/code/gcc-arm-none-eabi-7-2017-q4-major/bin/arm-none-eabi-
 
 CPP = $(PREFIX)g++
 CC = $(PREFIX)gcc
@@ -236,25 +236,25 @@ clean:
 	-rm -fR .dep $(BUILD_DIR)
 
 f4_flash:
-#	/home/dvk/code/stlink/build/Release/st-flash write $(BUILD_DIR)/$(TARGET).bin 0x8000000
-#	/home/slonegd/Code/stlink/build/Release/st-flash write $(BUILD_DIR)/$(TARGET).bin 0x8000000
-#	st-flash write $(BUILD_DIR)/$(TARGET).bin 0x8000000
-	/home/peltikhin/code/EmbeddedArm/stlink/build/Release/st-flash write $(BUILD_DIR)/$(TARGET_F4).bin 0x8000000
+	#/home/dvk/code/stlink/build/Release/st-flash write $(BUILD_DIR)/$(TARGET).bin 0x8000000
+	#/home/slonegd/Code/stlink/build/Release/st-flash write $(BUILD_DIR)/$(TARGET).bin 0x8000000
+	st-flash write $(BUILD_DIR)/$(TARGET_F4).bin 0x8000000
+	#/home/peltikhin/code/EmbeddedArm/stlink/build/Release/st-flash write $(BUILD_DIR)/$(TARGET_F4).bin 0x8000000
 
 f0_flash:
-	/home/peltikhin/code/EmbeddedArm/stlink/build/Release/st-flash write $(BUILD_DIR)/$(TARGET_F0).bin 0x8000000
-	#st-flash write $(BUILD_DIR)/$(TARGET_F0).bin 0x8000000
+	#/home/peltikhin/code/EmbeddedArm/stlink/build/Release/st-flash write $(BUILD_DIR)/$(TARGET_F0).bin 0x8000000
+	st-flash write $(BUILD_DIR)/$(TARGET_F0).bin 0x8000000
 
 f1_flash:
-	/home/peltikhin/code/EmbeddedArm/stlink/build/Release/st-flash write $(BUILD_DIR)/$(TARGET_F1).bin 0x8000000
-	#st-flash write $(BUILD_DIR)/$(TARGET_F1).bin 0x8000000
+	#/home/peltikhin/code/EmbeddedArm/stlink/build/Release/st-flash write $(BUILD_DIR)/$(TARGET_F1).bin 0x8000000
+	st-flash write $(BUILD_DIR)/$(TARGET_F1).bin 0x8000000
 
 
 util:
-#	/home/dvk/code/stlink/build/Release/src/gdbserver/st-util
-#	/home/slonegd/Code/stlink/build/Release/src/gdbserver/st-util
-	/home/peltikhin/code/EmbeddedArm/stlink/build/Release/src/gdbserver/st-util
-
+	#/home/dvk/code/stlink/build/Release/src/gdbserver/st-util
+	#/home/slonegd/Code/stlink/build/Release/src/gdbserver/st-util
+	#/home/peltikhin/code/EmbeddedArm/stlink/build/Release/src/gdbserver/st-util
+	st-util
 debug: clean all flash_stlink util
   
 #######################################

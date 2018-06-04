@@ -23,8 +23,8 @@ class Pin_t : protected PORT
 {
 public:
    using Port = PORT;
-   using Mode = GPIO_t::MODER_t::Mode_t;
-   using OutType = GPIO_t::OTYPER_t::OutType_t;
+   using Mode = GPIO_t::Mode_t;
+   using OutType = GPIO_t::OutType_t;
    using OutSpeed = GPIO_t::OSPEEDR_t::OutSpeed_t;
    using PullResistor = GPIO_t::PUPDR_t::PullResistor_t;
    using AF = GPIO_t::AFR_t::AF;

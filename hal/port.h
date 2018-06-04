@@ -2,7 +2,8 @@
 
 #include "GPIO.h"
 
-template <uint32_t PortPtr, int ID>
+
+template <uint32_t Adr, int ID>
 class Port_t : protected GPIO_t
 {
 /*public:
@@ -36,7 +37,7 @@ public:
       SetAltFunc<GPIO_t::getAltFunc(pinConf), pin>();
    }
 
-
+   static constexpr uint32_t  Base = Adr;
    static uint16_t Read()                  { return od().reg; }  
    static void Write (uint16_t val)        { od().reg = val; }
    static void Set (uint16_t val)          { bsr().reg = val; }
@@ -81,36 +82,38 @@ public:
 
 
 protected:
-   static volatile MODER_t   &mode()   { return (MODER_t &)  (*(GPIO_TypeDef*)PortPtr).MODER;   }
-   static volatile OTYPER_t  &otype()  { return (OTYPER_t &) (*(GPIO_TypeDef*)PortPtr).OTYPER;  }
-   static volatile OSPEEDR_t &ospeed() { return (OSPEEDR_t &)(*(GPIO_TypeDef*)PortPtr).OSPEEDR; }
-   static volatile PUPDR_t   &pupd()   { return (PUPDR_t &)  (*(GPIO_TypeDef*)PortPtr).PUPDR;   }
-   static volatile ODR_t     &od()     { return (ODR_t &)    (*(GPIO_TypeDef*)PortPtr).ODR;     }
-   static volatile IDR_t     &id()     { return (IDR_t &)    (*(GPIO_TypeDef*)PortPtr).IDR;     }
-   static volatile BSRR_t    &bsr()    { return (BSRR_t &)   (*(GPIO_TypeDef*)PortPtr).BSRR;    }
-   static volatile AFR_t     &af()     { return (AFR_t &)    (*(GPIO_TypeDef*)PortPtr).AFR[0];  }
+#define MakeRef(Reg,Ref) GPIO_ral::Reg& Ref() { return (GPIO_ral::Reg&) *(uint32_t*)(Base + GPIO_ral::Reg::Offset); }
+   static volatile MakeRef (MODER_t,  mode);
+   static volatile MakeRef (OTYPER_t,  otype);
+#undef MakeRef
+   static volatile OSPEEDR_t &ospeed() { return (OSPEEDR_t &)(*(GPIO_TypeDef*)Base).OSPEEDR; }
+   static volatile PUPDR_t   &pupd()   { return (PUPDR_t &)  (*(GPIO_TypeDef*)Base).PUPDR;   }
+   static volatile ODR_t     &od()     { return (ODR_t &)    (*(GPIO_TypeDef*)Base).ODR;     }
+   static volatile IDR_t     &id()     { return (IDR_t &)    (*(GPIO_TypeDef*)Base).IDR;     }
+   static volatile BSRR_t    &bsr()    { return (BSRR_t &)   (*(GPIO_TypeDef*)Base).BSRR;    }
+   static volatile AFR_t     &af()     { return (AFR_t &)    (*(GPIO_TypeDef*)Base).AFR[0];  }
 
 
 
 private:
 #if defined(STM32F405xx)
    static constexpr uint32_t ClkEnMask =
-      PortPtr == GPIOA_BASE ? RCC_AHB1ENR_GPIOAEN_Msk :
-      PortPtr == GPIOB_BASE ? RCC_AHB1ENR_GPIOBEN_Msk :
-      PortPtr == GPIOC_BASE ? RCC_AHB1ENR_GPIOCEN_Msk :
-      PortPtr == GPIOD_BASE ? RCC_AHB1ENR_GPIODEN_Msk :
-      PortPtr == GPIOE_BASE ? RCC_AHB1ENR_GPIOEEN_Msk :
-      PortPtr == GPIOF_BASE ? RCC_AHB1ENR_GPIOFEN_Msk :
-      PortPtr == GPIOG_BASE ? RCC_AHB1ENR_GPIOGEN_Msk :
-      PortPtr == GPIOH_BASE ? RCC_AHB1ENR_GPIOHEN_Msk :
-      PortPtr == GPIOI_BASE ? RCC_AHB1ENR_GPIOIEN_Msk : 0;
+      Base == GPIOA_BASE ? RCC_AHB1ENR_GPIOAEN_Msk :
+      Base == GPIOB_BASE ? RCC_AHB1ENR_GPIOBEN_Msk :
+      Base == GPIOC_BASE ? RCC_AHB1ENR_GPIOCEN_Msk :
+      Base == GPIOD_BASE ? RCC_AHB1ENR_GPIODEN_Msk :
+      Base == GPIOE_BASE ? RCC_AHB1ENR_GPIOEEN_Msk :
+      Base == GPIOF_BASE ? RCC_AHB1ENR_GPIOFEN_Msk :
+      Base == GPIOG_BASE ? RCC_AHB1ENR_GPIOGEN_Msk :
+      Base == GPIOH_BASE ? RCC_AHB1ENR_GPIOHEN_Msk :
+      Base == GPIOI_BASE ? RCC_AHB1ENR_GPIOIEN_Msk : 0;
 #elif defined(STM32F030x6)
    static constexpr uint32_t ClkEnMask =
-      PortPtr == GPIOA_BASE ? RCC_AHBENR_GPIOAEN_Msk :
-      PortPtr == GPIOB_BASE ? RCC_AHBENR_GPIOBEN_Msk :
-      PortPtr == GPIOC_BASE ? RCC_AHBENR_GPIOCEN_Msk :
-      PortPtr == GPIOD_BASE ? RCC_AHBENR_GPIODEN_Msk :
-      PortPtr == GPIOF_BASE ? RCC_AHBENR_GPIOFEN_Msk : 0;
+      Base == GPIOA_BASE ? RCC_AHBENR_GPIOAEN_Msk :
+      Base == GPIOB_BASE ? RCC_AHBENR_GPIOBEN_Msk :
+      Base == GPIOC_BASE ? RCC_AHBENR_GPIOCEN_Msk :
+      Base == GPIOD_BASE ? RCC_AHBENR_GPIODEN_Msk :
+      Base == GPIOF_BASE ? RCC_AHBENR_GPIOFEN_Msk : 0;
 #endif
 };
 
