@@ -97,7 +97,7 @@ int main(void)
             else 
                pwm.outEnable();
 
-            flash.data.d2++;
+            flash.d2++;
 
             zoomer.beep(50_ms, 2_cnt);
          }
