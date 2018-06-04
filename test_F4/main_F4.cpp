@@ -45,7 +45,6 @@ int main(void)
    // инициализация программных таймеров задач
    ledTimer.setTimeAndStart (500);
    butTimer.setTimeAndStart (200);
-   txTimer.setTimeAndStart  (100);
    lcdTimer.setTimeAndStart (5);
 
    // для отладки
@@ -59,7 +58,6 @@ int main(void)
    
    while (1)
    {
-      timers();
       modbus (reaction);
 
       N = encoder.getCounter();
@@ -110,11 +108,6 @@ int main(void)
 //////////////////////////////////////////////////////////////////////////////
 //       ПРЕРЫВАНИЯ
 //////////////////////////////////////////////////////////////////////////////
-extern "C" void SysTick_Handler()
-{
-   timers.tick();
-}
-
 extern "C" void USART1_IRQHandler()
 {
    modbus.recieveInterruptHandler();

@@ -18,10 +18,9 @@ public:
    bool    point  [indicatorQty];
 
 
-   SSI (Timer& timer, uint32_t refreshTime = 2_ms)
+   SSI (uint32_t refreshTime = 2_ms)
       : buffer {0},
-        index  (0),
-        timer  (timer)
+        index  (0)
    {
       Pins<A_,B_,C_,D_,E_,F_,G_,H_,Ks_...>
          ::template configure<PinConf_t::OutputHighSpeed>();
@@ -30,13 +29,13 @@ public:
 
 
    /// переключает индикаторы
-   void operator ()();
+   void operator()();
 
 
 
 private:
    uint8_t index;
-   Timer& timer;
+   Timer timer;
 
    using indicators = PinList<Ks_...>;
    using segments = PinList<A_,B_,C_,D_,E_,F_,G_,H_>;

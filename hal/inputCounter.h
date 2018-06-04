@@ -12,7 +12,7 @@ template<class TIM_, class Pin_>
 class InputCounter
 {
 public:
-   InputCounter (Timer& timer) : frequency(0), timer(timer) 
+   InputCounter () : frequency {0}
    {
       static_assert (
          (channel == 1) | (channel == 2),
@@ -29,7 +29,7 @@ public:
 private:
    static const uint8_t channel = Channel<TIM_,Pin_>();
    uint16_t frequency;
-   Timer& timer;
+   Timer timer;
    void init();
    using Trigger = typename TIM_::Trigger;
 };

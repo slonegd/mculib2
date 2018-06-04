@@ -28,15 +28,9 @@ using Gled = PD12;
 using Leds = PinList<Bled, Oled>;
 using Button = PA0;
 
-// программные таймеры
-const uint8_t timersQty = 6;
-Timers<timersQty> timers;
-auto& ledTimer = timers.all[0];
-auto& butTimer = timers.all[1];
-auto& mbTimer  = timers.all[2];
-auto& txTimer  = timers.all[3];
-auto& lcdTimer = timers.all[4];
-auto& zoomerTimer = timers.all[5];
+Timer ledTimer ;
+Timer butTimer ;
+Timer lcdTimer ;
 
 // энергонезависимые данные
 struct FlashData {
@@ -56,7 +50,7 @@ using PWM_ = PWM<PWMtimer, PWMout>;
 PWM_ pwm;
 
 // зуммер
-auto zoomer = Zoomer<PWM_> (pwm, zoomerTimer, 4000_Hz); 
+auto zoomer = Zoomer<PWM_> (pwm, 4000_Hz); 
 
 // LCD
 using RSpin = PC4;
@@ -89,7 +83,7 @@ struct OutRegs {
    uint16_t reg0;
    uint16_t reg1;
 };
-auto modbus = MBslave<InRegs, OutRegs, USART_> (uart, mbTimer);
+auto modbus = MBslave<InRegs, OutRegs, USART_> (uart);
 // действия на входные регистры модбаса
 #define ADR(reg)    GET_ADR(InRegs, reg)
 inline void reaction (uint16_t regAdr)

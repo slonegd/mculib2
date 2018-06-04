@@ -20,10 +20,9 @@ public:
    static const uint16_t LongPressed = 1_s;
 
 
-   Buttons (Timer& timer)
-      : pushHandeledFlag(false),
-        longPushHandeledFlag(false),
-        timer(timer)
+   Buttons()
+   : pushHandeledFlag     {false},
+     longPushHandeledFlag {false}
    {
       List<Types...>::ClockEnable();
       timer.setTime (100_s); // 100 s просто большое время
@@ -55,7 +54,7 @@ public:
       } else {
          // (Buttons_::IsSet() and ... ); - аналог в 17 стандарте
          tmp = inverted ? List<Buttons_...>::IsAllClear() : List<Buttons_...>::IsAllSet();
-         tmp = tmp and (timer.timePassed > MinPressed);
+         tmp = tmp and timer.isGreater(MinPressed);
          if (tmp)
             pushHandeledFlag = true;
       }
@@ -71,7 +70,7 @@ public:
          tmp = false;
       } else {
          tmp = inverted ? List<Buttons_...>::IsAllClear() : List<Buttons_...>::IsAllSet();
-         tmp = tmp and (timer.timePassed > LongPressed);
+         tmp = tmp and timer.isGreater(LongPressed);
          if (tmp)
             longPushHandeledFlag = true;
       }
@@ -105,7 +104,7 @@ public:
 private:
    bool pushHandeledFlag;
    bool longPushHandeledFlag;
-   Timer& timer;
+   Timer timer;
 
 
    // всю эту рекурсивную бяку можно/нужно заменить на fold expression 17 стандарта

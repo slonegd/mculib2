@@ -11,78 +11,121 @@
 #include <stdint.h>
 #include "SysTick.h"
 
-struct Timer
-{
-    volatile bool enable;
-    // устанавливается в true, если дотикал
-    volatile bool counted;
-    // время работы в мс до установки counted
-    volatile uint32_t timeSet;
-    // прошедшее время в мс
-    volatile uint32_t timePassed;	
 
-    inline void setTimeAndStart (uint32_t ms)
-    {
-        timeSet = ms;
-        enable = true;
-    }
-    inline void setTime (uint32_t ms) { timeSet = ms; }
-    // возвращает true, если таймер натикал и перезапускает его
-    inline bool event()
-    {
-        if (counted) {
-            counted = false;
-            timePassed = 0;
-            return (true);
-        } else {
-            return (false);
-        }
-    }
-    // возвращает true, если таймер натикал и НЕ перезапускает его
-    inline bool done()   { return counted; }
-    inline void pause()  { enable = false; }
-    inline void start()  { enable = true;  }
-    inline void stop()
-    {
-        counted = false;
-        enable = false; 
-        timePassed = 0;
-    }
-};
+struct TimersSubcriber;
 
-template<uint8_t qty>
-class Timers
+
+class Timer
 {
+public:
+   Timer();
+
+   void setTimeAndStart (uint32_t ms);
+   void setTime (uint32_t ms);
+   bool event(); /// возвращает true, если таймер натикал и перезапускает его
+   bool done();  /// возвращает true, если таймер натикал и НЕ перезапускает его
+   void pause(); /// останавливает счёт, но не сбрасывает счётчик
+   void start(); /// запускает счёт с текущего значения счётчика
+   void stop();  /// останавливает счёт и сбрасывает счётчик
+   bool isGreater (uint32_t val); /// возвращает true, если счётчик натикал больше значения val
+
+
+
 private:
-    // служебная переменная, подсчёт милисекунд
-    volatile uint16_t TickCount = 0;
-public:
-    Timer all[qty];
-public:
-    // инициализация и включение прерываний аппаратного таймера каждую мс
-    Timers (void)
-    {
-        InitSysTimerInt<1> ();
-    }
-    // должно вызываться в прерывании аппаратного таймера
-    inline void tick (void)
-    {
-        TickCount++;
-    }
-    // обновляет все созданные структуры Timer, если необходимо
-    inline void operator() ()
-    {
-        if (TickCount > 0) {
-            for (uint8_t i = 0; i < qty; i++) {
-                if (all[i].enable && !all[i].counted) {
-                    all[i].timePassed = all[i].timePassed+TickCount;
-                    all[i].counted = all[i].timePassed >= all[i].timeSet;
-                }
-            }
-            TickCount = 0;
-        }
-    }
+   volatile bool     enable;
+   volatile bool     counted;
+   volatile uint32_t timeSet;
+   volatile uint32_t timePassed;	
+
+   Timer* next;
+   friend TimersSubcriber;
+
+   void init();
+
 };
 
 
+static struct TimersSubcriber
+{
+   Timer* first {nullptr};
+   TimersSubcriber() { InitSysTimerInt<1> (); }
+   /// обновляет значения счётчикаов каждого таймера, начиная с first
+   void update();
+} timers;
 
+
+extern "C" void SysTick_Handler()
+{
+   timers.update();
+}
+
+
+void TimersSubcriber::update()
+{
+   auto p = this->first;
+   while (p->next) {
+      if (p->enable && !p->counted) {
+         p->timePassed++;
+         p->counted = p->timePassed >= p->timeSet;
+      }
+      p = p->next;
+   }
+}
+
+
+Timer::Timer() : next {nullptr}
+{
+   init();
+}
+
+
+void Timer::init()
+{
+   auto p = timers.first;
+   if (p) {
+      while (p->next)
+         p = p->next;
+      p->next = this;
+   } else {
+      timers.first = this;
+   }
+} 
+
+
+void Timer::setTimeAndStart (uint32_t ms)
+{
+   timeSet = ms;
+   enable = true;
+}
+
+
+void Timer::setTime (uint32_t ms)
+{
+   timeSet = ms;
+}
+
+
+bool Timer::event()
+{
+   if (counted) {
+      counted = false;
+      timePassed = 0;
+      return (true);
+   } else {
+      return (false);
+   }
+}
+
+
+void Timer::stop()
+{
+   counted = false;
+   enable = false; 
+   timePassed = 0;
+}
+
+
+bool Timer::done()   { return counted; }
+void Timer::pause()  { enable = false; }
+void Timer::start()  { enable = true;  }
+bool Timer::isGreater (uint32_t val) { return timePassed > val; }

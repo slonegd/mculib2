@@ -13,22 +13,14 @@
 #include "seven_segment_indicator.h"
 #include "modbusSlave.h"
 
-const uint8_t timersQty = 9;
-Timers<timersQty> timers;
-auto& onTimer      = timers.all[0];
-auto& offTimer     = timers.all[1];
-auto& spiTimer     = timers.all[2];
-auto& zoomerTimer  = timers.all[3];
-auto& butTimer     = timers.all[4];
-auto& counterTimer = timers.all[5];
-auto& ledTimer     = timers.all[6];
-auto& ssiTimer     = timers.all[7];
-auto& mbTimer      = timers.all[8];
+
+Timer ledTimer;
+Timer spiTimer;
 
 using BlueLed = PC8;
 
 // семисегментный индикатор
-// auto ssi = SSI<PD0,PD1,PD2,PD4,PD5,PD6,PD7,PC0,PC1,PC2>(ssiTimer);
+// SSI<PD0,PD1,PD2,PD4,PD5,PD6,PD7,PC0,PC1,PC2> ssi;
 
 
 // энергонезависимые данные
@@ -57,19 +49,19 @@ using PWM_ = PWM<PWMtimer, PWMout>;
 PWM_ pwm;
 
 // зуммер
-auto zoomer = Zoomer<PWM_> (pwm, zoomerTimer, 4000_Hz); 
+auto zoomer = Zoomer<PWM_> (pwm, 4000_Hz); 
 
 
 using But1 = PA0;
 using But2 = PA1;
 using But3 = PA2;
-auto buttons = Buttons<false,But1,But2,But3>(butTimer);
+Buttons<false,But1,But2,But3> buttons;
 
 
 using GreenLed = PC9;
 
 // частотометр
-auto counter = InputCounter<TIM1, PA9> (counterTimer);
+InputCounter<TIM1, PA9> counter;
 
 // уарт модбаса
 using RXpin = PA3;
