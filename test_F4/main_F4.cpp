@@ -7,10 +7,9 @@
 #include <type_traits>
 
 
-uint8_t i = 0;
-volatile uint16_t N;
+volatile uint8_t i = 0;
+volatile uint32_t N = 0;
 
-// volatile auto TIM2_d = reinterpret_cast<TIM2*>(TIM2::Base);
 auto encoder = Encoder<TIM8, PC6, PC7>();
 
 int main(void)
@@ -43,33 +42,22 @@ int main(void)
    // ADCaverage<ADC1, PC0, 16> current;
 
    // инициализация программных таймеров задач
-   ledTimer.setTimeAndStart (500);
-   butTimer.setTimeAndStart (200);
-   lcdTimer.setTimeAndStart (5);
+   ledTimer.setTimeAndStart (100);
+   // butTimer.setTimeAndStart (200);
+   // lcdTimer.setTimeAndStart (5);
 
-   // для отладки
-   // modbus.uart.disableRx();
 
-   char string[] = "ПрЁ";
-   string[1] = 'i';
-   LCD.setLine(string, 0);
-   LCD.setLine("пока", 1);
 
    
    while (1)
    {
       modbus (reaction);
+      zoomer();
 
       N = encoder.getCounter();
 
-      if (std::is_same<PWMout,Rled>::value)
-         zoomer();
+      
 
-
-      if ( lcdTimer.event() ) {
-         LCD.setLine("0123456789abcdef",0);
-         LCD.setLine("f0123456789abcd",1);
-      }
 
 
       if ( ledTimer.event() )
@@ -108,7 +96,7 @@ int main(void)
 //////////////////////////////////////////////////////////////////////////////
 //       ПРЕРЫВАНИЯ
 //////////////////////////////////////////////////////////////////////////////
-extern "C" void USART1_IRQHandler()
+extern "C" void USART2_IRQHandler()
 {
    modbus.recieveInterruptHandler();
 }
@@ -117,3 +105,8 @@ extern "C" void DMA1_Stream6_IRQHandler()
 {
    modbus.transmitInterruptHandler();
 }
+
+// extern "C" void Default_Handler()
+// {
+//    // modbus.recieveInterruptHandler();
+// }

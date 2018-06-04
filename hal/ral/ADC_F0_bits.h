@@ -16,6 +16,10 @@ struct SRbits {
    __IO uint32_t res2  :24; // Bits 31:8 Reserved, must be kept at reset value.
 };
 
+struct SRposition {
+   enum { ADRDY = 0, EOSMP, EOC, OVR, AWD = 7 };
+};
+
 struct IERbits {
    __IO bool     ADRDYIE :1; // Bits 0 ADRDYIE: ADC ready interrupt enable
    __IO bool     EOSMPIE :1; // Bit 1 EOSMPIE: End of sampling flag interrupt enable
@@ -35,6 +39,10 @@ struct CRbits {
    __IO bool     ADSTP   :1; // Bit 4 ADSTP: ADC stop conversion command
    __IO uint32_t res2    :26; // Bits 30:5 Reserved, must be kept at reset value.
    __IO bool     ADCAL   :1;  // Bit 31 ADCAL: ADC calibration
+};
+
+struct CRposition {
+   enum { ADEN = 0, ADDIS, ADSTART, ADSTP = 4, ADCAL = 31 };
 };
 
 enum Resolution { _12bits = 0b00, _10bits, _8bits, _6bits }; 
@@ -62,11 +70,21 @@ struct CFGR1bits {
    __IO uint32_t   res3    :1; // Bit 31 Reserved, must be kept at reset value.
 };
 
+struct CFGR1position {
+   enum { DMAEN = 0, DMACFG, SCANDIR, RES, EXTSEL = 6, EXTEN = 10, OVRMOD = 12, CONT, WAIT, AUTOFF,
+      DISCEN, AWDSGL = 22, AWDEN, AWDCH = 26
+   };
+};
+
 enum Clock { Dedicated14MHzClock = 0b00, PCLKdiv2, PCLKdiv4 };
 
 struct CFGR2bits {
    __IO uint32_t res1   :30; // Bits 29:0 Reserved, must be kept at reset value.
    __IO Clock    CKMODE :2; // Bits 31:30 CKMODE[1:0]: ADC clock mode
+};
+
+struct CFGR2position {
+   enum { CKMODE = 30 };
 };
 
 enum SampleTime { _1_5_ADCclockCycles = 0b000, _7_5_ADCclockCycles,
@@ -108,11 +126,11 @@ struct CHSELRbits {
    __IO uint32_t res1    :14; // Bits 31:18 Reserved, must be kept at reset value.
 };
 
-struct SR_t     : BitsRegistr<SRbits>,     Offset_t<0x00> {};
+struct SR_t     : BitsRegistr<SRbits>,     Offset_t<0x00>, SRposition {};
 struct IER_t    : BitsRegistr<IERbits>,    Offset_t<0x04> {};
-struct CR_t     : BitsRegistr<CRbits>,     Offset_t<0x08> {};
-struct CFGR1_t  : BitsRegistr<CFGR1bits>,  Offset_t<0x0C> {};
-struct CFGR2_t  : BitsRegistr<CFGR2bits>,  Offset_t<0x10> {};
+struct CR_t     : BitsRegistr<CRbits>,     Offset_t<0x08>, CRposition {};
+struct CFGR1_t  : BitsRegistr<CFGR1bits>,  Offset_t<0x0C>, CFGR1position {};
+struct CFGR2_t  : BitsRegistr<CFGR2bits>,  Offset_t<0x10>, CFGR2position {};
 struct SMPR_t   : BitsRegistr<SMPRbits>,   Offset_t<0x14> {};
 struct TR_t     : BitsRegistr<TRbits>,     Offset_t<0x20> {};
 struct CHSELR_t : BitsRegistr<CHSELRbits>, Offset_t<0x28> {};

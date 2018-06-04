@@ -45,8 +45,10 @@ int main(void)
       
       f = counter.get();
 
-      if (ledTimer.event())
+      if (ledTimer.event()) {
          GreenLed::Toggle();
+         current.computeAverage();
+      }
 
 
       if ( spiTimer.event() ) {

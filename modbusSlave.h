@@ -146,7 +146,7 @@ void MBslave<In,Out,UART>::transmitInterruptHandler()
 
 template <class In, class Out, class UART>
 template <class function>
-void MBslave<In,Out,UART>::operator() (function reaction)
+inline void MBslave<In,Out,UART>::operator() (function reaction)
 {
 #if defined(STM32F405xx)
    endMessage = timer.done() ? timer.stop(), true : false;

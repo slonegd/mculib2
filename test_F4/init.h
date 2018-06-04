@@ -28,9 +28,9 @@ using Gled = PD12;
 using Leds = PinList<Bled, Oled>;
 using Button = PA0;
 
-Timer ledTimer ;
-Timer butTimer ;
-Timer lcdTimer ;
+Timer ledTimer;
+Timer butTimer;
+Timer lcdTimer;
 
 // энергонезависимые данные
 struct FlashData {

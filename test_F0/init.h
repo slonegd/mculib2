@@ -12,6 +12,7 @@
 #include "inputCounter.h"
 #include "seven_segment_indicator.h"
 #include "modbusSlave.h"
+#include "adc.h"
 
 
 Timer ledTimer;
@@ -96,6 +97,11 @@ inline void reaction (uint16_t regAdr)
       default: ;
    }
 }
+
+
+// 
+constexpr uint16_t BufferSize = 256;
+ADCaverage<ADC1, PA0, BufferSize> current;
 
 
 // эта функция вызывается первой в startup файле
