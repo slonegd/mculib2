@@ -124,7 +124,7 @@ void ADCx<adr>::DMAenable()
 template <uint32_t adr>
 void ADCx<adr>::SetCircularDMA()
 {
-   SET(conf1(), DMACFG);
+   // SET_(conf1().bits, DMACFG);
 }
 
 

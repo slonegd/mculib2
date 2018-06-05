@@ -101,7 +101,7 @@ struct CCMRbits {
 };
 
 /// CC1P и CC1NP в CCERbits без смещения
-enum  OutputPolarity { rising = 0b0000, faling = 0b0010, both = 0b1010, reset = 0b1010 };
+enum  Polarity { rising = 0b0000, falling = 0b0010, both = 0b1010, reset = 0b1010 };
 
 struct CCERbits {
    __IO bool     CC1E  :1; // Bit 0 CC1E: Capture/Compare 1 output enable.

@@ -22,14 +22,11 @@ __IO uint32_t ODR;      // GPIO port output data register,        Address offset
 __IO uint32_t BSRR;     // GPIO port bit set/reset register,      Address offset: 0x18
 __IO uint32_t LCKR;     // GPIO port configuration lock register, Address offset: 0x1C
 __IO uint32_t AFR[2];   // GPIO alternate function registers,     Address offset: 0x20-0x24
-} GPIO_TypeDef;
+} GPIOxypeDef;
  */
 
-template <uint32_t Adr, int ID>
+template <uint32_t Adr>
 class GPIOx 
-//LCKR AFR пока не нужны
-
-
 {
 public:
    using Mode_t = GPIO_ral::Mode_t;
@@ -40,7 +37,7 @@ public:
 
    static constexpr uint32_t Base = Adr;
 
-   static auto Create() { return reinterpret_cast< GPIOx<Adr,ID>* > (Adr); }
+   static GPIOx<Adr>* Create() { return reinterpret_cast< GPIOx<Adr>* > (Adr); }
 
    void makeDebugVar() { bsr().reg = 0; }
  
@@ -108,9 +105,6 @@ public:
    template<uint16_t val> static void Set()    { bsr().reg = val; }
    template<uint16_t val> static void Clear()  { bsr().reg = val << 16; }
 
-   enum { Id = ID };
-
-
 
 
 protected:
@@ -166,14 +160,14 @@ private:
 #endif
 };
 
-using PA = GPIOx<GPIOA_BASE, 'A'>;
-using PB = GPIOx<GPIOB_BASE, 'B'>;
-using PC = GPIOx<GPIOC_BASE, 'C'>;
-using PD = GPIOx<GPIOD_BASE, 'D'>;
-using PF = GPIOx<GPIOF_BASE, 'F'>;
+using PA = GPIOx<GPIOA_BASE>;
+using PB = GPIOx<GPIOB_BASE>;
+using PC = GPIOx<GPIOC_BASE>;
+using PD = GPIOx<GPIOD_BASE>;
+using PF = GPIOx<GPIOF_BASE>;
 #if defined(STM32F405xx)
-using PE = GPIOx<GPIOE_BASE, 'E'>;
-using PG = GPIOx<GPIOG_BASE, 'G'>;
-using PH = GPIOx<GPIOH_BASE, 'H'>;
-using PI = GPIOx<GPIOI_BASE, 'I'>;
+using PE = GPIOx<GPIOE_BASE>;
+using PG = GPIOx<GPIOG_BASE>;
+using PH = GPIOx<GPIOH_BASE>;
+using PI = GPIOx<GPIOI_BASE>;
 #endif

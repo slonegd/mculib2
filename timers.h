@@ -37,7 +37,7 @@ private:
 };
 
 
-static struct TimersSubcriber
+struct TimersSubcriber
 {
    Timer* first {nullptr};
    TimersSubcriber() { InitSysTimerInt<1> (); }
@@ -52,10 +52,11 @@ extern "C" void SysTick_Handler()
 }
 
 
+
 void TimersSubcriber::update()
 {
    auto p = this->first;
-   while (p->next) {
+   while (p) {
       if (p->enable && !p->counted) {
          p->timePassed++;
          p->counted = p->timePassed >= p->timeSet;
@@ -63,6 +64,7 @@ void TimersSubcriber::update()
       p = p->next;
    }
 }
+
 
 
 Timer::Timer() : next {nullptr}
