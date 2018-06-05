@@ -17,11 +17,11 @@
 #define MAKE_VAR(name) volatile auto name##_d = (name*) name::Base
 
 volatile auto RCC_d = (RCC_t*) RCC;
-volatile auto GPIOA_d = (GPIO_t*) GPIOA;
-volatile auto GPIOB_d = (GPIO_t*) GPIOB;
-volatile auto GPIOC_d = (GPIO_t*) GPIOC;
-volatile auto GPIOD_d = (GPIO_t*) GPIOD;
-volatile auto GPIOF_d = (GPIO_t*) GPIOF;
+volatile auto GPIOA_d = PA::Create();
+volatile auto GPIOB_d = PB::Create();
+volatile auto GPIOC_d = PC::Create();
+volatile auto GPIOD_d = PD::Create();
+volatile auto GPIOF_d = PF::Create();
 volatile auto FLASH_d = (FLASH_t*) FLASH;
 MAKE_VAR(DMA1);
 MAKE_VAR(TIM1);
@@ -36,7 +36,7 @@ volatile auto SysTick_d = (SysTick_t*) SysTick;
     MAKE_VAR(DMA1channel5);
     MAKE_VAR(ADC1);
 #elif defined(STM32F405xx)
-    volatile auto GPIOE_d = (GPIO_t*) GPIOE;
+    volatile auto GPIOE_d = PE::Create();
     MAKE_VAR(TIM2);
     MAKE_VAR(TIM4);
     MAKE_VAR(TIM5);
@@ -70,12 +70,12 @@ inline void makeDebugVar (void)
 {
     RCC_d->makeDebugVar();
     FLASH_d->makeDebugVar();
-    GPIOA_d->BSRR_t::reg = 0;
-    GPIOB_d->BSRR_t::reg = 0;
-    GPIOC_d->BSRR_t::reg = 0;
+    GPIOA_d->makeDebugVar();
+    GPIOB_d->makeDebugVar();
+    // GPIOC_d->makeDebugVar();
     // почему то с ним не работает ЭО86
-    // GPIOD_d->BSRR_t::reg = 0;
-    GPIOF_d->BSRR_t::reg = 0;
+    GPIOD_d->makeDebugVar();
+    GPIOF_d->makeDebugVar();
     DMA1_d->makeDebugVar();
     TIM1_d->makeDebugVar();
     TIM3_d->makeDebugVar();
@@ -89,7 +89,7 @@ inline void makeDebugVar (void)
     DMA1channel5_d->makeDebugVar();
     ADC1_d->makeDebugVar();
 #elif defined(STM32F405xx)
-    GPIOE_d->BSRR_t::reg = 0;
+    GPIOE_d->makeDebugVar();
     TIM2_d->makeDebugVar();
     TIM4_d->makeDebugVar();
     TIM5_d->makeDebugVar();

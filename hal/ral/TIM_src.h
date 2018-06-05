@@ -213,7 +213,6 @@ void TIMx<adr>::setCompareValue (uint32_t val)
 {
     captureCompareRegister().reg[channel-1] = val; 
 }
-
 template<uint32_t adr>
 void TIMx<adr>::setAutoReloadValue (uint32_t val) 
 {

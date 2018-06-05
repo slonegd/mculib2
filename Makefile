@@ -77,11 +77,7 @@ C_DEFS_F1 = -DSTM32F103xB
 PREFIX = arm-none-eabi-
 #PREFIX = /home/slonegd/Code/gcc-arm-none-eabi-6-2017-q2-update/bin/arm-none-eabi-
 #PREFIX = /home/dvk/code/gcc-arm-none-eabi-6-2017-q1-update/bin/arm-none-eabi-
-<<<<<<< HEAD
-#PREFIX = /home/peltikhin/code/gcc-arm-none-eabi-7-2017-q4-major/bin/arm-none-eabi-
-=======
 # PREFIX = /home/peltikhin/code/gcc-arm-none-eabi-7-2017-q4-major/bin/arm-none-eabi-
->>>>>>> a96418e72cdc80a60416832c063b984996a662eb
 
 CPP = $(PREFIX)g++
 CC = $(PREFIX)gcc

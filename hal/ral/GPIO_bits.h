@@ -1,5 +1,6 @@
 #pragma once
 
+#include "registr.h"
 #if defined(STM32F030x6)
 #include "stm32f0xx.h"
 #elif defined(STM32F405xx)
@@ -51,146 +52,115 @@ struct OTYPERbits {
    // Bits 31:16 Reserved, must be kept at reset value.
    uint32_t dcb1	:16;
 };
-struct MODER_t    : BitsRegistr<MODERbits>,  Offset_t<0x00>{};
-struct OTYPER_t   : BitsRegistr<OTYPERbits>, Offset_t<0x04>{};
-};
-struct OSPEEDR_t
-{
-   enum OutSpeed_t {
-      Low	    = 0b00,
-      Medium	 = 0b01,
-      High	    = 0b10,
+
+enum OutSpeed_t {
+   Low	    = 0b00,
+   Medium	 = 0b01,
+   High	    = 0b10,
 #if defined(STM32F405xx)
-      VeryHigh	 = 0b11
+   VeryHigh	 = 0b11
+#endif
+};
+struct OSPEEDRbits{
+   __IO OutSpeed_t OSPEEDR0	:2;
+   __IO OutSpeed_t OSPEEDR1	:2;
+   __IO OutSpeed_t OSPEEDR2	:2;
+   __IO OutSpeed_t OSPEEDR3	:2;
+   __IO OutSpeed_t OSPEEDR4	:2;
+   __IO OutSpeed_t OSPEEDR5	:2;
+   __IO OutSpeed_t OSPEEDR6	:2;
+   __IO OutSpeed_t OSPEEDR7	:2;
+   __IO OutSpeed_t OSPEEDR8	:2;
+   __IO OutSpeed_t OSPEEDR9	:2;
+   __IO OutSpeed_t OSPEEDR10	:2;
+   __IO OutSpeed_t OSPEEDR11	:2;
+   __IO OutSpeed_t OSPEEDR12	:2;
+   __IO OutSpeed_t OSPEEDR13	:2;
+   __IO OutSpeed_t OSPEEDR14	:2;
+   __IO OutSpeed_t OSPEEDR15	:2;
+};
+
+enum PullResistor_t {
+   No	  = 0b00,
+   Up   = 0b01,
+   Down = 0b10
+};
+struct PUPDRbits {
+   __IO PullResistor_t PUPDR0	   :2;
+   __IO PullResistor_t PUPDR1	   :2;
+   __IO PullResistor_t PUPDR2	   :2;
+   __IO PullResistor_t PUPDR3	   :2;
+   __IO PullResistor_t PUPDR4	   :2;
+   __IO PullResistor_t PUPDR5	   :2;
+   __IO PullResistor_t PUPDR6	   :2;
+   __IO PullResistor_t PUPDR7	   :2;
+   __IO PullResistor_t PUPDR8	   :2;
+   __IO PullResistor_t PUPDR9	   :2;
+   __IO PullResistor_t PUPDR10   :2;
+   __IO PullResistor_t PUPDR11   :2;
+   __IO PullResistor_t PUPDR12   :2;
+   __IO PullResistor_t PUPDR13   :2;
+   __IO PullResistor_t PUPDR14   :2;
+   __IO PullResistor_t PUPDR15   :2;
+};
+
+struct IDRbits {
+   __IO bool _0  :1;
+   __IO bool _1  :1;
+   __IO bool _2  :1;
+   __IO bool _3  :1;
+   __IO bool _4  :1;
+   __IO bool _5  :1;
+   __IO bool _6  :1;
+   __IO bool _7  :1;
+   __IO bool _8  :1;
+   __IO bool _9  :1;
+   __IO bool _10 :1;
+   __IO bool _11 :1;
+   __IO bool _12 :1;
+   __IO bool _13 :1;
+   __IO bool _14 :1;
+   __IO bool _15 :1;
+   __IO uint32_t res1 :16;
+};
+ 
+enum AF {
+   _0 = 0b0000, _1, _2, _3, _4, _5, _6, _7,
+#if defined(STM32F405xx)
+   _8, _9, _10, _11, _12, _13, _14, _15
 #endif
    };
-   struct Bits {
-      volatile OutSpeed_t OSPEEDR0	:2;
-      volatile OutSpeed_t OSPEEDR1	:2;
-      volatile OutSpeed_t OSPEEDR2	:2;
-      volatile OutSpeed_t OSPEEDR3	:2;
-      volatile OutSpeed_t OSPEEDR4	:2;
-      volatile OutSpeed_t OSPEEDR5	:2;
-      volatile OutSpeed_t OSPEEDR6	:2;
-      volatile OutSpeed_t OSPEEDR7	:2;
-      volatile OutSpeed_t OSPEEDR8	:2;
-      volatile OutSpeed_t OSPEEDR9	:2;
-      volatile OutSpeed_t OSPEEDR10	:2;
-      volatile OutSpeed_t OSPEEDR11	:2;
-      volatile OutSpeed_t OSPEEDR12	:2;
-      volatile OutSpeed_t OSPEEDR13	:2;
-      volatile OutSpeed_t OSPEEDR14	:2;
-      volatile OutSpeed_t OSPEEDR15	:2;
-   };
-   union {
-      volatile Bits bits;
-      volatile uint32_t reg;
-   };
+struct AFRbits {
+   __IO AF AFR0    : 4;
+   __IO AF AFR1    : 4;
+   __IO AF AFR2    : 4;
+   __IO AF AFR3    : 4;
+   __IO AF AFR4    : 4;
+   __IO AF AFR5    : 4;
+   __IO AF AFR6    : 4;
+   __IO AF AFR7    : 4;
+   __IO AF AFR8    : 4;
+   __IO AF AFR9    : 4;
+   __IO AF AFR10   : 4;
+   __IO AF AFR11   : 4;
+   __IO AF AFR12   : 4;
+   __IO AF AFR13   : 4;
+   __IO AF AFR14   : 4;
+   __IO AF AFR15   : 4;
+};
+ 
+
+
+struct MODER_t    : BitsRegistr<MODERbits>,     Offset_t<0x00>{};
+struct OTYPER_t   : BitsRegistr<OTYPERbits>,    Offset_t<0x04>{};
+struct OSPEEDR_t  : BitsRegistr<OSPEEDRbits>,   Offset_t<0x08>{};
+struct PUPDR_t    : BitsRegistr<PUPDRbits>,     Offset_t<0x0C>{};
+struct IDR_t      : BitsRegistr<IDRbits>,       Offset_t<0x10>{};
+struct ODR_t      : DataRegistr,                Offset_t<0x14>{};
+struct BSRR_t     : DataRegistr,                Offset_t<0x18>{};
+struct LCKR_t     : DataRegistr,                Offset_t<0x1C>{};
+struct AFR_t      : ArrayDataRegistr<2>,       Offset_t<0x20>{};
+
 };
 
-struct PUPDR_t
-{
-   enum PullResistor_t {
-      No	  = 0b00,
-      Up   = 0b01,
-      Down = 0b10
-   };
-   struct Bits {
-      volatile PullResistor_t PUPDR0	:2;
-      volatile PullResistor_t PUPDR1	:2;
-      volatile PullResistor_t PUPDR2	:2;
-      volatile PullResistor_t PUPDR3	:2;
-      volatile PullResistor_t PUPDR4	:2;
-      volatile PullResistor_t PUPDR5	:2;
-      volatile PullResistor_t PUPDR6	:2;
-      volatile PullResistor_t PUPDR7	:2;
-      volatile PullResistor_t PUPDR8	:2;
-      volatile PullResistor_t PUPDR9	:2;
-      volatile PullResistor_t PUPDR10	:2;
-      volatile PullResistor_t PUPDR11	:2;
-      volatile PullResistor_t PUPDR12	:2;
-      volatile PullResistor_t PUPDR13	:2;
-      volatile PullResistor_t PUPDR14	:2;
-      volatile PullResistor_t PUPDR15	:2;
-   };
-   union {
-      volatile Bits bits;
-      volatile uint32_t reg;
-   };
-};
 
-struct IDR_t
-{
-   struct Bits {
-      volatile bool _0  :1;
-      volatile bool _1  :1;
-      volatile bool _2  :1;
-      volatile bool _3  :1;
-      volatile bool _4  :1;
-      volatile bool _5  :1;
-      volatile bool _6  :1;
-      volatile bool _7  :1;
-      volatile bool _8  :1;
-      volatile bool _9  :1;
-      volatile bool _10 :1;
-      volatile bool _11 :1;
-      volatile bool _12 :1;
-      volatile bool _13 :1;
-      volatile bool _14 :1;
-      volatile bool _15 :1;
-      volatile uint32_t res1 :16;
-   };
-   union {
-      volatile Bits bits;
-      volatile uint32_t reg;
-   };
-};
-
-struct ODR_t
-{
-   uint32_t reg;
-};
-
-struct BSRR_t
-{
-   uint32_t reg;
-};
-
-struct LCKR_t
-{
-   uint32_t reg;
-};
-
-struct AFR_t
-{
-   enum AF {
-      _0 = 0b0000, _1, _2, _3, _4, _5, _6, _7,
-#if defined(STM32F405xx)
-      _8, _9, _10, _11, _12, _13, _14, _15
-#endif
-   };
-   struct Bits {
-      volatile AF AFR0    : 4;
-      volatile AF AFR1    : 4;
-      volatile AF AFR2    : 4;
-      volatile AF AFR3    : 4;
-      volatile AF AFR4    : 4;
-      volatile AF AFR5    : 4;
-      volatile AF AFR6    : 4;
-      volatile AF AFR7    : 4;
-      volatile AF AFR8    : 4;
-      volatile AF AFR9    : 4;
-      volatile AF AFR10   : 4;
-      volatile AF AFR11   : 4;
-      volatile AF AFR12   : 4;
-      volatile AF AFR13   : 4;
-      volatile AF AFR14   : 4;
-      volatile AF AFR15   : 4;
-   };
-   union {
-      struct {
-         volatile Bits bits;
-      };
-      volatile uint32_t reg[2];
-   };
-};

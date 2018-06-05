@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "port.h"
+#include "GPIO.h"
 #include <stdint.h>
 #include <stdbool.h>
 
@@ -23,11 +23,11 @@ class Pin_t : protected PORT
 {
 public:
    using Port = PORT;
-   using Mode = GPIO_t::Mode_t;
-   using OutType = GPIO_t::OutType_t;
-   using OutSpeed = GPIO_t::OSPEEDR_t::OutSpeed_t;
-   using PullResistor = GPIO_t::PUPDR_t::PullResistor_t;
-   using AF = GPIO_t::AFR_t::AF;
+   using Mode = GPIO_ral::Mode_t;
+   using OutType = GPIO_ral::OutType_t;
+   using OutSpeed = GPIO_ral::OutSpeed_t;
+   using PullResistor = GPIO_ral::PullResistor_t;
+   using AF = GPIO_ral::AF;
 
    static const unsigned Number = pin;
    static const bool Inverted = false;
