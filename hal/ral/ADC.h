@@ -9,11 +9,11 @@
 
 
 
-template <uint32_t ADCadr>
+template <uint32_t adr>
 class ADCx
 {
 public:
-   static const uint32_t Base = ADCadr;
+   static const uint32_t Base = adr;
 
    using Channels   = DMA_ral::Channels;
    using Clock      = ADC_ral::Clock;
@@ -23,17 +23,17 @@ public:
    void makeDebugVar() { status().bits.res1 = 0; }
 
    static void ClockEnable();
-   static void Enable()    { control().reg |= ADC_CR_ADEN_Msk; }
-   static void Disable()   { control().reg |= ADC_CR_ADDIS_Msk; }
-   static bool IsDisable() { return (control().reg & ADC_CR_ADEN_Msk) == 0; }
-   static bool IsReady()   { return (status().reg & ADC_ISR_ADRDY_Msk) != 0; }
-   static void SetBusy()   { status().reg |= ADC_ISR_ADRDY_Msk; }
-   static void Stop()      { control().reg |= ADC_CR_ADSTP_Msk; }
-   static void Start()     { control().reg |= ADC_CR_ADSTART_Msk; }
-   static bool IsStoping() { return (control().reg & ADC_CR_ADSTP_Msk) != 0; }
+   static void Enable();
+   static void Disable();
+   static bool IsDisable();
+   static bool IsReady();
+   static void SetBusy();
+   static void Stop();
+   static void Start();
+   static bool IsStoping();
    static void SetClock ( Clock val );
-   static void DMAenable() { conf1().reg |= ADC_CFGR1_DMAEN_Msk; }
-   static void SetCircularDMA() { conf1().reg |= ADC_CFGR1_DMACFG_Msk; }
+   static void DMAenable();
+   static void SetCircularDMA();
    static void SetResolution (Resolution val);
    static void SetContinuousMode() { conf1().reg |= ADC_CFGR1_CONT_Msk; }
    static void SetSampleTime (SampleTime val);
@@ -48,21 +48,14 @@ protected:
    static volatile MakeRef(CR_t,    control);
    static volatile MakeRef(CFGR1_t, conf1);
    static volatile MakeRef(CFGR2_t, conf2);
+#if defined(STM32F030x6)   
    static volatile MakeRef(SMPR_t,  sampleTime);
    static volatile MakeRef(CHSELR_t, channelSelect);
+#endif
    #undef MakeRef
 
 
 private:
-#if defined(STM32F405xx)
-   static constexpr uint32_t ClkEnMask =
-      Base == ADC1_BASE ? RCC_APB2ENR_ADC1EN_Msk :
-      Base == ADC2_BASE ? RCC_APB2ENR_ADC2EN_Msk :
-      Base == ADC3_BASE ? RCC_APB2ENR_ADC3EN_Msk : 0;
-#elif defined(STM32F030x6)
-   static constexpr uint32_t ClkEnMask = RCC_APB2ENR_ADCEN_Msk;
-#endif
-
    ADC_ral::SR_t SR; // ADC status register (F0 - ISR ADC interrupt and status register )
 #if defined(STM32F405xx)
    ADC_ral::CR_t     CR;     // ADC control register 1

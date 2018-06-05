@@ -37,7 +37,6 @@ int main(void)
 
    while (1)
    {
-      timers();
       zoomer();
       buttons();
       counter();
@@ -46,8 +45,10 @@ int main(void)
       
       f = counter.get();
 
-      if (ledTimer.event())
+      if (ledTimer.event()) {
          GreenLed::Toggle();
+         current.computeAverage();
+      }
 
 
       if ( spiTimer.event() ) {
@@ -58,8 +59,4 @@ int main(void)
 
    }
 
-}
-extern "C" void SysTick_Handler()
-{
-    timers.tick();
 }

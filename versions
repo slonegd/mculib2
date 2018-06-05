@@ -168,3 +168,6 @@ v2.014  MODERbits и OTYPERbits
 
 
 v2.017  port.h перенесен в GPIO.h
+v2.015  рефакторинг Timer
+
+v2.016  оформление ADC для f0

@@ -43,11 +43,7 @@ public:
    };
 
 
-#if defined(STM32F405xx)
-   MBslave ( UART& uart, Timer& timer );
-#elif defined(STM32F030x6)
    MBslave ( UART& uart );
-#endif
 
    void init (const typename UART::Settings& val);
 
@@ -72,7 +68,7 @@ public:
 
 private:
 #if defined(STM32F405xx)
-   Timer& timer;
+   Timer timer;
 #endif
    UART& uart;
    bool endMessage;
@@ -95,19 +91,7 @@ private:
 
 
 
-#if defined(STM32F405xx)
-template <class In, class Out, class UART>
-MBslave<In,Out,UART>::MBslave (UART& uart, Timer& timer)
-   : address     {1},
-     arInRegs    {0},
-     arOutRegs   {0},
-     arInRegsMin {0},
-     arInRegsMax {0},
-     timer       (timer),
-     uart        (uart),
-     endMessage  {false}
-{ }
-#elif defined(STM32F030x6)
+
 template <class In, class Out, class UART>
 MBslave<In,Out,UART>::MBslave (UART& uart)
    : address     {1},
@@ -118,7 +102,6 @@ MBslave<In,Out,UART>::MBslave (UART& uart)
      uart        (uart),
      endMessage  {false}
 { }
-#endif
 
 
 
@@ -163,7 +146,7 @@ void MBslave<In,Out,UART>::transmitInterruptHandler()
 
 template <class In, class Out, class UART>
 template <class function>
-void MBslave<In,Out,UART>::operator() (function reaction)
+inline void MBslave<In,Out,UART>::operator() (function reaction)
 {
 #if defined(STM32F405xx)
    endMessage = timer.done() ? timer.stop(), true : false;

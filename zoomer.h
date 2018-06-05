@@ -19,7 +19,7 @@ class Zoomer
 {
 public:
    // freq - частота кварцевой пищалки
-   Zoomer(PWM& pwm, Timer& timer, uint32_t freq);
+   Zoomer(PWM& pwm,  uint32_t freq);
    // добавляет в начало очереди сигналы/паузы, первый всегда сигнал
    // не более QueueSize аргументов
    template<class ... T>
@@ -36,8 +36,8 @@ private:
    // очередь длительности гудков/пауз, первый всегда гудок
    uint32_t queue[QueueSize];
    uint8_t currentN;
+   Timer timer;
    PWM& pwm;
-   Timer& timer;
 };
 
 
@@ -45,8 +45,10 @@ private:
 
 
 template<class PWM, uint8_t QueueSize> 
-Zoomer<PWM, QueueSize>::Zoomer(PWM& pwm, Timer& timer, uint32_t freq)
-   : queue{0}, currentN(0), pwm(pwm), timer(timer)
+Zoomer<PWM, QueueSize>::Zoomer(PWM& pwm, uint32_t freq)
+   : queue    {0},
+     currentN {0},
+     pwm      (pwm)
 {
    pwm.setFreq(freq);
    pwm.setD(50);
