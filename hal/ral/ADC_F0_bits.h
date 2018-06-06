@@ -97,6 +97,10 @@ struct SMPRbits {
    __IO uint32_t   res1 :29; // Bits 31:3 Reserved, must be kept at reset value.
 };
 
+struct SMPRposition {
+   enum { SMP = 0 };
+};
+
 struct TRbits {
    __IO uint32_t LT    :12; // Bit 11:0 LT[11:0]: Analog watchdog lower threshold
    __IO uint32_t res1  :4; // Bits 15:12 Reserved, must be kept at reset value.
@@ -126,12 +130,12 @@ struct CHSELRbits {
    __IO uint32_t res1    :14; // Bits 31:18 Reserved, must be kept at reset value.
 };
 
-struct SR_t     : BitsRegistr<SRbits>,     Offset_t<0x00>, SRposition {};
+struct SR_t     : BitsRegistr<SRbits>,     Offset_t<0x00>, SRposition    {};
 struct IER_t    : BitsRegistr<IERbits>,    Offset_t<0x04> {};
-struct CR_t     : BitsRegistr<CRbits>,     Offset_t<0x08>, CRposition {};
+struct CR_t     : BitsRegistr<CRbits>,     Offset_t<0x08>, CRposition    {};
 struct CFGR1_t  : BitsRegistr<CFGR1bits>,  Offset_t<0x0C>, CFGR1position {};
 struct CFGR2_t  : BitsRegistr<CFGR2bits>,  Offset_t<0x10>, CFGR2position {};
-struct SMPR_t   : BitsRegistr<SMPRbits>,   Offset_t<0x14> {};
+struct SMPR_t   : BitsRegistr<SMPRbits>,   Offset_t<0x14>, SMPRposition  {};
 struct TR_t     : BitsRegistr<TRbits>,     Offset_t<0x20> {};
 struct CHSELR_t : BitsRegistr<CHSELRbits>, Offset_t<0x28> {};
 struct DR_t     : DataRegistr,             Offset_t<0x40> {};

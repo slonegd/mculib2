@@ -91,6 +91,13 @@ enum class PinConf_t {
       GPIO_ral::PullResistor_t::No,
       GPIO_ral::AF              ::_2
    ),
+   AlternateFunc3 = GPIO::MakeMask (
+      GPIO_ral::Mode_t         ::Alternate,
+      GPIO_ral::OutType_t      ::PushPull,
+      GPIO_ral::OutSpeed_t     ::Low,
+      GPIO_ral::PullResistor_t ::No,
+      GPIO_ral::AF             ::_3
+   ),
    AlternateFunc4 = GPIO::MakeMask (
       GPIO_ral::Mode_t        ::Alternate,
       GPIO_ral::OutType_t    ::PushPull,

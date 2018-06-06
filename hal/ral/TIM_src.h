@@ -49,8 +49,9 @@ void TIMx<adr>::clockEnable()
    #endif 
       0;
 
-   *(reinterpret_cast<uint32_t*>(ClockEnAdr)) |= mask;
-   // WRITE_MASK_ON_ADDRESS(ClockEnAdr, mask);
+   volatile uint32_t& tmp = *reinterpret_cast<uint32_t*>(ClockEnAdr);
+   tmp |= mask;
+   while ( (tmp & mask) == 0 ) {}
 }
 
 template<uint32_t adr>
@@ -134,11 +135,11 @@ void TIMx<adr>::setSlaveMode()
 
 
 template<uint32_t adr>
-template<TIM_ral::OutputPolarity value, uint8_t channel>
-void TIMx<adr>::setOutputPolarity()
+template<TIM_ral::Polarity value, uint8_t channel>
+void TIMx<adr>::setPolarity()
 {
    uint32_t tmp = captureCompareEnable().reg;
-   tmp &= ~((uint32_t)OutputPolarity::reset << (channel - 1) * 4 );
+   tmp &= ~((uint32_t)Polarity::reset << (channel - 1) * 4 );
    tmp |= ((uint32_t)value << (channel - 1) * 4 ); 
    captureCompareEnable().reg = tmp;
 }

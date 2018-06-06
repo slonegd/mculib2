@@ -46,7 +46,7 @@ void InputCounter<TIM_,Pin_>::init()
    TIM_::template setTrigger <
       channel == 1 ? Trigger::FiltrTI1 : Trigger::FiltrTI2
    >();
-   TIM_::template setOutputPolarity<TIM_::OutputPolarity::both, channel>();
+   TIM_::template setPolarity<TIM_::Polarity::both, channel>();
    TIM_::template setSlaveMode<TIM_::SlaveMode::ExternalClock>();
 
    constexpr PinConf_t conf =

@@ -22,12 +22,12 @@ __IO uint32_t ODR;      // GPIO port output data register,        Address offset
 __IO uint32_t BSRR;     // GPIO port bit set/reset register,      Address offset: 0x18
 __IO uint32_t LCKR;     // GPIO port configuration lock register, Address offset: 0x1C
 __IO uint32_t AFR[2];   // GPIO alternate function registers,     Address offset: 0x20-0x24
-} GPIO_TypeDef;
+} GPIOxypeDef;
  */
 
 template <uint32_t Adr>
 class GPIOx 
- {
+{
 public:
    using Mode_t         = GPIO_ral::Mode_t;
    using OutType_t      = GPIO_ral::OutType_t;
@@ -37,7 +37,7 @@ public:
 
    static constexpr uint32_t Base = Adr;
 
-   static auto Create() { return reinterpret_cast< GPIOx<Adr>* > (Adr); }
+   static GPIOx<Adr>* Create() { return reinterpret_cast< GPIOx<Adr>* > (Adr); }
 
    void makeDebugVar() { bsr().reg = 0; }
  

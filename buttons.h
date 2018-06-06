@@ -7,6 +7,7 @@
 #pragma once
 
 #include "timers.h"
+#include "pins_variadic.h"
 #include "literals.h"
 
 
@@ -24,7 +25,7 @@ public:
    : pushHandeledFlag     {false},
      longPushHandeledFlag {false}
    {
-      List<Types...>::ClockEnable();
+      Pins<Types...>::template configure<PinConf_t::Input>();
       timer.setTime (100_s); // 100 s просто большое время
    }
 

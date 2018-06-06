@@ -32,8 +32,8 @@ public:
                Clock clock = Clock::PCLKdiv4,
                Resolution resolution = Resolution::_12bits,
                SampleTime sampleTime = SampleTime::_239_5_ADCclockCicle);
-   void Enable();
-   void Disable();
+   void enable();
+   void disable();
    // расчитывает сумму всех элементов буфера
    uint32_t computeSum();
    // возвращает ранее рассчитаную сумму буфера
@@ -79,22 +79,22 @@ ADCaverage (uint32_t mul, uint32_t div, Clock clock, Resolution resolution, Samp
 
 
 template<class ADC_, class PIN, uint16_t bufSize, class DMA_>
-void ADCaverage<ADC_, PIN, bufSize, DMA_>::Enable()
+void ADCaverage<ADC_, PIN, bufSize, DMA_>::enable()
 {
-   if (ADC_::IsReady())
-      ADC_::SetBusy();
-   ADC_::Enable();
-   while ( !ADC_::IsReady() ) { }
+   if (ADC_::isReady())
+      ADC_::setBusy();
+   ADC_::enable();
+   while ( !ADC_::isReady() ) { }
 }
 
 
 template<class ADC_, class PIN, uint16_t bufSize, class DMA_>
-void ADCaverage<ADC_, PIN, bufSize, DMA_>::Disable()
+void ADCaverage<ADC_, PIN, bufSize, DMA_>::disable()
 {
-   ADC_::Stop();
-   while ( ADC_::IsStoping() ) { }
-   ADC_::Disable();
-   while ( !ADC_::IsDisable() ) { }
+   ADC_::stop();
+   while ( ADC_::isStoping() ) { }
+   ADC_::disable();
+   while ( !ADC_::isDisable() ) { }
 }
 
 
@@ -102,8 +102,8 @@ template<class ADC_, class PIN, uint16_t bufSize, class DMA_>
 uint32_t ADCaverage<ADC_, PIN, bufSize, DMA_>::computeSum()
 {
    sum = 0;
-   for (uint16_t i = 0; i < bufSize; i++)
-      sum += buf[i];
+   for (const auto n : buf)
+      sum += n;
    return sum;
 }
 
@@ -117,14 +117,14 @@ init(Clock clock, Resolution resolution, SampleTime sampleTime)
 {
    CONFIGURE_PIN (PIN, AnalogInput);
 
-   ADC_::ClockEnable();
-   ADC_::SetClock (clock);
-   ADC_::SetResolution (resolution);
-   ADC_::SetSampleTime (sampleTime);
-   ADC_::SetContinuousMode();
-   ADC_::SetChannel (ADCin);
+   ADC_::clockEnable();
+   ADC_::setClock (clock);
+   ADC_::setResolution (resolution);
+   ADC_::setSampleTime (sampleTime);
+   ADC_::setContinuousMode();
+   ADC_::setChannel (ADCin);
    ADC_::DMAenable();
-   ADC_::SetCircularDMA();
+   ADC_::setCircularDMA();
 
    DMA_::ClockEnable();
    DMA_::SetMemoryAdr ( (uint32_t)buf );
@@ -140,8 +140,8 @@ init(Clock clock, Resolution resolution, SampleTime sampleTime)
    DMA_::Configure (conf);
 
    DMA_::Enable();
-   Enable();
-   ADC_::Start();
+   enable();
+   ADC_::start();
 }
 
 

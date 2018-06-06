@@ -54,7 +54,7 @@ int main(void)
       modbus (reaction);
       zoomer();
 
-      N = encoder.getCounter();
+      N = encoder;
 
       
 
@@ -76,7 +76,7 @@ int main(void)
             d = goUp ? d+10 : d-10;
             goUp = (d == 100) ? false :
                    (d == 0)   ? true  : goUp;
-            pwm.setD (d);
+            pwm.fillRatio = d;
 
             if ( pwm.isOutEnable() )
                pwm.outDisable();

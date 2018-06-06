@@ -50,8 +50,8 @@ Zoomer<PWM, QueueSize>::Zoomer(PWM& pwm, uint32_t freq)
      currentN {0},
      pwm      (pwm)
 {
-   pwm.setFreq(freq);
-   pwm.setD(50);
+   pwm.freq = freq;
+   pwm.fillRatio = 500_from1000;
 }
 
 

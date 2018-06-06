@@ -17,7 +17,7 @@ public:
    using ExtTriggerPolarity   = TIM_ral::ExtTriggerPolarity;
    using SelectionCompareMode = TIM_ral::SelectionCompareMode;
    using CompareMode          = TIM_ral::CompareMode;
-   using OutputPolarity       = TIM_ral::OutputPolarity;
+   using Polarity             = TIM_ral::Polarity;
 
    static const uint32_t Base = adr;
 
@@ -51,7 +51,7 @@ public:
 
    template<SelectionCompareMode value, uint8_t channel> static void selectCompareMode();
    template<CompareMode value,          uint8_t channel> static void setCompareMode();
-   template<OutputPolarity value,       uint8_t channel> static void setOutputPolarity();
+   template<Polarity value,             uint8_t channel> static void setPolarity();
 
 
 protected:
@@ -74,7 +74,7 @@ private:
    TIM_ral::DIER_t DIER; // TIM DMA/interrupt enable register
    TIM_ral::SR_t   SR;   // TIM status register
    TIM_ral::EGR_t  EGR;  // TIM event generation register
-   TIM_ral::CCMR_t CCMR; // TIM capture/compare mode register
+   TIM_ral::CCMR_t CCMR; // TIM capture/compare mode register 1
    TIM_ral::CCER_t CCER; // TIM capture/compare enable register
    TIM_ral::CNT_t  CNT;  // TIM counter register
    TIM_ral::PSC_t  PSC;  // TIM prescaler

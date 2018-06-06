@@ -9,3 +9,4 @@ constexpr uint32_t operator "" _min (unsigned long long val) { return val * 6000
 constexpr uint32_t operator "" _cnt (unsigned long long val) { return val; }
 constexpr uint32_t operator "" _percent (unsigned long long val) { return val; }
 constexpr uint32_t operator "" _channel (unsigned long long val) { return val; }
+constexpr uint32_t operator "" _from1000 (unsigned long long val) { return val; }
