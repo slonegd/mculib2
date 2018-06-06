@@ -16,8 +16,8 @@ int main(void)
    // CONFIGURE_PIN (BlueLed, Output);
 
 
-   pwm.setFreq(1000_Hz);
-   pwm.setD(50_percent);
+   pwm.freq = 1000_Hz;
+   pwm.fillRatio = 500_from1000;
    pwm.outEnable();
   
   

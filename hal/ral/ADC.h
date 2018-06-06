@@ -22,22 +22,22 @@ public:
 
    void makeDebugVar() { status().bits.res1 = 0; }
 
-   static void ClockEnable();
-   static void Enable();
-   static void Disable();
-   static bool IsDisable();
-   static bool IsReady();
-   static void SetBusy();
-   static void Stop();
-   static void Start();
-   static bool IsStoping();
-   static void SetClock ( Clock val );
+   static void clockEnable();
+   static void enable();
+   static void disable();
+   static bool isDisable();
+   static bool isReady();
+   static void setBusy();
+   static void stop();
+   static void start();
+   static bool isStoping();
+   static void setClock (Clock val);
    static void DMAenable();
-   static void SetCircularDMA();
-   static void SetResolution (Resolution val);
-   static void SetContinuousMode() { conf1().reg |= ADC_CFGR1_CONT_Msk; }
-   static void SetSampleTime (SampleTime val);
-   static void SetChannel (uint8_t val) { channelSelect().reg |= (1u << val); }
+   static void setCircularDMA();
+   static void setResolution (Resolution val);
+   static void setContinuousMode();
+   static void setSampleTime (SampleTime val);
+   static void setChannel (uint8_t val);
 
 
 

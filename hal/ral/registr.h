@@ -68,7 +68,18 @@ struct Offset_t { enum { Offset = offset }; };
 #define IS_SET(reg_,pos)        ((reg_.reg &   _1BIT_TO_MASK(reg_, pos)) != 0)
 
 
-#define POSITHION_OF(bits,pos) [](){ std::remove_reference<decltype(reg_)>::type reg; reg.bits.pos = 1; size_t res = 0; while (reg.reg != 1) { reg.reg >> 1; res++; } return res; }()
+/// эта ерунда не работает на этапе компиляции, потому не использовать!!!
+#define POSITHION_OF(reg_,pos) [](){ \
+   typename std::decay<decltype(reg_)>::type reg; \
+   reg.bits.pos = static_cast<typename std::decay<decltype(reg.bits.pos)>::type>(1); \
+   size_t res = 0; \
+   while (reg.reg != 1) { \
+      reg.reg >> 1; \
+      res++; \
+   } \
+   return res; \
+   }()
+
 
 #define _1BIT_TO_MASK_(reg, pos) ((uint32_t)0b1 << POSITHION_OF(reg, pos))
 #define SET_(reg_,pos)           (reg_.reg  |=  _1BIT_TO_MASK_(reg_, pos))

@@ -12,7 +12,7 @@
 #if defined(STM32F405xx)
 
 template <uint32_t adr>
-void ADCx<adr>::ClockEnable()
+void ADCx<adr>::clockEnable()
 {
    constexpr uint32_t ClkEnMask =
       Base == ADC1_BASE ? RCC_APB2ENR_ADC1EN_Msk :
@@ -24,14 +24,14 @@ void ADCx<adr>::ClockEnable()
 
 
 template <uint32_t adr>
-void ADCx<adr>::Enable()
+void ADCx<adr>::enable()
 {
    Bit_BAND(control(), ADEN) = true;
 }
 
 
 template <uint32_t adr>
-void ADCx<adr>::Disable()
+void ADCx<adr>::disable()
 {
    Bit_BAND(control(), ADDIS) = true;
 }
@@ -40,7 +40,7 @@ void ADCx<adr>::Disable()
 #elif defined(STM32F030x6)
 
 template <uint32_t adr>
-void ADCx<adr>::ClockEnable()
+void ADCx<adr>::clockEnable()
 {
    static constexpr uint32_t ClkEnMask = RCC_APB2ENR_ADCEN_Msk;
    RCC->APB2ENR |= ClkEnMask;
@@ -49,63 +49,63 @@ void ADCx<adr>::ClockEnable()
 
 
 template <uint32_t adr>
-void ADCx<adr>::Enable()
+void ADCx<adr>::enable()
 {
    SET(control(), ADEN);
 }
 
 
 template <uint32_t adr>
-void ADCx<adr>::Disable()
+void ADCx<adr>::disable()
 {
    SET(control(), ADDIS);
 }
 
 
 template <uint32_t adr>
-bool ADCx<adr>::IsDisable()
+bool ADCx<adr>::isDisable()
 {
    return IS_SET(control(), ADEN);
 }
 
 
 template <uint32_t adr>
-bool ADCx<adr>::IsReady()
+bool ADCx<adr>::isReady()
 {
    return IS_SET(status(), ADRDY);
 }
 
 
 template <uint32_t adr>
-void ADCx<adr>::SetBusy()
+void ADCx<adr>::setBusy()
 {
    SET(status(), ADRDY);
 }
 
 
 template <uint32_t adr>
-void ADCx<adr>::Stop()
+void ADCx<adr>::stop()
 {
    SET(control(), ADSTP);
 }
 
 
 template <uint32_t adr>
-void ADCx<adr>::Start()
+void ADCx<adr>::start()
 {
    SET(control(), ADSTART);
 }
 
 
 template <uint32_t adr>
-bool ADCx<adr>::IsStoping()
+bool ADCx<adr>::isStoping()
 {
    return IS_SET(control(), ADSTP);
 }
 
 
 template <uint32_t adr>
-void ADCx<adr>::SetClock ( Clock val )
+void ADCx<adr>::setClock ( Clock val )
 {
    uint32_t tmp = conf2().reg;
    tmp &= ~_2BIT_TO_MASK(conf2(), CKMODE);
@@ -122,27 +122,43 @@ void ADCx<adr>::DMAenable()
 
 
 template <uint32_t adr>
-void ADCx<adr>::SetCircularDMA()
+void ADCx<adr>::setCircularDMA()
 {
-   // SET_(conf1().bits, DMACFG);
-}
-
-
-
-
-template <uint32_t adr>
-void ADCx<adr>::SetResolution ( Resolution val )
-{
-   conf1().reg &= ~ADC_CFGR1_RES_Msk;
-   conf1().reg |= (uint32_t)val << ADC_CFGR1_RES_Pos;
+   SET(conf1(), DMACFG);
 }
 
 
 template <uint32_t adr>
-void ADCx<adr>::SetSampleTime ( SampleTime val )
+void ADCx<adr>::setResolution ( Resolution val )
 {
-   sampleTime().reg &= ~ADC_SMPR_SMP_Msk;
-   sampleTime().reg |= (uint32_t)val << ADC_SMPR_SMP_Pos;
+   uint32_t tmp = conf1().reg;
+   tmp &= ~_2BIT_TO_MASK(conf1(), RES);
+   tmp |= VAL_TO_MASK(conf1(), RES, val);
+   conf1().reg = tmp;
+}
+
+
+template <uint32_t adr>
+void ADCx<adr>::setContinuousMode()
+{
+   SET(conf1(), CONT);
+}
+
+
+template <uint32_t adr>
+void ADCx<adr>::setSampleTime ( SampleTime val )
+{
+   uint32_t tmp = sampleTime().reg;
+   tmp &= ~_3BIT_TO_MASK(sampleTime(), SMP);
+   tmp |= VAL_TO_MASK(sampleTime(), SMP, val);
+   sampleTime().reg = tmp;
+}
+
+
+template <uint32_t adr>
+void ADCx<adr>::setChannel (uint8_t val )
+{
+   channelSelect().reg |= ((uint32_t)1 << val);
 }
 
 #endif

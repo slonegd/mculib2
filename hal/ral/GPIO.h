@@ -85,15 +85,15 @@ public:
    }
 
    // конфигурация (пока не все методы)
-   static void Enable()  { ClockEnable(); }
-   static void Disable()
-   {
-#if defined(STM32F030x6)
-      RCC->AHBENR |= ClkEnMask;
-#elif defined(STM32F405xx)
-      RCC->AHB1ENR |= ClkEnMask;
-#endif
-   }
+//    static void Enable()  { ClockEnable(); }
+//    static void Disable()
+//    {
+// #if defined(STM32F030x6)
+//       RCC->AHBENR |= ClkEnMask;
+// #elif defined(STM32F405xx)
+//       RCC->AHB1ENR |= ClkEnMask;
+// #endif
+//    }
 
    // методы шаблоны
    template<uint16_t clearMask, uint16_t val> static void ClearAndSet()

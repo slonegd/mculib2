@@ -51,7 +51,6 @@
             ],
             "defines": [
                 "STM32F030x6"
-               //  "STM32F405xx"
             ],
             "intelliSenseMode": "clang-x64",
             "browse": {
