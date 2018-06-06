@@ -109,18 +109,18 @@ private:
 
    // всю эту рекурсивную бяку можно/нужно заменить на fold expression 17 стандарта
    template<class T, class ... Ts> struct List { 
-      static bool IsAnySet()   { return T::IsSet()   or  List<Ts...>::IsAnySet();   }
-      static bool IsAnyClear() { return T::IsClear() or  List<Ts...>::IsAnyClear(); }
-      static bool IsAllSet()   { return T::IsSet()   and List<Ts...>::IsAllSet();   }
-      static bool IsAllClear() { return T::IsClear() and List<Ts...>::IsAllClear(); }
-      static void ClockEnable() { T::Port::ClockEnable(); List<Ts...>::ClockEnable(); }
+      static bool IsAnySet()   { return T::isSet()   or  List<Ts...>::IsAnySet();   }
+      static bool IsAnyClear() { return T::isClear() or  List<Ts...>::IsAnyClear(); }
+      static bool IsAllSet()   { return T::isSet()   and List<Ts...>::IsAllSet();   }
+      static bool IsAllClear() { return T::isClear() and List<Ts...>::IsAllClear(); }
+      static void ClockEnable() { T::Port::clockEnable(); List<Ts...>::ClockEnable(); }
    };
    template<class T> struct List<T> {
-      static bool IsAnySet()   { return T::IsSet();   }
-      static bool IsAnyClear() { return T::IsClear(); }
-      static bool IsAllSet()   { return T::IsSet();   }
-      static bool IsAllClear() { return T::IsClear(); }
-      static void ClockEnable() { T::Port::ClockEnable(); }
+      static bool IsAnySet()   { return T::isSet();   }
+      static bool IsAnyClear() { return T::isClear(); }
+      static bool IsAllSet()   { return T::isSet();   }
+      static bool IsAllClear() { return T::isClear(); }
+      static void ClockEnable() { T::Port::clockEnable(); }
    };
 
 

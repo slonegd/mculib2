@@ -183,7 +183,7 @@ void USART<USART_, bufSize, RX, TX, RTS, LED>::sendByte (uint8_t val)
 template <class USART_, uint32_t bufSize, class RX, class TX, class RTS, class LED>
 void USART<USART_, bufSize, RX, TX, RTS, LED>::startTX (uint32_t qty)
 {
-   LED::Set();
+   LED::set();
    DMAtx::Disable();
    DMAtx::SetQtyTransactions (qty);
    DMAtx::Enable();
@@ -223,7 +223,7 @@ template <class USART_, uint32_t bufSize, class RX, class TX, class RTS, class L
 void USART<USART_, bufSize, RX, TX, RTS, LED>::txCompleteHandler()
 {
    if ( DMAtx::IsTransferCompleteInterrupt() ) {
-      LED::Clear();
+      LED::clear();
       // DMAtx::Disable();
       // DMAenableRX();
       DMAtx::ClearFlagTransferCompleteInterrupt();

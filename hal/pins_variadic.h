@@ -11,7 +11,7 @@ struct Pins
    template<PinConf_t val>
    static void configure()
    {
-      First::template Configure<val>();
+      First::template configure<val>();
       Pins<Other...>::template configure<val>();
    }
 };
@@ -22,6 +22,6 @@ struct Pins<Last>
    template<PinConf_t val>
    static void configure()
    {
-      Last::template Configure<val>();
+      Last::template configure<val>();
    }
 };

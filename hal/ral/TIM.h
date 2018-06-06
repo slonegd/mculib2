@@ -30,7 +30,7 @@ public:
    static void     clockEnable();
    static uint16_t getCounter();
    static uint16_t clearCounter();
-   static void     externalClockEnable();
+   static void     externalClockEnable(); 
    static void     externalClockDisable();
    static void     setAutoReloadValue (uint32_t val);
    static void     setPrescaller (uint32_t val);
@@ -82,7 +82,7 @@ private:
    TIM_ral::RCR_t  RCR;  // TIM repetition counter register
    TIM_ral::CCR_t  CCR;  // TIM capture/compare register
    TIM_ral::BDTR_t BDTR; // TIM break and dead-time register
-   TIM_ral::DCR_t  DCR;  // TIM DMA control register
+   TIM_ral::DCR_t  DCR;  // TIM DMA control registerGPIO_ral
 /* STM32F4 STM32F0
 typedef struct
 {

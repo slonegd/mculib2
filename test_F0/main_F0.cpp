@@ -46,7 +46,7 @@ int main(void)
       f = counter.get();
 
       if (ledTimer.event()) {
-         GreenLed::Toggle();
+         GreenLed::toggle();
          current.computeAverage();
       }
 

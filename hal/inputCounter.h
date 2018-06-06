@@ -52,7 +52,7 @@ void InputCounter<TIM_,Pin_>::init()
    constexpr PinConf_t conf =
       std::is_same<TIM_,TIM1>::value  ? PinConf_t::AlternateFunc2: 
                                         PinConf_t::AlternateFunc1;
-   Pin_::template Configure<conf>();
+   Pin_::template configure<conf>();
    TIM_::counterEnable();
    timer.setTimeAndStart(500_ms);
 }

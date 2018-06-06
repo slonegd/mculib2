@@ -32,7 +32,7 @@ public:
    static const unsigned Number = pin;
    static const bool Inverted = false;
 
-   inline static void Configure ( Mode mode,
+   inline static void configure ( Mode mode,
                            OutType type,
                            OutSpeed speed,
                            PullResistor res)
@@ -50,22 +50,22 @@ public:
 
    // using PinConf_t = typename Port::PinConf_t;
    template<PinConf_t pinConf>
-   static void Configure() { Port::template Configure<pinConf, pin>(); }
-   #define CONFIGURE_PIN(Pin,Conf) Pin::template Configure<PinConf_t::Conf>()
+   static void configure() { Port::template configure<pinConf, pin>(); }
+   #define CONFIGURE_PIN(Pin,Conf) Pin::template configure<PinConf_t::Conf>()
 
    template <AF func> static void SetAltFunc()
    {
-      Port::template SetAltFunc<func, pin>();
+      Port::template setAltFunc<func, pin>();
    }
 
-   static void Set()          { PORT::template Set<1u << pin> (); }
-   static void Clear()        { PORT::template Clear<1u << pin> (); }
-   static void Toggle()       { PORT::template Toggle<1u << pin> (); }
-   static void Set(bool b)    { b ? Set() : Clear(); }
-   static bool IsSet()        { return ( (PORT::PinRead() & (1u << pin) ) != 0); }
-   static bool IsClear()      { return ( (PORT::PinRead() & (1u << pin) ) == 0); }
-   static void WaitForSet()   { while( IsSet() == 0) {} }
-   static void WaitForClear() { while( IsSet() ) {} }
+   static void set()          { PORT::template set<1u << pin> (); }
+   static void clear()        { PORT::template clear<1u << pin> (); }
+   static void toggle()       { PORT::template toggle<1u << pin> (); }
+   static void set(bool b)    { b ? set() : clear(); }
+   static bool isSet()        { return ( (PORT::pinRead() & (1u << pin) ) != 0); }
+   static bool isClear()      { return ( (PORT::pinRead() & (1u << pin) ) == 0); }
+   static void waitForSet()   { while( isSet() == 0) {} }
+   static void waitForClear() { while( isSet() ) {} }
 
 };
 

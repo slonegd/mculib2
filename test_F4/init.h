@@ -124,18 +124,18 @@ extern "C" void CLKinit (void)
 
 inline void PortsInit (void)
 {
-   LedPort::ClockEnable();
+   LedPort::clockEnable();
 
-   Bled::Configure (Bled::Mode::Output,
+   Bled::configure (Bled::Mode::Output,
                 Bled::OutType::PushPull,
                 Bled::OutSpeed::High,
                 Bled::PullResistor::No);
-   Oled::Configure (Oled::Mode::Output,
+   Oled::configure (Oled::Mode::Output,
                 Oled::OutType::PushPull,
                 Oled::OutSpeed::High,
                 Oled::PullResistor::No);
 
-   Button::Port::ClockEnable();
+   Button::Port::clockEnable();
 }
 
 

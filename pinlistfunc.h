@@ -207,7 +207,7 @@ template <class PortList, class PinList> struct PortWriteIterator;
          // проецируем биты из входного значения в соответствующие биты порта
          // как это реализованно увидим дальше
          uint16_t result = PinWriteIterator<Pins>::UppendValue(value);
-         CurPort::ClearAndSet(PortMask, result);
+         CurPort::clearAndSet(PortMask, result);
          // рекурсивно обрабатываем остальные порты в списке
          PortWriteIterator<Tail, PinList>::Write(value);
       }

@@ -64,12 +64,12 @@ private:
     // static const AFR_t::AF altFun = AltFunc<Timer,Pin>();
     void init (void)
     {
-        Pin_::Port::ClockEnable();
+        Pin_::Port::clockEnable();
         TIM_::clockEnable();
 
 
        
-        Pin_::Configure ( Pin_::Mode::Alternate,
+        Pin_::configure ( Pin_::Mode::Alternate,
                          Pin_::OutType::PushPull,
                          Pin_::OutSpeed::High,
                          Pin_::PullResistor::No);
