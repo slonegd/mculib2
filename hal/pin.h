@@ -12,6 +12,7 @@
 #include "GPIO.h"
 #include <stdint.h>
 #include <stdbool.h>
+#include <type_traits>
 
 namespace Pin_HAL {
 
@@ -52,6 +53,10 @@ public:
    template<PinConf_t pinConf>
    static void configure() { Port::template configure<pinConf, pin>(); }
    #define CONFIGURE_PIN(Pin,Conf) Pin::template configure<PinConf_t::Conf>()
+
+   template<AF af>
+   static void configureAltFunction();
+
 
    template <AF func> static void SetAltFunc()
    {
@@ -189,3 +194,22 @@ using PG13 = Pin_t<PG, 13>;
 using PG14 = Pin_t<PG, 14>;
 using PG15 = Pin_t<PG, 15>;
 #endif
+
+
+
+
+template <class PORT, uint8_t pin>
+template<GPIO_ral::AF af>
+void Pin_t<PORT,pin>::configureAltFunction()
+{
+   using PIN = Pin_t<PORT,pin>;
+   if      (af == GPIO_ral::AF::_0) CONFIGURE_PIN(PIN, AlternateFunc0);
+   else if (af == GPIO_ral::AF::_1) CONFIGURE_PIN(PIN, AlternateFunc1);
+   else if (af == GPIO_ral::AF::_2) CONFIGURE_PIN(PIN, AlternateFunc2);
+   else if (af == GPIO_ral::AF::_3) CONFIGURE_PIN(PIN, AlternateFunc3);
+   else if (af == GPIO_ral::AF::_4) CONFIGURE_PIN(PIN, AlternateFunc4);
+   else if (af == GPIO_ral::AF::_5) CONFIGURE_PIN(PIN, AlternateFunc5);
+   else if (af == GPIO_ral::AF::_6) CONFIGURE_PIN(PIN, AlternateFunc6);
+   else if (af == GPIO_ral::AF::_7) CONFIGURE_PIN(PIN, AlternateFunc7);
+   
+}

@@ -23,19 +23,32 @@ struct Encoder
 template<class TIM_, class PinA, class PinB, bool inverted>
 Encoder<TIM_,PinA,PinB,inverted>::Encoder()
 {
+   constexpr auto pinAchannel = Channel<TIM_,PinA>();
+   constexpr auto pinBchannel = Channel<TIM_,PinB>();
    static_assert (
-      (std::is_same<TIM_,TIM3>::value) | (std::is_same<TIM_,TIM8>::value),
-      "Вывод контроллера не поддерживает функцию ШИМ с этим таймером"
+      pinAchannel == 1 or pinAchannel == 2,
+      "PinA вывод контроллера не поддерживает функцию энкодера с этим таймером" 
+   );
+   static_assert (
+      pinBchannel == 1 or pinBchannel == 2,
+      "PinB вывод контроллера не поддерживает функцию энкодера с этим таймером" 
+   );
+   static_assert (
+      pinAchannel != pinBchannel,
+      "PinA и PinB не должны принадлежать одному каналу таймера" 
    );
 
-   Pins<PinA,PinB>::template configure<PinConf_t::AlternateFunc3>();
+   constexpr auto altFuncPinA = AltFunc<TIM_,PinA>();
+   constexpr auto altFuncPinB = AltFunc<TIM_,PinB>();
+   PinA::template configureAltFunction<altFuncPinA>();
+   PinB::template configureAltFunction<altFuncPinB>();
   
    TIM_::clockEnable();
    TIM_::template setSlaveMode<TIM_::SlaveMode::Encoder1>();
-   TIM_::template selectCompareMode<TIM_::SelectionCompareMode::InputTIFirst, 1_channel>();
-   TIM_::template selectCompareMode<TIM_::SelectionCompareMode::InputTIFirst, 2_channel>();
+   TIM_::template selectCompareMode<TIM_::SelectionCompareMode::InputTIFirst, pinAchannel>();
+   TIM_::template selectCompareMode<TIM_::SelectionCompareMode::InputTIFirst, pinBchannel>();
    if (inverted) {
-      TIM_::template setPolarity<TIM_::Polarity::falling, 1_channel>();
+      TIM_::template setPolarity<TIM_::Polarity::falling, pinAchannel>();
    }
    TIM_::clearCounter();
    TIM_::counterEnable();

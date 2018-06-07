@@ -29,67 +29,67 @@ static constexpr uint32_t MakeMask (GPIO_ral::Mode_t m,
 
 enum class PinConf_t {
    Output = GPIO::MakeMask (
-      GPIO_ral::Mode_t        ::Output,
-      GPIO_ral::OutType_t    ::PushPull,
-      GPIO_ral::OutSpeed_t  ::Low,
-      GPIO_ral::PullResistor_t::No,
-      GPIO_ral::AF              ::_0
+      GPIO_ral::Mode_t         ::Output,
+      GPIO_ral::OutType_t      ::PushPull,
+      GPIO_ral::OutSpeed_t     ::Low,
+      GPIO_ral::PullResistor_t ::No,
+      GPIO_ral::AF             ::_0
    ),
    OutputHighSpeed = GPIO::MakeMask (
-      GPIO_ral::Mode_t        ::Output,
-      GPIO_ral::OutType_t    ::PushPull,
-      GPIO_ral::OutSpeed_t  ::High,
-      GPIO_ral::PullResistor_t::No,
-      GPIO_ral::AF              ::_0
+      GPIO_ral::Mode_t         ::Output,
+      GPIO_ral::OutType_t      ::PushPull,
+      GPIO_ral::OutSpeed_t     ::High,
+      GPIO_ral::PullResistor_t ::No,
+      GPIO_ral::AF             ::_0
    ),
    Input = GPIO::MakeMask (
-      GPIO_ral::Mode_t        ::Input,
-      GPIO_ral::OutType_t    ::PushPull,
-      GPIO_ral::OutSpeed_t  ::Low,
-      GPIO_ral::PullResistor_t::No,
-      GPIO_ral                  ::AF::_0
+      GPIO_ral::Mode_t         ::Input,
+      GPIO_ral::OutType_t      ::PushPull,
+      GPIO_ral::OutSpeed_t     ::Low,
+      GPIO_ral::PullResistor_t ::No,
+      GPIO_ral                 ::AF::_0
    ),
    AlternateFunc0 = GPIO::MakeMask (
-      GPIO_ral::Mode_t        ::Alternate,
-      GPIO_ral::OutType_t    ::PushPull,
-      GPIO_ral::OutSpeed_t  ::Low,
-      GPIO_ral::PullResistor_t::No,
-      GPIO_ral::AF              ::_0
+      GPIO_ral::Mode_t         ::Alternate,
+      GPIO_ral::OutType_t      ::PushPull,
+      GPIO_ral::OutSpeed_t     ::Low,
+      GPIO_ral::PullResistor_t ::No,
+      GPIO_ral::AF             ::_0
    ),
    AlternateFunc0HighSpeed = GPIO::MakeMask (
-      GPIO_ral::Mode_t        ::Alternate,
-      GPIO_ral::OutType_t    ::PushPull,
-      GPIO_ral::OutSpeed_t  ::High,
-      GPIO_ral::PullResistor_t::No,
-      GPIO_ral::AF              ::_0
+      GPIO_ral::Mode_t         ::Alternate,
+      GPIO_ral::OutType_t      ::PushPull,
+      GPIO_ral::OutSpeed_t     ::High,
+      GPIO_ral::PullResistor_t ::No,
+      GPIO_ral::AF             ::_0
    ),
    AnalogInput = GPIO::MakeMask (
-      GPIO_ral::Mode_t        ::Analog,
-      GPIO_ral::OutType_t    ::PushPull,
-      GPIO_ral::OutSpeed_t  ::Low,
-      GPIO_ral::PullResistor_t::No,
-      GPIO_ral::AF              ::_0
+      GPIO_ral::Mode_t         ::Analog,
+      GPIO_ral::OutType_t      ::PushPull,
+      GPIO_ral::OutSpeed_t     ::Low,
+      GPIO_ral::PullResistor_t ::No,
+      GPIO_ral::AF             ::_0
    ),
    AlternateFunc1 = GPIO::MakeMask (
-      GPIO_ral::Mode_t        ::Alternate,
-      GPIO_ral::OutType_t    ::PushPull,
-      GPIO_ral::OutSpeed_t  ::Low,
-      GPIO_ral::PullResistor_t::No,
-      GPIO_ral::AF              ::_1
+      GPIO_ral::Mode_t         ::Alternate,
+      GPIO_ral::OutType_t      ::PushPull,
+      GPIO_ral::OutSpeed_t     ::Low,
+      GPIO_ral::PullResistor_t ::No,
+      GPIO_ral::AF             ::_1
    ),
    AlternateFunc1HighSpeed = GPIO::MakeMask (
-      GPIO_ral::Mode_t        ::Alternate,
-      GPIO_ral::OutType_t    ::PushPull,
-      GPIO_ral::OutSpeed_t  ::High,
-      GPIO_ral::PullResistor_t::No,
-      GPIO_ral::AF              ::_1
+      GPIO_ral::Mode_t         ::Alternate,
+      GPIO_ral::OutType_t      ::PushPull,
+      GPIO_ral::OutSpeed_t     ::High,
+      GPIO_ral::PullResistor_t ::No,
+      GPIO_ral::AF             ::_1
    ),
    AlternateFunc2 = GPIO::MakeMask (
-      GPIO_ral::Mode_t        ::Alternate,
-      GPIO_ral::OutType_t    ::PushPull,
-      GPIO_ral::OutSpeed_t  ::Low,
-      GPIO_ral::PullResistor_t::No,
-      GPIO_ral::AF              ::_2
+      GPIO_ral::Mode_t         ::Alternate,
+      GPIO_ral::OutType_t      ::PushPull,
+      GPIO_ral::OutSpeed_t     ::Low,
+      GPIO_ral::PullResistor_t ::No,
+      GPIO_ral::AF             ::_2
    ),
    AlternateFunc3 = GPIO::MakeMask (
       GPIO_ral::Mode_t         ::Alternate,
@@ -99,47 +99,54 @@ enum class PinConf_t {
       GPIO_ral::AF             ::_3
    ),
    AlternateFunc4 = GPIO::MakeMask (
-      GPIO_ral::Mode_t        ::Alternate,
-      GPIO_ral::OutType_t    ::PushPull,
-      GPIO_ral::OutSpeed_t  ::Low,
-      GPIO_ral::PullResistor_t::No,
-      GPIO_ral::AF              ::_4
+      GPIO_ral::Mode_t         ::Alternate,
+      GPIO_ral::OutType_t      ::PushPull,
+      GPIO_ral::OutSpeed_t     ::Low,
+      GPIO_ral::PullResistor_t ::No,
+      GPIO_ral::AF             ::_4
    ),
    AlternateFunc5 = GPIO::MakeMask (
-      GPIO_ral::Mode_t        ::Alternate,
-      GPIO_ral::OutType_t    ::PushPull,
-      GPIO_ral::OutSpeed_t  ::Low,
-      GPIO_ral::PullResistor_t::No,
-      GPIO_ral::AF              ::_5
+      GPIO_ral::Mode_t         ::Alternate,
+      GPIO_ral::OutType_t      ::PushPull,
+      GPIO_ral::OutSpeed_t     ::Low,
+      GPIO_ral::PullResistor_t ::No,
+      GPIO_ral::AF             ::_5
+   ),
+   AlternateFunc6 = GPIO::MakeMask (
+      GPIO_ral::Mode_t         ::Alternate,
+      GPIO_ral::OutType_t      ::PushPull,
+      GPIO_ral::OutSpeed_t     ::Low,
+      GPIO_ral::PullResistor_t ::No,
+      GPIO_ral::AF             ::_6
    ),
    AlternateFunc7 = GPIO::MakeMask (
-      GPIO_ral::Mode_t        ::Alternate,
-      GPIO_ral::OutType_t    ::PushPull,
-      GPIO_ral::OutSpeed_t  ::Low,
-      GPIO_ral::PullResistor_t::No,
-      GPIO_ral::AF              ::_7
+      GPIO_ral::Mode_t         ::Alternate,
+      GPIO_ral::OutType_t      ::PushPull,
+      GPIO_ral::OutSpeed_t     ::Low,
+      GPIO_ral::PullResistor_t ::No,
+      GPIO_ral::AF             ::_7
    ),
    AlternateFunc7HighSpeed = GPIO::MakeMask (
-      GPIO_ral::Mode_t        ::Alternate,
-      GPIO_ral::OutType_t    ::PushPull,
-      GPIO_ral::OutSpeed_t  ::High,
-      GPIO_ral::PullResistor_t::No,
-      GPIO_ral::AF              ::_7
+      GPIO_ral::Mode_t         ::Alternate,
+      GPIO_ral::OutType_t      ::PushPull,
+      GPIO_ral::OutSpeed_t     ::High,
+      GPIO_ral::PullResistor_t ::No,
+      GPIO_ral::AF             ::_7
    ),
 #if defined(STM32F405xx)
    AlternateFunc8 = GPIO::MakeMask (
-      GPIO_ral::Mode_t        ::Alternate,
-      GPIO_ral::OutType_t    ::PushPull,
-      GPIO_ral::OutSpeed_t  ::Low,
-      GPIO_ral::PullResistor_t::No,
-      GPIO_ral::AF              ::_8
+      GPIO_ral::Mode_t         ::Alternate,
+      GPIO_ral::OutType_t      ::PushPull,
+      GPIO_ral::OutSpeed_t     ::Low,
+      GPIO_ral::PullResistor_t ::No,
+      GPIO_ral::AF             ::_8
    ),
    AlternateFunc8HighSpeed = GPIO::MakeMask (
-      GPIO_ral::Mode_t        ::Alternate,
-      GPIO_ral::OutType_t    ::PushPull,
-      GPIO_ral::OutSpeed_t  ::High,
-      GPIO_ral::PullResistor_t::No,
-      GPIO_ral::AF              ::_8
+      GPIO_ral::Mode_t         ::Alternate,
+      GPIO_ral::OutType_t      ::PushPull,
+      GPIO_ral::OutSpeed_t     ::High,
+      GPIO_ral::PullResistor_t ::No,
+      GPIO_ral::AF             ::_8
    ),
 #endif
 };
