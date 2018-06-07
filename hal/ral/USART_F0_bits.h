@@ -96,7 +96,7 @@ struct RQRbits {
    __IO uint32_t res1  :28; // Bits 31:4 Reserved, must be kept at reset value
 };
 
-struct ISRbits {
+struct SRbits {
    __IO bool     PE    :1; // Bit 0 PE: Parity error
    __IO bool     FE    :1; // Bit 1 FE: Framing error
    __IO bool     NF    :1; // Bit 2 NF: START bit Noise detection flag
@@ -119,7 +119,7 @@ struct ISRbits {
    __IO uint32_t res3  :12; // Bits 31:20 Reserved, must be kept at reset value.
 };
 
-struct ISRposition {
+struct SRposition {
    enum { PE = 0, FE, NF, ORE, IDLE, RXNE, TC, TXE, CTSIF = 9,
       CTS, RTOF, ABRE = 14, ABRF, BUSY, CMF, SBKF, RWU
    };
@@ -153,7 +153,7 @@ struct CR3_t  : BitsRegistr<CR3bits>, Offset_t<0x08>, CR3position {};
 struct BRR_t  : DataRegistr,          Offset_t<0x0C> {};
 struct RTOR_t : DataRegistr,          Offset_t<0x14> {};
 struct RQR_t  : BitsRegistr<RQRbits>, Offset_t<0x18> {};
-struct ISR_t  : BitsRegistr<ISRbits>, Offset_t<0x1C>, ISRposition {};
+struct SR_t   : BitsRegistr<SRbits>,  Offset_t<0x1C>, SRposition {};
 struct ICR_t  : BitsRegistr<ICRbits>, Offset_t<0x20>, ICRposition {};
 struct RDR_t  : DataRegistr,          Offset_t<0x24> {};
 struct TDR_t  : DataRegistr,          Offset_t<0x28> {};

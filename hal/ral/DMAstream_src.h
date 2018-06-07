@@ -1,9 +1,7 @@
 #pragma once
 
 #include "DMAstream.h"
-#if defined(STM32F405xx)
-#include "bitbanding.h"
-#endif
+
 
 #if defined(STM32F405xx) || defined(STM32F030x6)
 
@@ -55,6 +53,36 @@ bool DMAstream<adr>::IsTransferCompleteInterrupt()
    return DMA::template IsTransferCompleteInterrupt<stream()>();
 }
 
+
+template<uint32_t adr>
+void DMAstream<adr>::Disable()
+{
+   CLEAR(conf(), EN); 
+   while (IS_SET(conf(), EN)) {}
+}
+
+
+template<uint32_t adr>
+bool DMAstream<adr>::IsDisable()
+{
+   return IS_CLEAR(conf(), EN);
+}
+
+
+template<uint32_t adr>
+void DMAstream<adr>::Enable()
+{
+   SET(conf(), EN);
+}
+
+
+template<uint32_t adr>
+void DMAstream<adr>::EnableTransferCompleteInterrupt()
+{
+   SET(conf(), TCIE);
+}
+
+
 #endif
 
 #if defined(STM32F405xx)
@@ -96,35 +124,6 @@ constexpr IRQn_Type DMAstream<adr>::IRQn()
 }
 
 
-template<uint32_t adr>
-void DMAstream<adr>::Enable()
-{
-   BIT_BAND(conf(), EN) = true;
-}
-
-
-template<uint32_t adr>
-bool DMAstream<adr>::IsDisable()
-{
-   return BIT_BAND(conf(), EN) == 0;
-}
-
-
-template<uint32_t adr>
-void DMAstream<adr>::Disable()
-{
-   BIT_BAND(conf(), EN) = false;
-   while (BIT_BAND(conf(), EN)) {}
-}
-
-
-template<uint32_t adr>
-void DMAstream<adr>::EnableTransferCompleteInterrupt()
-{
-   BIT_BAND(conf(), TCIE) = true;
-}
-
-
 template<> struct DMAn<DMA1_Stream0_BASE> { using type = DMA1; };
 template<> struct DMAn<DMA1_Stream1_BASE> : DMAn<DMA1_Stream0_BASE> {};
 template<> struct DMAn<DMA1_Stream2_BASE> : DMAn<DMA1_Stream0_BASE> {};
@@ -154,35 +153,6 @@ constexpr int DMAstream<adr>::stream()
           adr == DMA1_Channel3_BASE ? 3 :
           adr == DMA1_Channel4_BASE ? 4 :
           adr == DMA1_Channel5_BASE ? 5 : -1;
-}
-
-
-template<uint32_t adr>
-void DMAstream<adr>::Enable()
-{
-   SET(conf(), EN);
-}
-
-
-template<uint32_t adr>
-bool DMAstream<adr>::IsDisable()
-{
-   return IS_CLEAR(conf(), EN);
-}
-
-
-template<uint32_t adr>
-void DMAstream<adr>::Disable()
-{
-   CLEAR(conf(), EN); 
-   while (IS_SET(conf(), EN)) {}
-}
-
-
-template<uint32_t adr>
-void DMAstream<adr>::EnableTransferCompleteInterrupt()
-{
-   SET(conf(), EN);
 }
 
 

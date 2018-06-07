@@ -87,7 +87,6 @@ void GPIOx<adr>::configure()
    pupd().reg   &= ~((uint32_t)0b1  << pin);
    pupd().reg   |=  (uint32_t)GPIOx::getResistor(pinConf) << pin;
    setAltFunc<GPIOx::getAltFunc(pinConf), pin>();
-    
 }
 
 template<uint32_t adr>

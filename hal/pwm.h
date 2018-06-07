@@ -89,8 +89,8 @@ PWM<TIM_,Pin_>::PWM() : freq(*this), fillRatio(*this), countTo(*this)
       "Вывод контроллера не поддерживает функцию ШИМ с этим таймером"
    );
 
-   Pin_::Port::ClockEnable();
-   Pin_::Configure ( Pin_::Mode::Alternate,
+   Pin_::Port::clockEnable();
+   Pin_::configure ( Pin_::Mode::Alternate,
                      Pin_::OutType::PushPull,
                      Pin_::OutSpeed::High,
                      Pin_::PullResistor::No);

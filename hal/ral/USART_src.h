@@ -2,9 +2,51 @@
 
 #include <type_traits>
 
-#if defined(STM32F405xx) or defined(STM32F030x6)
+#if defined(STM32F405xx) || defined(STM32F030x6)
+
+template<uint32_t adr, class DMArx, class DMAtx> 
+bool USARTx<adr,DMArx,DMAtx>::IsIDLEinterrupt()
+{
+   return IS_SET(status(), IDLE);
+}
 
 
+template<uint32_t adr, class DMArx, class DMAtx> 
+void USARTx<adr,DMArx,DMAtx>::EnableIDLEinterrupt()
+{
+   SET(conf1(), IDLEIE);
+}
+
+
+template<uint32_t adr, class DMArx, class DMAtx> 
+void USARTx<adr,DMArx,DMAtx>::DMAtxEnable()
+{
+   SET(conf3(), DMAT);
+}
+
+
+template<uint32_t adr, class DMArx, class DMAtx> 
+void USARTx<adr,DMArx,DMAtx>::DMArxEnable()
+{
+   SET(conf3(), DMAR);
+}
+
+
+template<uint32_t adr, class DMArx, class DMAtx> 
+void USARTx<adr,DMArx,DMAtx>::RTSenable()
+{
+   SET(conf3(), RTSE);
+}
+
+
+template<uint32_t adr, class DMArx, class DMAtx> 
+void USARTx<adr,DMArx,DMAtx>::SetStopBits (StopBits val)
+{
+   uint32_t tmp = conf2().reg;
+   tmp &= ~_2BIT_TO_MASK(conf2(), STOP);
+   tmp |= VAL_TO_MASK(conf2(), STOP, val);
+   conf2().reg = tmp;
+}
 
 #endif
 
@@ -48,26 +90,6 @@ void USARTx<adr,DMArx,DMAtx>::TXenable (bool val)
    BIT_BAND(conf1(), TE) = val;
 }
 
-template<uint32_t adr, class DMArx, class DMAtx> 
-void USARTx<adr,DMArx,DMAtx>::RTSenable()
-{
-   BIT_BAND(conf3(), RTSE) = true;
-}
-
-
-template<uint32_t adr, class DMArx, class DMAtx> 
-void USARTx<adr,DMArx,DMAtx>::DMAtxEnable()
-{
-   BIT_BAND(conf3(), DMAT) = true;
-}
-
-
-template<uint32_t adr, class DMArx, class DMAtx> 
-void USARTx<adr,DMArx,DMAtx>::DMArxEnable()
-{
-   BIT_BAND(conf3(), DMAR) = true;
-}
-
 
 template<uint32_t adr, class DMArx, class DMAtx> 
 void USARTx<adr,DMArx,DMAtx>::SetBoudRate (Boudrate val)
@@ -91,29 +113,6 @@ template<uint32_t adr, class DMArx, class DMAtx>
 void USARTx<adr,DMArx,DMAtx>::SetParity (Parity val)
 {
    BIT_BAND(conf1(), PS) = val;
-}
-
-
-template<uint32_t adr, class DMArx, class DMAtx> 
-void USARTx<adr,DMArx,DMAtx>::SetStopBits (StopBits val)
-{
-   auto& tmp = BIT_BAND(conf2(), STOP);
-   tmp = val;
-   BIT_BAND_NEXT(tmp) = val >> 1;
-}
-
-
-template<uint32_t adr, class DMArx, class DMAtx> 
-void USARTx<adr,DMArx,DMAtx>::EnableIDLEinterrupt()
-{
-   BIT_BAND(conf1(), IDLEIE) = true;
-}
-
-
-template<uint32_t adr, class DMArx, class DMAtx> 
-bool USARTx<adr,DMArx,DMAtx>::IsIDLEinterrupt()
-{
-   return BIT_BAND(status(), IDLE);
 }
 
 
@@ -284,27 +283,6 @@ void USARTx<adr,DMArx,DMAtx>::TXenable (bool val)
 
 
 template<uint32_t adr, class DMArx, class DMAtx> 
-void USARTx<adr,DMArx,DMAtx>::RTSenable()
-{
-   SET(conf3(), RTSE);
-}
-
-
-template<uint32_t adr, class DMArx, class DMAtx> 
-void USARTx<adr,DMArx,DMAtx>::DMAtxEnable()
-{
-   SET(conf3(), DMAT);
-}
-
-
-template<uint32_t adr, class DMArx, class DMAtx> 
-void USARTx<adr,DMArx,DMAtx>::DMArxEnable()
-{
-   SET(conf3(), DMAR);
-}
-
-
-template<uint32_t adr, class DMArx, class DMAtx> 
 void USARTx<adr,DMArx,DMAtx>::SetBoudRate (Boudrate val)
 {
    boudrate().reg = RCC_t::getAPB2clock() / val;
@@ -328,23 +306,6 @@ void USARTx<adr,DMArx,DMAtx>::SetParity (Parity val)
       SET(conf1(), PS);
    else
       CLEAR(conf1(), PS);
-}
-
-
-template<uint32_t adr, class DMArx, class DMAtx> 
-void USARTx<adr,DMArx,DMAtx>::SetStopBits (StopBits val)
-{
-   uint32_t tmp = conf2().reg;
-   tmp &= ~_2BIT_TO_MASK(conf2(), STOP);
-   tmp |= VAL_TO_MASK(conf2(), STOP, val);
-   conf2().reg = tmp;
-}
-
-
-template<uint32_t adr, class DMArx, class DMAtx> 
-void USARTx<adr,DMArx,DMAtx>::EnableIDLEinterrupt()
-{
-   SET(conf1(), IDLEIE);
 }
 
 
@@ -386,7 +347,7 @@ void USARTx<adr,DMArx,DMAtx>::EnableReceiveTimeoutInterupt()
 template<uint32_t adr, class DMArx, class DMAtx> 
 bool USARTx<adr,DMArx,DMAtx>::IsReceiveTimeoutInterrupt()
 {
-   return IS_SET(interrupt(), RTOF);
+   return IS_SET(status(), RTOF);
 }
 
 

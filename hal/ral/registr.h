@@ -4,7 +4,6 @@
    #include "stm32f0xx.h"
 #elif defined(STM32F405xx)
    #include "stm32f4xx.h"
-   #include "bitbanding.h"
 #endif
 
 #include <type_traits>
@@ -68,6 +67,8 @@ struct Offset_t { enum { Offset = offset }; };
 #define IS_SET(reg_,pos)        ((reg_.reg &   _1BIT_TO_MASK(reg_, pos)) != 0)
 
 
+
+namespace {
 /// эта ерунда не работает на этапе компиляции, потому не использовать!!!
 #define POSITHION_OF(reg_,pos) [](){ \
    typename std::decay<decltype(reg_)>::type reg; \
@@ -83,3 +84,37 @@ struct Offset_t { enum { Offset = offset }; };
 
 #define _1BIT_TO_MASK_(reg, pos) ((uint32_t)0b1 << POSITHION_OF(reg, pos))
 #define SET_(reg_,pos)           (reg_.reg  |=  _1BIT_TO_MASK_(reg_, pos))
+}
+
+
+
+
+/// работа через битбендинг, где возможно
+#if defined(STM32F405xx)
+/// из-за преобразования указателя эта функция не будет выполнятся точно во время компиляции
+constexpr volatile uint32_t& bitBand (uint32_t base, uint32_t offset, uint32_t bit)
+{
+    return (volatile uint32_t&)*((volatile uint32_t*)(PERIPH_BB_BASE + (base-PERIPH_BASE + offset)*32 + bit*4));
+}
+
+/// а вот эта будет
+template<uint32_t base, uint32_t offset, uint32_t bit>
+constexpr uint32_t bitBandAdr() { return
+   PERIPH_BB_BASE + (base-PERIPH_BASE + offset)*32 + bit*4;
+}
+
+// макрос для упрощения работы с предыдущей функцией
+#define BIT_BAND(reg, bit) (*(volatile uint32_t*)bitBandAdr<Base, std::decay<decltype(reg)>::type::Offset, std::decay<decltype(reg)>::type::bit>())
+
+// #define BIT_BAND_NEXT_(current_ref) *(reinterpret_cast<volatile uint32_t*>(&current_ref) + 1)
+
+#undef SET
+#define SET(reg_,pos)           ( BIT_BAND(reg_,pos) = true  )
+#undef CLEAR
+#define CLEAR(reg_,pos)         ( BIT_BAND(reg_,pos) = false )
+#undef IS_CLEAR
+#define IS_CLEAR(reg_,pos)      (!BIT_BAND(reg_,pos) )
+#undef IS_SET
+#define IS_SET(reg_,pos)        ( BIT_BAND(reg_,pos) )
+
+#endif

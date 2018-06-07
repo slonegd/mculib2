@@ -3,9 +3,7 @@
 #include "TIM_bits.h"
 #include "RCC.h"
 #include "GPIO.h"
-#if defined(STM32F405xx)
-#include "bitbanding.h"
-#endif
+
 
 template<uint32_t adr>
 class TIMx
@@ -29,7 +27,7 @@ public:
    static void     autoReloadEnable();
    static void     clockEnable();
    static uint16_t getCounter();
-   static uint16_t clearCounter();
+   static void     clearCounter();
    static void     externalClockEnable(); 
    static void     externalClockDisable();
    static void     setAutoReloadValue (uint32_t val);

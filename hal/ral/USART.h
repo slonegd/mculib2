@@ -2,7 +2,6 @@
 
 #if defined(STM32F405xx)
    #include "USART_F4_bits.h"
-   #include "bitbanding.h"
 #elif defined(STM32F030x6)
    #include "USART_F0_bits.h"
 #endif
@@ -75,17 +74,16 @@ protected:
    static volatile MakeRef (CR1_t,  conf1   );
    static volatile MakeRef (CR2_t,  conf2   );
    static volatile MakeRef (CR3_t,  conf3   );
-#if defined(STM32F405xx)
    static volatile MakeRef (SR_t,   status  );
+#if defined(STM32F405xx)
    static volatile MakeRef (DR_t,   data    );
    static volatile MakeRef (GTPR_t, gtp     );
 #elif defined(STM32F030x6)
    static volatile MakeRef (RTOR_t, recieverTmeout );
-   static volatile MakeRef (RQR_t,  request );
-   static volatile MakeRef (ISR_t,  interrupt );
-   static volatile MakeRef (ICR_t,  clear );
-   static volatile MakeRef (RDR_t,  receiveData );
-   static volatile MakeRef (TDR_t,  transmitData );
+   static volatile MakeRef (RQR_t,  request        );
+   static volatile MakeRef (ICR_t,  clear          );
+   static volatile MakeRef (RDR_t,  receiveData    );
+   static volatile MakeRef (TDR_t,  transmitData   );
 #endif
 #undef MakeRef
 
@@ -106,7 +104,7 @@ private:
    Reserve_t<1>      reserve1;
    USART_ral::RTOR_t RTOR; // USART Receiver Time Out register
    USART_ral::RQR_t  RQR;  // USART Request register
-   USART_ral::ISR_t  ISR;  // USART Interrupt and status register
+   USART_ral::SR_t   ISR;  // USART Interrupt and status register
    USART_ral::ICR_t  ICR;  // USART Interrupt flag Clear register
    USART_ral::RDR_t  RDR;  // USART Receive Data register
    USART_ral::TDR_t  TDR;  // USART Transmit Data register

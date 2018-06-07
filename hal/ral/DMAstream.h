@@ -2,9 +2,7 @@
 
 #include "DMAstream_bits.h"
 #include "DMA.h"
-#if defined(STM32F405xx)
-#include "bitbanding.h"
-#endif
+
 
 /// номер dma в зависимости от адреса, хелпер
 template<uint32_t adr> struct DMAn;

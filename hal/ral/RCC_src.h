@@ -31,34 +31,34 @@ void RCC_t::systemClockSwitch (SystemClockSwitch val)
    conf().reg = tmp;
 }
 
-#endif
 
-
-#if defined(STM32F405xx)
-
-void RCC_t::HSEon()
+void RCC_t::waitPLLready()
 {
-   BIT_BAND(clockContr(), HSEON) = true;
-}
-
-
-void RCC_t::waitHSEready()
-{
-   while (!BIT_BAND(clockContr(), HSERDY)) { }
+   while (IS_CLEAR(clockContr(), PLLRDY)) { }
 }
 
 
 void RCC_t::PLLon()
 {
-   BIT_BAND(clockContr(), PLLON) = true;
+   SET(clockContr(), PLLON);
 }
 
 
-void RCC_t::waitPLLready()
+void RCC_t::waitHSEready()
 {
-   while (!BIT_BAND(clockContr(), PLLRDY)) { }
+   while (IS_CLEAR(clockContr(), HSERDY)) { }
 }
 
+
+void RCC_t::HSEon()
+{
+   SET(clockContr(), HSEON);
+}
+
+#endif
+
+
+#if defined(STM32F405xx)
 
 void RCC_t::setPLLsource (PLLsource val)
 {
@@ -154,30 +154,6 @@ void RCC_t::setPLLQ()
 
 
 #elif defined(STM32F030x6)
-
-void RCC_t::HSEon()
-{
-   SET(clockContr(), HSEON);
-}
-
-
-void RCC_t::waitHSEready()
-{
-   while (IS_CLEAR(clockContr(), HSERDY)) { }
-}
-
-
-void RCC_t::PLLon()
-{
-   SET(clockContr(), PLLON);
-}
-
-
-void RCC_t::waitPLLready()
-{
-   while (IS_CLEAR(clockContr(), PLLRDY)) { }
-}
-
 
 void RCC_t::setPLLsource (PLLsource val)
 {

@@ -1,9 +1,7 @@
 #pragma once
 
 #include "DMA_bits.h"
-#if defined(STM32F405xx)
-#include "bitbanding.h"
-#endif
+
 
 template<uint32_t adr>
 class DMAx 

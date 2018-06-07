@@ -54,6 +54,8 @@ void TIMx<adr>::clockEnable()
    while ( (tmp & mask) == 0 ) {}
 }
 
+
+#if defined(STM32F405xx) || defined(STM32F030x6)
 template<uint32_t adr>
 template<TIM_ral::SelectionCompareMode value, uint8_t channel>
 void TIMx<adr>::selectCompareMode()
@@ -68,6 +70,7 @@ void TIMx<adr>::selectCompareMode()
     captureCompareMode().reg[regN] = tmp;
 }
 
+
 template<uint32_t adr>
 template<uint8_t channel>
 void TIMx<adr>::preloadEnable()
@@ -79,6 +82,7 @@ void TIMx<adr>::preloadEnable()
    captureCompareMode().reg[regN] |= ((uint32_t)0b1 << position);
 }
 
+
 template<uint32_t adr>
 template<uint8_t channel>
 void TIMx<adr>::preloadDisable()
@@ -89,6 +93,7 @@ void TIMx<adr>::preloadDisable()
                                 channel == 2 or channel == 4 ? 11: 32;
    captureCompareMode().reg[regN] &= ~((uint32_t)0b1 << position);
 }
+
 
 template<uint32_t adr>
 template <TIM_ral::CompareMode value, uint8_t channel>
@@ -105,12 +110,19 @@ void TIMx<adr>::setCompareMode()
 
 }
 
-template<uint32_t adr>
-uint16_t TIMx<adr>::getCounter() { return count().reg; }
 
 template<uint32_t adr>
-uint16_t TIMx<adr>::clearCounter() { return  count().reg = 0; }
+uint16_t TIMx<adr>::getCounter() 
+{
+   return count().reg;
+}
 
+
+template<uint32_t adr>
+void TIMx<adr>::clearCounter()
+{
+   count().reg = 0;
+}
 
 
 template<uint32_t adr>
@@ -231,52 +243,34 @@ void TIMx<adr>::mainOutputEnable ()
 {
     breakAndDeathTime().reg |= TIM_BDTR_MOE_Msk;
 }
-#if defined(STM32F030x6)
-   template<uint32_t adr>
-   void TIMx<adr>::counterEnable()
-   {
-      controlRegister1().reg |= TIM_CR1_CEN_Msk;
-   } 
 
-   template<uint32_t adr>
-   void TIMx<adr>::counterDisable() 
-   {
-      controlRegister1().reg &= ~TIM_CR1_CEN_Msk;
-   }
 
-   template<uint32_t adr>
-   bool TIMx<adr>::isCount()
-   {
-   return (controlRegister1().reg & TIM_CR1_CEN_Msk) != 0;
-   }
+template<uint32_t adr>
+void TIMx<adr>::counterEnable()
+{
+   SET(controlRegister1(), CEN);
+}
 
-   template<uint32_t adr>
-   void TIMx<adr>::autoReloadEnable ()
-   {
-      controlRegister1().reg |= TIM_CR1_ARPE_Msk;
-   }
-#elif defined(STM32F405xx)
-   template<uint32_t adr>
-   void TIMx<adr>::counterEnable()
-   {
-       BIT_BAND(controlRegister1(), CEN) = true;
-   } 
 
-   template<uint32_t adr>
-   void TIMx<adr>::counterDisable() 
-   {
-      BIT_BAND(controlRegister1(), CEN) = false;
-   }
+template<uint32_t adr>
+void TIMx<adr>::autoReloadEnable ()
+{
+   SET(controlRegister1(), ARPE);
+}
 
-   template<uint32_t adr>
-   bool TIMx<adr>::isCount()
-   {
-      return BIT_BAND(controlRegister1(), CEN); 
-   }
 
-   template<uint32_t adr>
-   void TIMx<adr>::autoReloadEnable ()
-   {
-      BIT_BAND(controlRegister1(), ARPE) = true;
-   }
+template<uint32_t adr>
+bool TIMx<adr>::isCount()
+{
+   return IS_SET(controlRegister1(), CEN); 
+}
+
+
+template<uint32_t adr>
+void TIMx<adr>::counterDisable() 
+{
+   CLEAR(controlRegister1(), CEN);
+}
+
+
 #endif
