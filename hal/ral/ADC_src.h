@@ -2,58 +2,7 @@
 
 #include "ADC.h"
 
-#if defined(STM32F405xx) or defined(STM32F030x6)
-
-
-
-#endif
-
-
-#if defined(STM32F405xx)
-
-template <uint32_t adr>
-void ADCx<adr>::clockEnable()
-{
-   constexpr uint32_t ClkEnMask =
-      Base == ADC1_BASE ? RCC_APB2ENR_ADC1EN_Msk :
-      Base == ADC2_BASE ? RCC_APB2ENR_ADC2EN_Msk :
-      Base == ADC3_BASE ? RCC_APB2ENR_ADC3EN_Msk : 0;
-   RCC->APB2ENR |= ClkEnMask;
-   while ( (RCC->APB2ENR & ClkEnMask) == 0 ) { }
-}
-
-
-template <uint32_t adr>
-void ADCx<adr>::enable()
-{
-   Bit_BAND(control(), ADEN) = true;
-}
-
-
-template <uint32_t adr>
-void ADCx<adr>::disable()
-{
-   Bit_BAND(control(), ADDIS) = true;
-}
-
-
-#elif defined(STM32F030x6)
-
-template <uint32_t adr>
-void ADCx<adr>::clockEnable()
-{
-   static constexpr uint32_t ClkEnMask = RCC_APB2ENR_ADCEN_Msk;
-   RCC->APB2ENR |= ClkEnMask;
-   while ( (RCC->APB2ENR & ClkEnMask) == 0 ) { }
-}
-
-
-template <uint32_t adr>
-void ADCx<adr>::enable()
-{
-   SET(control(), ADEN);
-}
-
+#if defined(STM32F405xx) || defined(STM32F030x6)
 
 template <uint32_t adr>
 void ADCx<adr>::disable()
@@ -65,7 +14,7 @@ void ADCx<adr>::disable()
 template <uint32_t adr>
 bool ADCx<adr>::isDisable()
 {
-   return IS_SET(control(), ADEN);
+   return IS_SET(control(), ADDIS);
 }
 
 
@@ -74,7 +23,6 @@ bool ADCx<adr>::isReady()
 {
    return IS_SET(status(), ADRDY);
 }
-
 
 template <uint32_t adr>
 void ADCx<adr>::setBusy()
@@ -103,6 +51,50 @@ bool ADCx<adr>::isStoping()
    return IS_SET(control(), ADSTP);
 }
 
+#endif
+
+
+#if defined(STM32F405xx)
+
+template <uint32_t adr>
+void ADCx<adr>::clockEnable()
+{
+   constexpr uint32_t ClkEnMask =
+      Base == ADC1_BASE ? RCC_APB2ENR_ADC1EN_Msk :
+      Base == ADC2_BASE ? RCC_APB2ENR_ADC2EN_Msk :
+      Base == ADC3_BASE ? RCC_APB2ENR_ADC3EN_Msk : 0;
+   RCC->APB2ENR |= ClkEnMask;
+   while ( (RCC->APB2ENR & ClkEnMask) == 0 ) { }
+}
+
+
+template <uint32_t adr>
+void ADCx<adr>::setClock ( Clock val )
+{
+   uint32_t tmp = ADCC::control().reg;
+   tmp &= ~_2BIT_TO_MASK(ADCC::control(), ADCPRE);
+   tmp |= VAL_TO_MASK(ADCC::control(), ADCPRE, val);
+   ADCC::control().reg = tmp;
+}
+
+template <uint32_t adr>
+void ADCx<adr>::enable()
+{
+   SET(control2(), ADON);
+}
+
+
+
+#elif defined(STM32F030x6)
+
+template <uint32_t adr>
+void ADCx<adr>::clockEnable()
+{
+   static constexpr uint32_t ClkEnMask = RCC_APB2ENR_ADCEN_Msk;
+   RCC->APB2ENR |= ClkEnMask;
+   while ( (RCC->APB2ENR & ClkEnMask) == 0 ) { }
+}
+
 
 template <uint32_t adr>
 void ADCx<adr>::setClock ( Clock val )
@@ -111,6 +103,13 @@ void ADCx<adr>::setClock ( Clock val )
    tmp &= ~_2BIT_TO_MASK(conf2(), CKMODE);
    tmp |= VAL_TO_MASK(conf2(), CKMODE, val);
    conf2().reg = tmp;
+}
+
+
+template <uint32_t adr>
+void ADCx<adr>::enable()
+{
+   SET(control(), ADEN);
 }
 
 

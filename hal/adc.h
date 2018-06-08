@@ -22,16 +22,30 @@ public:
    using Clock      = typename ADC_::Clock;
    using Resolution = typename ADC_::Resolution;
    using SampleTime = typename ADC_::SampleTime;
-#if defined(STM32F405xx)
    using Channels   = typename DMA_ral::Channels;
-#endif
 
    // mul - множитель для вычисления среднего
    // div - частное для вычисления среднего
    ADCaverage (uint32_t mul = 1, uint32_t div = 1,
                Clock clock = Clock::PCLKdiv4,
                Resolution resolution = Resolution::_12bits,
-               SampleTime sampleTime = SampleTime::_239_5_ADCclockCicle);
+               SampleTime sampleTime = SampleTime::Default);
+   ADCaverage& withMultipler (uint32_t val) { mul = val; return this; }
+   ADCaverage& withDivider (uint32_t val) { mul = val; return this; }
+   ADCaverage& changeResolution (Resolution val)
+   {
+      disable();
+      ADC_::setResolution (val);
+      enable();
+      return this;
+   }
+   ADCaverage& changeSampleTime (SampleTime val)
+   {
+      disable();
+      ADC_::setSampleTime (val);
+      enable();
+      return this;
+   }
    void enable();
    void disable();
    // расчитывает сумму всех элементов буфера

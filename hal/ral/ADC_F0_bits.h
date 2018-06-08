@@ -80,16 +80,15 @@ enum Clock { Dedicated14MHzClock = 0b00, PCLKdiv2, PCLKdiv4 };
 
 struct CFGR2bits {
    __IO uint32_t res1   :30; // Bits 29:0 Reserved, must be kept at reset value.
-   __IO Clock    CKMODE :2; // Bits 31:30 CKMODE[1:0]: ADC clock mode
+   __IO Clock    CKMODE :2;  // Bits 31:30 CKMODE[1:0]: ADC clock mode
 };
 
 struct CFGR2position {
    enum { CKMODE = 30 };
 };
 
-enum SampleTime { _1_5_ADCclockCycles = 0b000, _7_5_ADCclockCycles,
-   _13_5_ADCclockCycles, _28_5_ADCclockCycles, _41_5_ADCclockCycles,
-   _55_5_ADCclockCicle, _71_5_ADCclockCicle, _239_5_ADCclockCicle
+enum SampleTime { _1_5CLOCK = 0b000, _7_5CLOCK, _13_5CLOCK, _28_5CLOCK, _41_5CLOCK,
+   _55_5CLOCK, _71_5CLOCK, _239_5CLOCK, Default = _239_5CLOCK
 };
 
 struct SMPRbits {

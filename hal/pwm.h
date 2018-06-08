@@ -6,7 +6,7 @@
 #include "literals.h"
 
 
-template <class TIM_, class Pin_>
+template <class TIM_, class Pin_, uint16_t maxFill = 1000_from1000>
 class PWM
 {
 public:
@@ -14,7 +14,7 @@ public:
    /// частота в Гц
    class Freq {
    public:
-      Freq  (PWM<TIM_,Pin_>& up);
+      Freq  (PWM<TIM_,Pin_,maxFill>& up);
             operator uint16_t();
       Freq& operator=  (uint16_t val);
       Freq& operator+= (int val);
@@ -22,26 +22,26 @@ public:
       void  update     (uint16_t val);
    private:
       uint16_t        freq;
-      PWM<TIM_,Pin_>& up;
+      PWM<TIM_,Pin_,maxFill>& up;
    } freq;
 
    /// коэффициент заполения в от 0 до 1000
    class FillRatio {
    public:
-      FillRatio  (PWM<TIM_,Pin_>& up);
+      FillRatio  (PWM<TIM_,Pin_,maxFill>& up);
                  operator uint16_t();
       FillRatio& operator=  (uint16_t val);
       FillRatio& operator+= (int val);
       void       update();
    private:
       uint16_t        fillRatio;
-      PWM<TIM_,Pin_>& up;
+      PWM<TIM_,Pin_,maxFill>& up;
    } fillRatio;
 
    /// значение при котором счётчик сбрасывается 
    class CountTo {
    public:
-      CountTo  (PWM<TIM_,Pin_>& up);
+      CountTo  (PWM<TIM_,Pin_,maxFill>& up);
                operator uint16_t();
       CountTo& operator=  (uint16_t val);
       CountTo& operator+= (int val);
@@ -49,7 +49,7 @@ public:
       void     update     (uint16_t val);
    private:
       uint16_t countTo;
-      PWM<TIM_,Pin_>& up;
+      PWM<TIM_,Pin_,maxFill>& up;
    } countTo;
 
 
@@ -81,8 +81,8 @@ public:
 
 
 
-template <class TIM_, class Pin_>
-PWM<TIM_,Pin_>::PWM() : freq(*this), fillRatio(*this), countTo(*this)
+template <class TIM_, class Pin_, uint16_t maxFill>
+PWM<TIM_,Pin_,maxFill>::PWM() : freq(*this), fillRatio(*this), countTo(*this)
 {
    static_assert (
       channel != 0,
@@ -111,22 +111,22 @@ PWM<TIM_,Pin_>::PWM() : freq(*this), fillRatio(*this), countTo(*this)
 ///////////////////////////////////////////////////////////////////////////////
 // ЧАСТОТА
 ///////////////////////////////////////////////////////////////////////////////
-template <class TIM_, class Pin_>
-PWM<TIM_,Pin_>::Freq::Freq (PWM<TIM_,Pin_>& up) : up(up)
+template <class TIM_, class Pin_, uint16_t maxFill>
+PWM<TIM_,Pin_,maxFill>::Freq::Freq (PWM<TIM_,Pin_,maxFill>& up) : up(up)
 {
 
 }
 
 
-template <class TIM_, class Pin_>
-PWM<TIM_,Pin_>::Freq::operator uint16_t()
+template <class TIM_, class Pin_, uint16_t maxFill>
+PWM<TIM_,Pin_,maxFill>::Freq::operator uint16_t()
 {
    return freq;
 }
 
 
-template <class TIM_, class Pin_>
-typename PWM<TIM_,Pin_>::Freq& PWM<TIM_,Pin_>::Freq::operator= (uint16_t val)
+template <class TIM_, class Pin_, uint16_t maxFill>
+typename PWM<TIM_,Pin_,maxFill>::Freq& PWM<TIM_,Pin_,maxFill>::Freq::operator= (uint16_t val)
 {
    if ( (val != freq) and (val > minFreq) ) {
       freq = val;
@@ -136,15 +136,15 @@ typename PWM<TIM_,Pin_>::Freq& PWM<TIM_,Pin_>::Freq::operator= (uint16_t val)
 }
 
 
-template <class TIM_, class Pin_>
-typename PWM<TIM_,Pin_>::Freq& PWM<TIM_,Pin_>::Freq::operator+= (int val)
+template <class TIM_, class Pin_, uint16_t maxFill>
+typename PWM<TIM_,Pin_,maxFill>::Freq& PWM<TIM_,Pin_,maxFill>::Freq::operator+= (int val)
 {
    return operator= (freq + val);
 }
 
 
-template <class TIM_, class Pin_>
-void PWM<TIM_,Pin_>::Freq::update (uint16_t val)
+template <class TIM_, class Pin_, uint16_t maxFill>
+void PWM<TIM_,Pin_,maxFill>::Freq::update (uint16_t val)
 {
    freq = val;
 }
@@ -153,24 +153,24 @@ void PWM<TIM_,Pin_>::Freq::update (uint16_t val)
 ///////////////////////////////////////////////////////////////////////////////
 // Коэффициент заполнения
 ///////////////////////////////////////////////////////////////////////////////
-template <class TIM_, class Pin_>
-PWM<TIM_,Pin_>::FillRatio::FillRatio (PWM<TIM_,Pin_>& up) : up(up)
+template <class TIM_, class Pin_, uint16_t maxFill>
+PWM<TIM_,Pin_,maxFill>::FillRatio::FillRatio (PWM<TIM_,Pin_,maxFill>& up) : up(up)
 {
 
 }
 
 
-template <class TIM_, class Pin_>
-PWM<TIM_,Pin_>::FillRatio::operator uint16_t()
+template <class TIM_, class Pin_, uint16_t maxFill>
+PWM<TIM_,Pin_,maxFill>::FillRatio::operator uint16_t()
 {
    return fillRatio;
 }
 
 
-template <class TIM_, class Pin_>
-typename PWM<TIM_,Pin_>::FillRatio& PWM<TIM_,Pin_>::FillRatio::operator= (uint16_t val)
+template <class TIM_, class Pin_, uint16_t maxFill>
+typename PWM<TIM_,Pin_,maxFill>::FillRatio& PWM<TIM_,Pin_,maxFill>::FillRatio::operator= (uint16_t val)
 {
-   if ( (val != fillRatio) and (val >= 0) and (val <= 1000) ) {
+   if ( (val != fillRatio) and (val >= 0) and (val <= maxFill) ) {
       fillRatio = val;
       update();
    }
@@ -178,15 +178,15 @@ typename PWM<TIM_,Pin_>::FillRatio& PWM<TIM_,Pin_>::FillRatio::operator= (uint16
 }
 
 
-template <class TIM_, class Pin_>
-typename PWM<TIM_,Pin_>::FillRatio& PWM<TIM_,Pin_>::FillRatio::operator+= (int val)
+template <class TIM_, class Pin_, uint16_t maxFill>
+typename PWM<TIM_,Pin_,maxFill>::FillRatio& PWM<TIM_,Pin_,maxFill>::FillRatio::operator+= (int val)
 {
-   return this->operator= (fillRatio + val);
+   return operator= (fillRatio + val);
 }
 
 
-template <class TIM_, class Pin_>
-void PWM<TIM_,Pin_>::FillRatio::update()
+template <class TIM_, class Pin_, uint16_t maxFill>
+void PWM<TIM_,Pin_,maxFill>::FillRatio::update()
 {
    TIM_::template setCompareValue <channel> (up.countTo * fillRatio / 1000);
 }
@@ -195,22 +195,22 @@ void PWM<TIM_,Pin_>::FillRatio::update()
 ///////////////////////////////////////////////////////////////////////////////
 // СБРОС СЧЁТЧИКА
 ///////////////////////////////////////////////////////////////////////////////
-template <class TIM_, class Pin_>
-PWM<TIM_,Pin_>::CountTo::CountTo (PWM<TIM_,Pin_>& up) : countTo{0}, up(up)
+template <class TIM_, class Pin_, uint16_t maxFill>
+PWM<TIM_,Pin_,maxFill>::CountTo::CountTo (PWM<TIM_,Pin_,maxFill>& up) : countTo{0}, up(up)
 {
 
 }
 
 
-template <class TIM_, class Pin_>
-PWM<TIM_,Pin_>::CountTo::operator uint16_t()
+template <class TIM_, class Pin_, uint16_t maxFill>
+PWM<TIM_,Pin_,maxFill>::CountTo::operator uint16_t()
 {
    return countTo;
 }
 
 
-template <class TIM_, class Pin_>
-typename PWM<TIM_,Pin_>::CountTo& PWM<TIM_,Pin_>::CountTo::operator= (uint16_t val)
+template <class TIM_, class Pin_, uint16_t maxFill>
+typename PWM<TIM_,Pin_,maxFill>::CountTo& PWM<TIM_,Pin_,maxFill>::CountTo::operator= (uint16_t val)
 {
    if ( (val != countTo) and (countTo >= 0) and (countTo <= 0xFFFF) ) {
       countTo = val;
@@ -221,15 +221,15 @@ typename PWM<TIM_,Pin_>::CountTo& PWM<TIM_,Pin_>::CountTo::operator= (uint16_t v
 }
 
 
-template <class TIM_, class Pin_>
-typename PWM<TIM_,Pin_>::CountTo& PWM<TIM_,Pin_>::CountTo::operator+= (int val)
+template <class TIM_, class Pin_, uint16_t maxFill>
+typename PWM<TIM_,Pin_,maxFill>::CountTo& PWM<TIM_,Pin_,maxFill>::CountTo::operator+= (int val)
 {
    return operator= (countTo + val);
 }
 
 
-template <class TIM_, class Pin_>
-void PWM<TIM_,Pin_>::CountTo::update (uint16_t val)
+template <class TIM_, class Pin_, uint16_t maxFill>
+void PWM<TIM_,Pin_,maxFill>::CountTo::update (uint16_t val)
 {
    countTo = val;
    TIM_::setAutoReloadValue (val);

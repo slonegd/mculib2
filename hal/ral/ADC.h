@@ -4,8 +4,8 @@
 #include "ADC_F0_bits.h"
 #elif defined(STM32F405xx)
 #include "ADC_F4_bits.h"
-#include "bitbanding.h"
 #endif
+#include "ADC_common.h"
 
 
 
@@ -31,26 +31,28 @@ public:
    static void stop();
    static void start();
    static bool isStoping();
-   static void setClock (Clock val);
    static void DMAenable();
    static void setCircularDMA();
    static void setResolution (Resolution val);
    static void setContinuousMode();
    static void setSampleTime (SampleTime val);
    static void setChannel (uint8_t val);
+   static void setClock (Clock val);
 
 
 
 protected:
    #define MakeRef(Reg,Ref) ADC_ral::Reg& Ref() { return (ADC_ral::Reg&) *(uint32_t*)(Base + ADC_ral::Reg::Offset); }
-   static volatile MakeRef(SR_t,    status);
-   static volatile MakeRef(DR_t,    data);
-   static volatile MakeRef(CR_t,    control);
-   static volatile MakeRef(CFGR1_t, conf1);
-   static volatile MakeRef(CFGR2_t, conf2);
-#if defined(STM32F030x6)   
+   static volatile MakeRef(SR_t,    status    );
+   static volatile MakeRef(DR_t,    data      );
+   static volatile MakeRef(CR_t,    control   );
    static volatile MakeRef(SMPR_t,  sampleTime);
-   static volatile MakeRef(CHSELR_t, channelSelect);
+#if defined(STM32F030x6)
+   static volatile MakeRef(CFGR1_t, conf1     );
+   static volatile MakeRef(CFGR2_t, conf2     );
+   static volatile MakeRef(CHSELR_t,channelSelect);
+#elif defined(STM32F405xx)
+   static volatile MakeRef(CR2_t,   control2  );
 #endif
    #undef MakeRef
 
@@ -60,8 +62,7 @@ private:
 #if defined(STM32F405xx)
    ADC_ral::CR_t     CR;     // ADC control register 1
    ADC_ral::CR2_t    CR2;    // ADC control register 2
-   ADC_ral::SMPR1_t  SMPR1;  // ADC sample time register 1
-   ADC_ral::SMPR2_t  SMPR2;  // ADC sample time register 2
+   ADC_ral::SMPR_t   SMPR;   // ADC sample time register
    ADC_ral::JOFR1_t  JOFR1;  // ADC injected channel data offset register 1
    ADC_ral::JOFR2_t  JOFR2;  // ADC injected channel data offset register 2
    ADC_ral::JOFR3_t  JOFR3;  // ADC injected channel data offset register 3

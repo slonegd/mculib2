@@ -11,7 +11,11 @@ struct SRbits {
    __IO bool      JSTRT :1; // Bit 3 JSTRT: Injected channel start flag
    __IO bool      STRT  :1; // Bit 4 STRT: Regular channel start flag
    __IO bool      OVR   :1; // Bit 5 OVR: Overrun
-   __IO uint32_t res1   :26; // Bits 31:6 Reserved, must be kept at reset value.
+   __IO uint32_t  res1  :26; // Bits 31:6 Reserved, must be kept at reset value.
+};
+
+struct SRposition {
+   enum { AWD = 0, EOC, JEOC, JSTRT, STRT, OVR };
 };
 
 enum Resolution { _12bit  = 0b00, _10bit, _8bit, _6bit };
@@ -33,6 +37,12 @@ struct CRbits {
    __IO Resolution RES     :2; // Bits 25:24 RES[1:0]: Resolution
    __IO bool       OVRIE   :1; // Bit 26 OVRIE: Overrun interrupt enable
    __IO uint32_t   res2    :5; // Bits 31:27 Reserved, must be kept at reset value.
+};
+
+struct CRposition {
+   enum { AWDCH = 0, EOCIE = 5, AWDIE, JEOCIE, SCAN, AWDSGL, JAUTO, DISCEN, JDISCEN,
+      DISCNUM, JAWDEN = 22, AWDEN, OVRIE = 26
+   };
 };
 
 enum EventsInjected {
@@ -75,26 +85,60 @@ struct CR2bits {
    __IO bool           res3     :1; // Bit 31 Reserved, must be kept at reset value.
 };
 
-struct SR_t    : BitsRegistr<SRbits>,  Offset_t<0x00> {};
-struct CR_t    : BitsRegistr<CRbits>,  Offset_t<0x04> {};
-struct CR2_t   : BitsRegistr<CR2bits>, Offset_t<0x08> {};
-struct SMPR1_t : DataRegistr,          Offset_t<0x0C> {};
-struct SMPR2_t : DataRegistr,          Offset_t<0x10> {};
-struct JOFR1_t : DataRegistr,          Offset_t<0x14> {};
-struct JOFR2_t : DataRegistr,          Offset_t<0x18> {};
-struct JOFR3_t : DataRegistr,          Offset_t<0x1C> {};
-struct JOFR4_t : DataRegistr,          Offset_t<0x20> {};
-struct HTR_t   : DataRegistr,          Offset_t<0x24> {};
-struct LTR_t   : DataRegistr,          Offset_t<0x28> {};
-struct SQR1_t  : DataRegistr,          Offset_t<0x2C> {};
-struct SQR2_t  : DataRegistr,          Offset_t<0x30> {};
-struct SQR3_t  : DataRegistr,          Offset_t<0x34> {};
-struct JSQR_t  : DataRegistr,          Offset_t<0x38> {};
-struct JDR1_t  : DataRegistr,          Offset_t<0x3C> {};
-struct JDR2_t  : DataRegistr,          Offset_t<0x40> {};
-struct JDR3_t  : DataRegistr,          Offset_t<0x44> {};
-struct JDR4_t  : DataRegistr,          Offset_t<0x48> {};
-struct DR_t    : DataRegistr,          Offset_t<0x4C> {};
+struct CR2position {
+   enum { ADON = 0, CONT, DMA, DDS, EOCS, ALIGN, JEXTSEL = 16, JEXTEN = 20, JSWSTART = 22, EXTSEL = 24,
+      EXTEN = 28, SWSTART = 30
+   };
+};
+
+enum SampleTime { _3CLK = 0b000, _15CLK, _28CLK, _56CLK, _84CLK, _112CLK, _480CLK, Default = _480CLK };
+
+struct SMPRbits {
+   __IO SampleTime SMP10 : 3; // Bits 26:0 SMPx[2:0]: Channel x sampling time selection
+   __IO SampleTime SMP11 : 3;
+   __IO SampleTime SMP12 : 3;
+   __IO SampleTime SMP13 : 3;
+   __IO SampleTime SMP14 : 3;
+   __IO SampleTime SMP15 : 3;
+   __IO SampleTime SMP16 : 3;
+   __IO SampleTime SMP17 : 3;
+   __IO SampleTime SMP18 : 3;
+   __IO uint32_t   res1  : 2; // Bits 31: 27 Reserved, must be kept at reset value.
+   __IO SampleTime SMP0  : 3; // Bits 29:0 SMPx[2:0]: Channel x sampling time selection
+   __IO SampleTime SMP1  : 3;
+   __IO SampleTime SMP2  : 3;
+   __IO SampleTime SMP3  : 3;
+   __IO SampleTime SMP4  : 3;
+   __IO SampleTime SMP5  : 3;
+   __IO SampleTime SMP6  : 3;
+   __IO SampleTime SMP7  : 3;
+   __IO SampleTime SMP8  : 3;
+   __IO SampleTime SMP9  : 3;
+   __IO uint32_t   res2  : 2; // Bits 31:30 Reserved, must be kept at reset value.
+
+};
+
+struct SR_t    : BitsRegistr<SRbits>   , Offset_t<0x00>, SRposition  {};
+struct CR_t    : BitsRegistr<CRbits>   , Offset_t<0x04>, CRposition  {};
+struct CR2_t   : BitsRegistr<CR2bits>  , Offset_t<0x08>, CR2position {};
+struct SMPR_t  : BitsRegistrs<SMPRbits>, Offset_t<0x0C> {};
+struct JOFR1_t : DataRegistr           , Offset_t<0x14> {};
+struct JOFR2_t : DataRegistr           , Offset_t<0x18> {};
+struct JOFR3_t : DataRegistr           , Offset_t<0x1C> {};
+struct JOFR4_t : DataRegistr           , Offset_t<0x20> {};
+struct HTR_t   : DataRegistr           , Offset_t<0x24> {};
+struct LTR_t   : DataRegistr           , Offset_t<0x28> {};
+struct SQR1_t  : DataRegistr           , Offset_t<0x2C> {};
+struct SQR2_t  : DataRegistr           , Offset_t<0x30> {};
+struct SQR3_t  : DataRegistr           , Offset_t<0x34> {};
+struct JSQR_t  : DataRegistr           , Offset_t<0x38> {};
+struct JDR1_t  : DataRegistr           , Offset_t<0x3C> {};
+struct JDR2_t  : DataRegistr           , Offset_t<0x40> {};
+struct JDR3_t  : DataRegistr           , Offset_t<0x44> {};
+struct JDR4_t  : DataRegistr           , Offset_t<0x48> {};
+struct DR_t    : DataRegistr           , Offset_t<0x4C> {};
 
 
 } // namespace ADC_ral {
+
+   

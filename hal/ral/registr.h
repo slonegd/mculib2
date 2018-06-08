@@ -18,11 +18,11 @@ struct BitsRegistr {
 };
 
 
-template<class Bits, uint32_t n = sizeof(Bits)/4>
+template<class Bits, class Int = uint32_t, std::size_t n = sizeof(Bits)/sizeof(Int)>
 struct BitsRegistrs {
    union {
-      __IO Bits     bits;
-      __IO uint32_t reg[n];
+      __IO Bits bits;
+      __IO Int  reg[n];
    };
 };
 
@@ -38,9 +38,9 @@ struct ArrayDataRegistr {
 };
 
 
-template<int n>
+template<int n, class T = uint32_t>
 class Reserve_t {
-   uint32_t reg[n];
+   T reg[n];
 };
 
 
