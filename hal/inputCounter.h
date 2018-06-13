@@ -54,7 +54,7 @@ void InputCounter<TIM_,Pin_>::init()
                                         PinConf_t::AlternateFunc1;
    Pin_::template configure<conf>();
    TIM_::counterEnable();
-   timer.setTimeAndStart(500_ms);
+   timer.start (500_ms);
 }
 
 

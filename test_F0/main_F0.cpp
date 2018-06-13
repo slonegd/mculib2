@@ -21,9 +21,9 @@ int main(void)
    pwm.outEnable();
   
   
-   ledTimer.setTimeAndStart (500_ms);  
+   ledTimer.start (500_ms);  
    
-   spiTimer.setTimeAndStart (1_s);
+   spiTimer.start (1_s);
 
    buttons.push<But1>();
 
@@ -37,7 +37,7 @@ int main(void)
 
    while (1)
    {
-      zoomer();
+      buzzer();
       buttons();
       counter();
       // ssi();

@@ -15,11 +15,11 @@
 
 
 template<class PWM, uint8_t QueueSize = 6>
-class Zoomer
+class Buzzer
 {
 public:
    // freq - частота кварцевой пищалки
-   Zoomer(PWM& pwm,  uint32_t freq);
+   Buzzer(PWM& pwm,  uint32_t freq);
    // добавляет в начало очереди сигналы/паузы, первый всегда сигнал
    // не более QueueSize аргументов
    template<class ... T>
@@ -45,7 +45,7 @@ private:
 
 
 template<class PWM, uint8_t QueueSize> 
-Zoomer<PWM, QueueSize>::Zoomer(PWM& pwm, uint32_t freq)
+Buzzer<PWM, QueueSize>::Buzzer(PWM& pwm, uint32_t freq)
    : queue    {0},
      currentN {0},
      pwm      (pwm)
@@ -57,7 +57,7 @@ Zoomer<PWM, QueueSize>::Zoomer(PWM& pwm, uint32_t freq)
 
 template<class PWM, uint8_t QueueSize> 
 template<class ... T>
-void Zoomer<PWM, QueueSize>::addBeepPause (T ... args)
+void Buzzer<PWM, QueueSize>::addBeepPause (T ... args)
 {
    static_assert(
       QtyTypes<T...>::value < QueueSize,
@@ -67,26 +67,26 @@ void Zoomer<PWM, QueueSize>::addBeepPause (T ... args)
    for (auto&& arg : std::initializer_list<uint32_t>{args...} )
       queue[i++] = arg;
    currentN = 0;
-   timer.setTimeAndStart (queue[currentN]);
+   timer.start (queue[currentN]);
    pwm.outEnable();
 }
 
 
 template<class PWM, uint8_t QueueSize> 
-void Zoomer<PWM, QueueSize>::beep (uint32_t ms, uint8_t qty)
+void Buzzer<PWM, QueueSize>::beep (uint32_t ms, uint8_t qty)
 {
    qty *= 2;
    qty = qty < QueueSize ? qty : QueueSize;
    for (uint8_t i = 0; i < qty; i++)
       queue[i] = ms;
    currentN = 0;
-   timer.setTimeAndStart (ms);
+   timer.start (ms);
    pwm.outEnable(); 
 }
 
 
 template<class PWM, uint8_t QueueSize> 
-void Zoomer<PWM, QueueSize>::operator () ()
+void Buzzer<PWM, QueueSize>::operator () ()
 {
    if ( timer.event() ) {
       queue[currentN++] = 0;

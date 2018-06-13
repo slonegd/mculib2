@@ -12,7 +12,7 @@
 #include "pinlist.h"
 #include "modbusSlave.h"
 #include "HD44780_hal.h"
-#include "zoomer.h"
+#include "buzzer.h"
 #include "literals.h"
 #include "inputCounter.h"
 #include "encoder.h"
@@ -50,7 +50,7 @@ using PWM_ = PWM<PWMtimer, PWMout>;
 PWM_ pwm;
 
 // зуммер
-auto zoomer = Zoomer<PWM_> (pwm, 4000_Hz); 
+auto buzzer = Buzzer<PWM_> (pwm, 4000_Hz); 
 
 // LCD
 using RSpin = PC4;

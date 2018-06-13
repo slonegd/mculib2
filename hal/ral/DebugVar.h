@@ -74,7 +74,7 @@ inline void makeDebugVar (void)
     GPIOB_d->makeDebugVar();
     // GPIOC_d->makeDebugVar();
     // почему то с ним не работает ЭО86
-    GPIOD_d->makeDebugVar();
+   //  GPIOD_d->makeDebugVar();
     GPIOF_d->makeDebugVar();
     DMA1_d->makeDebugVar();
     TIM1_d->makeDebugVar();

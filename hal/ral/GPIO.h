@@ -39,7 +39,7 @@ public:
 
    static GPIOx<Adr>* Create() { return reinterpret_cast< GPIOx<Adr>* > (Adr); }
 
-   void makeDebugVar() { bsr().reg = 0; }
+   void makeDebugVar() { BSRR.reg = 0; }
  
    static void       clockEnable();
    static uint16_t   read();                  

@@ -23,8 +23,8 @@ public:
         index  (0)
    {
       Pins<A_,B_,C_,D_,E_,F_,G_,H_,Ks_...>
-         ::template configure<PinConf_t::OutputHighSpeed>();
-      timer.setTimeAndStart (refreshTime);
+         ::template configure<PinConf_t::Output>();
+      timer.start (refreshTime);
    }
 
 
@@ -38,7 +38,7 @@ private:
    Timer timer;
 
    using indicators = PinList<Ks_...>;
-   using segments = PinList<A_,B_,C_,D_,E_,F_,G_,H_>;
+   using segments = PinList<H_,G_,F_,E_,D_,C_,B_,A_>;
 };
 
 
