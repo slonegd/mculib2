@@ -1,3 +1,6 @@
+v2.025 отладка для EO90_91_C1_C24
+       добавил методы в Timer
+
 v2.024 отладка для EO90_zevs
        добавил const_chain
        seven_segment_indicator проверен

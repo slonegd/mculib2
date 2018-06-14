@@ -18,7 +18,7 @@ public:
    bool    point  [indicatorQty];
 
 
-   SSI (uint32_t refreshTime = 2_ms)
+   SSI (uint32_t refreshTime = 10_ms)
       : buffer {0},
         index  (0)
    {

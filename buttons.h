@@ -82,7 +82,7 @@ public:
    // определяет событие нажатия хоть какой-нибудь кнопки
    bool anyPush()
    {
-      return (timer.timePassed > MinPressed) and !pushHandeledFlag;
+      return timer.isGreater(MinPressed) and !pushHandeledFlag;
    }
 
 
