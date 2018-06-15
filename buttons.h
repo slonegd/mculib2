@@ -17,8 +17,8 @@ template<bool inverted, class ... Types>
 class Buttons : private ItickSubscribed
 {
 public:
-   static const uint16_t MinPressed = 10_ms;
-   static const uint16_t LongPressed = 1_s;
+   static constexpr uint16_t MinPressed = 10_ms;
+   static constexpr uint16_t LongPressed = 1_s;
 
 
    Buttons()
@@ -104,8 +104,9 @@ public:
 
 
 private:
-   bool pushHandeledFlag;
-   bool longPushHandeledFlag;
+   // без volatile оптимизировал их и логика нарушалась
+   volatile bool pushHandeledFlag;
+   volatile bool longPushHandeledFlag;
    Timer timer;
 
 

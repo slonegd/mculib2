@@ -35,11 +35,11 @@ public:
 
 
 
-   volatile uint32_t timeSet;
+   volatile uint32_t timeSet {0};
 private:
-   volatile bool     enable;
-   volatile bool     counted;
-   volatile uint32_t timePassed_;	
+   volatile bool     enable  {false};
+   volatile bool     counted {false};
+   volatile uint32_t timePassed_ {0};	
 
    Timer* next {nullptr};
    friend TickUpdater;
