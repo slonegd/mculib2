@@ -10,7 +10,7 @@ template<
    class A_, class B_, class C_, class D_, class E_, class F_, class G_, class H_,
    class ... Ks_
 >
-class SSI // seven-segment indicator 
+class SSI : private ItickSubscribed // seven-segment indicator 
 {
 public:
    static constexpr uint32_t indicatorQty = sizeof...(Ks_);
@@ -18,27 +18,28 @@ public:
    bool    point  [indicatorQty];
 
 
-   SSI (uint32_t refreshTime = 10_ms)
-      : buffer {0},
-        index  (0)
+   SSI (uint8_t refreshTime = 10_ms)
+      : buffer      {0},
+        refreshTime {refreshTime}
    {
       Pins<A_,B_,C_,D_,E_,F_,G_,H_,Ks_...>
          ::template configure<PinConf_t::Output>();
-      timer.start (refreshTime);
+      tickUpdater.subscribe (this);
    }
 
 
-   /// переключает индикаторы
-   void operator()();
+
 
 
 
 private:
-   uint8_t index;
-   Timer timer;
-
+   uint8_t index {0};
+   uint8_t tickCounter {0};
+   const uint8_t refreshTime;
    using indicators = PinList<Ks_...>;
    using segments = PinList<H_,G_,F_,E_,D_,C_,B_,A_>;
+   void tick() override;
+
 };
 
 
@@ -69,9 +70,10 @@ static constexpr uint8_t symbols[] = {
 
 
 template<class A_, class B_, class C_, class D_, class E_, class F_, class G_, class H_,class ... Ks_>
-void SSI<A_,B_,C_,D_,E_,F_,G_,H_,Ks_...>::operator ()()
+void SSI<A_,B_,C_,D_,E_,F_,G_,H_,Ks_...>::tick()
 {
-   if (timer.event()) {
+   if (++tickCounter == refreshTime) {
+      tickCounter = 0;
       indicators::Write(0);
       ++index;
       if (index == indicatorQty)

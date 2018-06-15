@@ -52,19 +52,13 @@ int main(void)
    while (1)
    {
       modbus (reaction);
-      buzzer();
 
       N = encoder;
-
-      
-
-
 
       if ( ledTimer.event() )
          Leds::Write(i++);
 
       if ( butTimer.event() ) {
-         flash();
          static bool butActDone = false;
          if ( !Button::isSet() ) {
             butActDone = false;

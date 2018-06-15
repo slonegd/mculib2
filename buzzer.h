@@ -15,7 +15,7 @@
 
 
 template<class PWM, uint8_t QueueSize = 6>
-class Buzzer
+class Buzzer : ItickSubscribed
 {
 public:
    // freq - частота кварцевой пищалки
@@ -26,9 +26,7 @@ public:
    void addBeepPause (T ... args);
    // бибикает ms в количестве qty, пауза между ms
    void beep (uint32_t ms, uint8_t qty = 1);
-   // непосредственно включает/выключает пищалку
-   // должна периодически вызываться
-   void operator () ();
+
 
 
 
@@ -38,6 +36,7 @@ private:
    uint8_t currentN;
    Timer timer;
    PWM& pwm;
+   void tick() override;
 };
 
 
@@ -52,6 +51,7 @@ Buzzer<PWM, QueueSize>::Buzzer(PWM& pwm, uint32_t freq)
 {
    pwm.freq = freq;
    pwm.fillRatio = 500_from1000;
+   tickUpdater.subscribe (this);
 }
 
 
@@ -86,12 +86,12 @@ void Buzzer<PWM, QueueSize>::beep (uint32_t ms, uint8_t qty)
 
 
 template<class PWM, uint8_t QueueSize> 
-void Buzzer<PWM, QueueSize>::operator () ()
+void Buzzer<PWM, QueueSize>::tick()
 {
    if ( timer.event() ) {
       queue[currentN++] = 0;
       if ( queue[currentN] != 0 ) {
-         timer.setTime (queue[currentN]);
+         timer.timeSet = queue[currentN];
          pwm.outToggle();
       } else {
          pwm.outDisable();

@@ -21,7 +21,7 @@ Timer spiTimer;
 using BlueLed = PC8;
 
 // семисегментный индикатор
-// SSI<PD0,PD1,PD2,PD4,PD5,PD6,PD7,PC0,PC1,PC2> ssi;
+SSI<PD0,PD1,PD2,PD4,PD5,PD6,PD7,PC0,PC1,PC2> ssi;
 
 
 // энергонезависимые данные

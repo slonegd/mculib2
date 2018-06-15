@@ -2,9 +2,16 @@
 
 #include <stdint.h>
 #include "SysTick.h"
+#include <functional>
 
 
-struct TimersSubcriber;
+struct TickUpdater;
+/// интерфейс для подписывания на вызов tick каждый тик
+struct ItickSubscribed
+{
+   virtual void tick() = 0;
+   ItickSubscribed* next {nullptr};
+};
 
 
 class Timer
@@ -12,7 +19,7 @@ class Timer
 public:
    Timer();
 
-   void     setTime (uint32_t ms);
+   // void     setTime (uint32_t ms);
    void     start   (uint32_t ms); /// запускает счёт с текущего значения счётчика, устанавливает время
    bool     event();   /// возвращает true, если таймер натикал и перезапускает его
    bool     done();    /// возвращает true, если таймер натикал и НЕ перезапускает его
@@ -24,7 +31,8 @@ public:
    uint32_t timePassed(); /// возвращает сколько натикал
    uint32_t timeLeft();   /// возвращает сколько осталось
    template<class function>
-   void     event(function); /// выполняет function, когда дотикал и перезапускает таймер
+   void     event (function); /// выполняет function, когда дотикал и перезапускает таймер
+
 
 
    volatile uint32_t timeSet;
@@ -33,45 +41,67 @@ private:
    volatile bool     counted;
    volatile uint32_t timePassed_;	
 
-   Timer* next;
-   friend TimersSubcriber;
+   Timer* next {nullptr};
+   friend TickUpdater;
 
    void init();
 
 };
 
 
-struct TimersSubcriber
+struct TickUpdater
 {
-   Timer* first {nullptr};
-   TimersSubcriber() { InitSysTimerInt<1> (); }
-   /// обновляет значения счётчикаов каждого таймера, начиная с first
+   Timer* firstTimer {nullptr};
+   ItickSubscribed* firstObserver {nullptr};
+   TickUpdater() { InitSysTimerInt<1> (); }
+   /// обновляет значения счётчиков каждого таймера, начиная с firstTimer
    void update();
-} timers;
+   /// подписывает на выполнение tick каждый тик
+   void subscribe (ItickSubscribed* ps);
+} tickUpdater;
 
 
 extern "C" void SysTick_Handler()
 {
-   timers.update();
+   tickUpdater.update();
 }
 
+/// можно определить у себя и добавить выполнение на каждый тик
+// extern void doEveryTick() __attribute__((weak));
 
-
-void TimersSubcriber::update()
+void TickUpdater::update()
 {
-   auto p = this->first;
-   while (p) {
-      if (p->enable && !p->counted) {
-         p->timePassed_++;
-         p->counted = p->timePassed_ >= p->timeSet;
+   auto pt = this->firstTimer;
+   while (pt) {
+      if (pt->enable && !pt->counted) {
+         pt->timePassed_++;
+         pt->counted = pt->timePassed_ >= pt->timeSet;
       }
-      p = p->next;
+      pt = pt->next;
+   }
+   auto po = this->firstObserver;
+   while (po) {
+      po->tick();
+      po = po->next;
    }
 }
 
 
+void TickUpdater::subscribe (ItickSubscribed* ps)
+{
+   auto p = firstObserver;
+   if (p) {
+      while (p->next)
+         p = p->next;
+      p->next = ps;
+   } else {  
+      firstObserver = ps;
+   } 
+}
 
-Timer::Timer() : next {nullptr}
+
+
+Timer::Timer()
 {
    init();
 }
@@ -79,13 +109,13 @@ Timer::Timer() : next {nullptr}
 
 void Timer::init()
 {
-   auto p = timers.first;
+   auto p = tickUpdater.firstTimer;
    if (p) {
       while (p->next)
          p = p->next;
       p->next = this;
    } else {
-      timers.first = this;
+      tickUpdater.firstTimer = this;
    }
 } 
 
@@ -94,12 +124,6 @@ void Timer::start (uint32_t ms)
 {
    timeSet = ms;
    enable = true;
-}
-
-
-void Timer::setTime (uint32_t ms)
-{
-   timeSet = ms;
 }
 
 
@@ -116,7 +140,7 @@ bool Timer::event()
 
 
 template<class function>
-void Timer::event(function f)
+void Timer::event (function f)
 {
    if (counted) {
       counted = false;

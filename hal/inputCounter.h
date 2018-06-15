@@ -5,44 +5,39 @@
 
 #include "TIM.h"
 #include "pin.h"
+#include "timers.h"
 #include <type_traits>
 
 
 template<class TIM_, class Pin_>
-class InputCounter
+class InputCounter : private ItickSubscribed
 {
 public:
-   InputCounter () : frequency {0}
-   {
-      static_assert (
-         (channel == 1) | (channel == 2),
-         "Вывод контроллера не поддерживает функцию счёта внешнего сигнала"
-      );
-      init();
-   }
-	
-  uint16_t get()  { return frequency; }
-   
-   void operator() ();
+   InputCounter();
+   operator uint16_t()  { return frequency; }
 
    
 private:
-   static const uint8_t channel = Channel<TIM_,Pin_>();
-   uint16_t frequency;
-   Timer timer;
-   void init();
-   using Trigger = typename TIM_::Trigger;
+   static constexpr uint8_t channel = Channel<TIM_,Pin_>();
+   uint16_t frequency {0};
+   uint16_t tickCounter {0};
+   void tick() override;
+   friend TickUpdater;
 };
 
 
 
 
-
 template<class TIM_, class Pin_>
-void InputCounter<TIM_,Pin_>::init()
+InputCounter<TIM_,Pin_>::InputCounter()
 {
-  
+   static_assert (
+      (channel == 1) | (channel == 2),
+      "Вывод контроллера не поддерживает функцию счёта внешнего сигнала"
+   );
+
    TIM_::clockEnable();
+   using Trigger = typename TIM_::Trigger;
    TIM_::template setTrigger <
       channel == 1 ? Trigger::FiltrTI1 : Trigger::FiltrTI2
    >();
@@ -54,15 +49,16 @@ void InputCounter<TIM_,Pin_>::init()
                                         PinConf_t::AlternateFunc1;
    Pin_::template configure<conf>();
    TIM_::counterEnable();
-   timer.start (500_ms);
+   tickUpdater.subscribe (this);
 }
 
 
+
 template<class TIM_, class Pin_>
-void InputCounter<TIM_,Pin_>::operator() ()
+void InputCounter<TIM_,Pin_>::tick()
 {
-   if (timer.event())
-   {
+   if (++tickCounter == 500_ms) {
+      tickCounter = 0;
       frequency = TIM_::getCounter();
       TIM_::clearCounter();
    }

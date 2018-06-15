@@ -17,6 +17,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include "FLASH.h"
+#include "timers.h"
 
 
 // для STM32F0 sector на самом деле page из refmanual
@@ -24,14 +25,9 @@ template <class DATA, uint8_t sector>
 class Flash : public DATA
 {
 public:
-   // метод должен периодически вызываться в программе
-   // запускает запись во флэш, если данные изменились
-   void operator() ();
-
-
    // конструктор принимает значения, которые необходимо записать
    // при первой прошивке (по умолчанию)
-   Flash (DATA d)
+   Flash (DATA d) : flashUpdater(this)
    {
       static_assert (
          SectorAddr != 0,
@@ -47,6 +43,7 @@ public:
       }
    }
 
+   
 
 
 private:
@@ -75,7 +72,6 @@ private:
       sector > 0 && sector < 31 ? 1024 : 0;
 #endif
 
-
    uint8_t copy[QtyBytes];
    uint8_t* original = (uint8_t*)this;
    int32_t flashOffset;
@@ -93,6 +89,24 @@ private:
    // возвращает true, если данные прочитаны
    // false, если нет или данные не полные
    bool readFromFlash();
+
+
+
+   /// пришлось делать эту структуру, потому что
+   /// основная при наследовании ItickSubscribed затирала базовый класс
+   /// почему так и не выяснил
+   class FlashUpdater : private ItickSubscribed
+   {
+   public:
+      FlashUpdater (Flash<DATA,sector>* parent) : parent(parent)
+      {
+          tickUpdater.subscribe (this);
+      }
+   private:
+      Flash<DATA,sector>* parent;
+      void tick() override { parent->tick(); }
+   } flashUpdater;
+   void tick();
 };
 
 
@@ -148,7 +162,7 @@ bool Flash<Data,sector>::readFromFlash ()
 
 
 template <class Data, uint8_t sector>
-void Flash<Data,sector>::operator() ()
+void Flash<Data,sector>::tick()
 {
    // реализация автоматом
    enum State {
@@ -222,7 +236,7 @@ void Flash<Data,sector>::operator() ()
          FLASH_t::Lock();
          // проверка, что стёрли
          bool tmp = true;
-         for (uint32_t i = 0; i < SectorSize; i++) {
+         for (uint32_t i = 0; i < SectorSize / 2; i++) {
             tmp &= (flash.word[i] == 0xFFFF);
          }
          if (tmp) {

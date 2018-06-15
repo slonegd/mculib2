@@ -14,7 +14,7 @@
 // Types - это список пинов всех кнопок
 // inverted = true, если нажатая кнопка даёт 1 на входе
 template<bool inverted, class ... Types>
-class Buttons
+class Buttons : private ItickSubscribed
 {
 public:
    static const uint16_t MinPressed = 10_ms;
@@ -26,13 +26,14 @@ public:
      longPushHandeledFlag {false}
    {
       Pins<Types...>::template configure<PinConf_t::Input>();
-      timer.setTime (100_s); // 100 s просто большое время
+      timer.timeSet = 100_s; // 100 s просто большое время
+      tickUpdater.subscribe (this);
    }
 
 
    // запускает/останавливает таймер отслеживания времени нажатия
    // должна периодически вызываться
-   void operator () ()
+   void tick() override
    {
       // (Types::IsSet() or ... ); - аналог в 17 стандарте
       bool tmp = inverted ? List<Types...>::IsAnyClear() : List<Types...>::IsAnySet();

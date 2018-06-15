@@ -37,22 +37,18 @@ int main(void)
 
    while (1)
    {
-      buzzer();
-      buttons();
-      counter();
-      // ssi();
       modbus (reaction);
       
-      f = counter.get();
+      f = counter;
 
       if (ledTimer.event()) {
          GreenLed::toggle();
          current.computeAverage();
+         buzzer.beep(1_s);
       }
 
 
       if ( spiTimer.event() ) {
-         flash();
          spi.data.time++;
          spi.startTx();
       }
