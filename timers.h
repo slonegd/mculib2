@@ -2,7 +2,6 @@
 
 #include <stdint.h>
 #include "SysTick.h"
-#include <functional>
 
 
 struct TickUpdater;

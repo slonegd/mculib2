@@ -14,6 +14,7 @@
 #include "usart.h"
 #include "timers.h"
 #include "crc.h"
+#include "interrupt.h"
 #include <cstring>
 
 
@@ -47,14 +48,6 @@ public:
 
    void init (const typename UART::Settings& val);
 
-   // вызываеться в прерывании по приёму данных USARTx_IRQHandler
-   // где x - номер применяемого уарта
-   void recieveInterruptHandler();
-
-   // вызываеться в прерывании по передаче данных
-   // для серии F4 DMAn_Streamx_IRQHandler
-   // где x - номер канала ДМА, n - номер ДМА
-   void transmitInterruptHandler();
 
    // обрабатывает поступивший запрос, по необходимости формирует ответ
    // если надо ответить, то переводит уарт на отправку зажигает индикатор
@@ -64,7 +57,7 @@ public:
    template <class function>
    void operator() (function reaction);
 
-
+ 
 
 private:
 #if defined(STM32F405xx)
@@ -72,6 +65,24 @@ private:
 #endif
    UART& uart;
    bool endMessage;
+
+   // вызываеться в прерывании по приёму данных USARTx_IRQHandler
+   // где x - номер применяемого уарта
+   void recieveInterruptHandler();
+
+
+   // вызываеться в прерывании по передаче данных
+   // для серии F4 DMAn_Streamx_IRQHandler
+   // где x - номер канала ДМА, n - номер ДМА
+   void transmitInterruptHandler();
+
+
+   using type = MBslave<InRegs_t,OutRegs_t,UART>;
+
+   SUBSCRIBE_INTERRUPT(recieve , typename UART::Periph_type, recieveInterruptHandler);
+   SUBSCRIBE_INTERRUPT(transmit, typename UART::DMAtx      , transmitInterruptHandler);
+
+
 };
 
 /// для определения адреса регистра по его положению в структуре
@@ -113,6 +124,8 @@ void MBslave<In,Out,UART>::init (const typename UART::Settings& val)
 {
    uart.init (val);
 }
+
+
 
 
 

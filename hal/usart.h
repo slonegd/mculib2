@@ -37,6 +37,7 @@ public:
    // volatile uint8_t buffer[bufSize];
    uint8_t buffer[bufSize];
 
+   using Periph_type = USART_;
    using DMArx    = typename USART_::DMArx;
    using DMAtx    = typename USART_::DMAtx;
    using Boudrate = typename USART_::Boudrate;
