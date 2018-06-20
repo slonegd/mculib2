@@ -53,7 +53,7 @@ public:
 
 
 protected:
-  #define MAKE_REG(Type, name) static Type& name() { return *((Type *)(adr + Type::Offset));}
+  #define MAKE_REG(Type, name) __IO static Type& name() { return *((Type *)(adr + Type::Offset));}
   MAKE_REG(TIM_ral::CCMR_t, captureCompareMode)
   MAKE_REG(TIM_ral::SMCR_t, slaveModeControl)
   MAKE_REG(TIM_ral::CR1_t,  controlRegister1)

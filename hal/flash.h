@@ -37,7 +37,7 @@ public:
          sizeof(DATA) < 255,
          "Размер сохраняемой структуры не может превышать 255 байт"
       );
-      FLASH_t::EndOfProgInterruptEn(); // уже не помню зачем это
+      FLASH::endOfProgInterruptEn(); // уже не помню зачем это
       if ( !readFromFlash() ) {
          memcpy (this, &d, sizeof(DATA));
       }
@@ -84,7 +84,7 @@ private:
       ByteInd_t data[SectorSize/2];
       uint16_t word[SectorSize/2];
    };
-   volatile Flash_t& flash = *( (Flash_t *) SectorAddr );
+   volatile Flash_t& flash = *(Flash_t*)SectorAddr ;
 
    // возвращает true, если данные прочитаны
    // false, если нет или данные не полные
@@ -187,18 +187,18 @@ void Flash<Data,sector>::tick()
             byteN = 0;
          }
       } else {
-         FLASH_t::Lock();
+         FLASH::lock();
          state = StartWrite;
       }
       break;
 
    case StartWrite:
-      if ( !FLASH_t::Busy() && FLASH_t::IsLock() ) {
-         FLASH_t::Unlock();
-         FLASH_t::SetProgMode();
-#if defined(STM32F405xx)
-         FLASH_t::SetProgSize (FLASH_t::ProgSize::x16);
-#endif
+      if ( !FLASH::isBusy() and FLASH::isLock() ) {
+         FLASH::unlock();
+         FLASH::setProgMode();
+         #if defined(STM32F405xx)
+            FLASH::setProgSize (FLASH::ProgSize::x16);
+         #endif
          dataWrite = original[byteN];
          flash.word[flashOffset] = (uint16_t)byteN << 8 | dataWrite;
          state = CheckWrite;
@@ -206,9 +206,9 @@ void Flash<Data,sector>::tick()
       break;
 
    case CheckWrite:
-      if ( FLASH_t::EndOfProg() ) {
-         FLASH_t::ClearEndOfProgFlag();
-         FLASH_t::Lock();
+      if ( FLASH::isEndOfProg() ) {
+         FLASH::clearEndOfProgFlag();
+         FLASH::lock();
          copy[byteN] = dataWrite;
          flashOffset++;
          if ( flashOffset >= SectorSize ) {
@@ -219,21 +219,21 @@ void Flash<Data,sector>::tick()
       break;
 
    case Errase:
-      if ( !FLASH_t::Busy() && FLASH_t::IsLock() ) {
-         FLASH_t::Unlock();
-#if defined(STM32F405xx)
-         FLASH_t::template StartEraseSector<sector>();
-#elif defined(STM32F030x6)
-         FLASH_t::template StartEraseSector<SectorAddr>();
-#endif
+      if ( !FLASH::isBusy() and FLASH::isLock() ) {
+         FLASH::unlock();
+         #if defined(STM32F405xx)
+            FLASH::template startEraseSector<sector>();
+         #elif defined(STM32F030x6)
+            FLASH::template startEraseSector<SectorAddr>();
+         #endif
          state = CheckErase;
       }
       break;
 
    case CheckErase:
-      if ( FLASH_t::EndOfProg() ) {
-         FLASH_t::ClearEndOfProgFlag();
-         FLASH_t::Lock();
+      if ( FLASH::isEndOfProg() ) {
+         FLASH::clearEndOfProgFlag();
+         FLASH::lock();
          // проверка, что стёрли
          bool tmp = true;
          for (uint32_t i = 0; i < SectorSize / 2; i++) {

@@ -57,7 +57,9 @@ public:
    template <class function>
    void operator() (function reaction);
 
- 
+   // вызываеться в прерывании по приёму данных USARTx_IRQHandler
+   // где x - номер применяемого уарта
+   void recieveInterruptHandler();
 
 private:
 #if defined(STM32F405xx)
@@ -66,9 +68,7 @@ private:
    UART& uart;
    bool endMessage;
 
-   // вызываеться в прерывании по приёму данных USARTx_IRQHandler
-   // где x - номер применяемого уарта
-   void recieveInterruptHandler();
+
 
 
    // вызываеться в прерывании по передаче данных
@@ -79,7 +79,7 @@ private:
 
    using type = MBslave<InRegs_t,OutRegs_t,UART>;
 
-   SUBSCRIBE_INTERRUPT(recieve , typename UART::Periph_type, recieveInterruptHandler);
+   // SUBSCRIBE_INTERRUPT(recieve , typename UART::Periph_type, recieveInterruptHandler);
    SUBSCRIBE_INTERRUPT(transmit, typename UART::DMAtx      , transmitInterruptHandler);
 
 
@@ -123,6 +123,9 @@ template <class In, class Out, class UART>
 void MBslave<In,Out,UART>::init (const typename UART::Settings& val)
 {
    uart.init (val);
+#if defined(STM32F405xx)
+   timer.timeSet = 5_ms;
+#endif
 }
 
 
@@ -212,7 +215,7 @@ inline void MBslave<In,Out,UART>::operator() (function reaction)
             if (   (uint8_t) crc       != uart.buffer[byteQty-2]
                 or (uint8_t)(crc >> 8) != uart.buffer[byteQty-1] )
             {
-               step = Step::CRCcheck;
+               step = Step::Done;
             } else {
                step = Step::FuncCheck;
             }

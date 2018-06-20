@@ -76,12 +76,16 @@ struct AHBENRbits {
    __IO uint32_t res6    :9; // Bits 31:23 Reserved, must be kept at reset value.
 };
 
+struct AHBENRposition {
+   enum { DMAEN = 0, SRAMEN = 2, FLITFEN = 4, CRCEN = 6, IOPAEN = 17, IOPBEN, IOPCEN, IOPDEN, IOPFEN = 22 };
+};
+
 struct APB2ENRbits {
    __IO bool     SYSCFGEN :1; // Bit 0 SYSCFGEN: SYSCFG clock enable
    __IO uint32_t res1     :4; // Bits 4:1 Reserved, must be kept at reset value.
    __IO bool     USART6EN :1; // Bit 5 USART6EN: USART6 clock enable
    __IO uint32_t res2     :3; // Bits 8:6 Reserved, must be kept at reset value.
-   __IO bool     ADCEN    :1; // Bit 9 ADCEN: ADC interface clock enable
+   __IO bool     ADC1EN   :1; // Bit 9 ADCEN: ADC interface clock enable
    __IO uint32_t res3     :1; // Bit 10 Reserved, must be kept at reset value.
    __IO bool     TIM1EN   :1; // Bit 11 TIM1EN: TIM1 timer clock enable
    __IO bool     SPI1EN   :1; // Bit 12 SPI1EN: SPI1 clock enable
@@ -94,6 +98,12 @@ struct APB2ENRbits {
    __IO uint32_t res6     :3; // Bits 21:19 Reserved, must be kept at reset value.
    __IO bool     DBGMCUEN :1; // Bit 22 DBGMCUEN MCU debug module clock enable
    __IO uint32_t res7     :9; // Bits 31:23 Reserved, must be kept at reset value.
+};
+
+struct APB2ENRposition {
+   enum { SYSCFGEN = 0, USART6EN = 5, ADC1EN = 9, TIM1EN = 11, SPI1EN, USART1EN = 14, TIM15EN = 16,
+      TIM16EN, TIM17EN, DBGMCUEN = 22
+   };
 };
 
 struct APB1ENRbits {
@@ -121,20 +131,20 @@ struct APB1ENRbits {
    __IO uint32_t res8           :3;
 };
 
-struct CR_t       : BitsRegistr<CRbits>     , Offset_t<0x00>, CRposition   {};
-struct CFGR_t     : BitsRegistr<CFGRbits>   , Offset_t<0x04>, CFGRposition {};
-struct CIR_t      : DataRegistr             , Offset_t<0x08> {};
-struct APB2RSTR_t : DataRegistr             , Offset_t<0x0C> {};
-struct APB1RSTR_t : DataRegistr             , Offset_t<0x10> {};
-struct AHBENR_t   : BitsRegistr<AHBENRbits> , Offset_t<0x14> {};
-struct APB2ENR_t  : BitsRegistr<APB2ENRbits>, Offset_t<0x18> {};
-struct APB1ENR_t  : BitsRegistr<APB1ENRbits>, Offset_t<0x1C> {};
-struct BDCR_t     : DataRegistr             , Offset_t<0x20> {};
-struct CSR_t      : DataRegistr             , Offset_t<0x24> {};
-struct AHBRSTR_t  : DataRegistr             , Offset_t<0x28> {};
-struct CFGR2_t    : DataRegistr             , Offset_t<0x2C> {};
-struct CFGR3_t    : DataRegistr             , Offset_t<0x30> {};
-struct CR2_t      : DataRegistr             , Offset_t<0x34> {};
+struct CR_t       : BitsRegistr<CRbits>     , Offset_t<0x00>, CRposition      {};
+struct CFGR_t     : BitsRegistr<CFGRbits>   , Offset_t<0x04>, CFGRposition    {};
+struct CIR_t      : DataRegistr             , Offset_t<0x08>                  {};
+struct APB2RSTR_t : DataRegistr             , Offset_t<0x0C>                  {};
+struct APB1RSTR_t : DataRegistr             , Offset_t<0x10>                  {};
+struct AHBENR_t   : BitsRegistr<AHBENRbits> , Offset_t<0x14>, AHBENRposition  {};
+struct APB2ENR_t  : BitsRegistr<APB2ENRbits>, Offset_t<0x18>, APB2ENRposition {};
+struct APB1ENR_t  : BitsRegistr<APB1ENRbits>, Offset_t<0x1C>                  {};
+struct BDCR_t     : DataRegistr             , Offset_t<0x20>                  {};
+struct CSR_t      : DataRegistr             , Offset_t<0x24>                  {};
+struct AHBRSTR_t  : DataRegistr             , Offset_t<0x28>                  {};
+struct CFGR2_t    : DataRegistr             , Offset_t<0x2C>                  {};
+struct CFGR3_t    : DataRegistr             , Offset_t<0x30>                  {};
+struct CR2_t      : DataRegistr             , Offset_t<0x34>                  {};
 
 
 } // namespace RCC_ral

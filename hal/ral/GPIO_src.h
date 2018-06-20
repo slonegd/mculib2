@@ -3,37 +3,13 @@
 template<uint32_t adr>
 void GPIOx<adr>::clockEnable()
 {
-#if defined(STM32F405xx)
-   constexpr uint32_t ClkEnMask =
-      adr == GPIOA_BASE ? RCC_AHB1ENR_GPIOAEN_Msk :
-      adr == GPIOB_BASE ? RCC_AHB1ENR_GPIOBEN_Msk :
-      adr == GPIOC_BASE ? RCC_AHB1ENR_GPIOCEN_Msk :
-      adr == GPIOD_BASE ? RCC_AHB1ENR_GPIODEN_Msk :
-      adr == GPIOE_BASE ? RCC_AHB1ENR_GPIOEEN_Msk :
-      adr == GPIOF_BASE ? RCC_AHB1ENR_GPIOFEN_Msk :
-      adr == GPIOG_BASE ? RCC_AHB1ENR_GPIOGEN_Msk :
-      adr == GPIOH_BASE ? RCC_AHB1ENR_GPIOHEN_Msk :
-      adr == GPIOI_BASE ? RCC_AHB1ENR_GPIOIEN_Msk : 0;
-#elif defined(STM32F030x6)
-   constexpr uint32_t ClkEnMask =
-      adr == GPIOA_BASE ? RCC_AHBENR_GPIOAEN_Msk :
-      adr == GPIOB_BASE ? RCC_AHBENR_GPIOBEN_Msk :
-      adr == GPIOC_BASE ? RCC_AHBENR_GPIOCEN_Msk :
-      adr == GPIOD_BASE ? RCC_AHBENR_GPIODEN_Msk :
-      adr == GPIOF_BASE ? RCC_AHBENR_GPIOFEN_Msk : 0;
-#endif
-
-#if defined(STM32F030x6)
-   RCC->AHBENR |= ClkEnMask;
-#elif defined(STM32F405xx)
-   RCC->AHB1ENR |= ClkEnMask;
-#endif
+   RCC::template clockEnable<GPIOx<adr>>();
 }
 
 template<uint32_t adr>
 uint16_t GPIOx<adr>::read()     
 {
-   return od().reg;
+   return id().reg;
 }
 
 template<uint32_t adr>

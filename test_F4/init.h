@@ -105,20 +105,20 @@ inline void reaction (uint16_t regAdr)
 // эта функция вызываеться первой в startup файле
 extern "C" void CLKinit (void)
 {
-   FLASH_t::SetLatency (FLASH_t::Latency::_5);
-   RCC_t::HSEon();
-   RCC_t::waitHSEready();
-   RCC_t::setAHBprescaler (RCC_ral::AHBprescaler::AHBnotdiv);
-   RCC_t::setAPB1prescaler (RCC_ral::APBprescaler::APBdiv4);
-   RCC_t::setAPB2prescaler (RCC_ral::APBprescaler::APBdiv2);
-   RCC_t::systemClockSwitch (RCC_ral::SystemClockSwitch::CS_PLL);
-   RCC_t::setPLLM<4>();
-   RCC_t::setPLLN<168>();
-   RCC_t::setPLLP (RCC_ral::PLLPdiv::PLLdiv2);
-//  RCC_t::setPLLQ<4>();
-   RCC_t::setPLLsource (RCC_ral::PLLsource::sHSE);
-   RCC_t::PLLon();
-   RCC_t::waitPLLready();
+   FLASH::setLatency (FLASH::Latency::_5);
+   RCC::HSEon();
+   RCC::waitHSEready();
+   RCC::setAHBprescaler (RCC_ral::AHBprescaler::AHBnotdiv);
+   RCC::setAPB1prescaler (RCC_ral::APBprescaler::APBdiv4);
+   RCC::setAPB2prescaler (RCC_ral::APBprescaler::APBdiv2);
+   RCC::systemClockSwitch (RCC_ral::SystemClockSwitch::CS_PLL);
+   RCC::setPLLM<4>();
+   RCC::setPLLN<168>();
+   RCC::setPLLP (RCC_ral::PLLPdiv::PLLdiv2);
+//  RCC::setPLLQ<4>();
+   RCC::setPLLsource (RCC_ral::PLLsource::sHSE);
+   RCC::PLLon();
+   RCC::waitPLLready();
 }
 
 

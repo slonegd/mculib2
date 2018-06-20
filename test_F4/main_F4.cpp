@@ -90,15 +90,15 @@ int main(void)
 //////////////////////////////////////////////////////////////////////////////
 //       ПРЕРЫВАНИЯ
 //////////////////////////////////////////////////////////////////////////////
-extern "C" void USART2_IRQHandler()
-{
-   modbus.recieveInterruptHandler();
-}
+// extern "C" void USART2_IRQHandler()
+// {
+//    modbus.recieveInterruptHandler();
+// }
 
-extern "C" void DMA1_Stream6_IRQHandler()
-{
-   modbus.transmitInterruptHandler();
-}
+// extern "C" void DMA1_Stream6_IRQHandler()
+// {
+//    modbus.transmitInterruptHandler();
+// }
 
 // extern "C" void Default_Handler()
 // {

@@ -1,6 +1,5 @@
 /**
- * RAL над регистрами SPI
- * файл пока создан только для stm32f0
+ * для F4 не созданы SPI2 и SPI3
  */
 
 #pragma once
@@ -13,7 +12,7 @@
 #endif
 #include "DMA.h"
 
-
+#if defined(STM32F030x6)
 namespace SPI_ral {
 
    struct CR1_t {
@@ -71,6 +70,7 @@ namespace SPI_ral {
          _4bits = 0b0011, _5bits, _6bits, _7bits, _8bits, _10bits, _11bits, 
          _12bits, _13bits, _14bits, _15bits, _16bits
       };
+
       struct Bits {
          // Bit 0 RXDMAEN: Rx buffer DMA enable
          volatile bool RXDMAEN     :1;
@@ -211,7 +211,8 @@ public:
 
    void makeDebugVar() { conf1().bits.res1 = 0; }
 
-   static void ClockEnable() { RCC->APB2ENR |= RCC_APB2ENR_SPI1EN_Msk; }
+   static void ClockEnable() { RCC::template clockEnable<SPIx<BaseAdr>>(); }
+   // { RCC->APB2ENR |= RCC_APB2ENR_SPI1EN_Msk; }
    static void SetAsMaster() { conf1().reg |= SPI_CR1_MSTR_Msk; }
    template<Div val> static void SetBoudRate()
    {
@@ -247,3 +248,14 @@ protected:
 
 #undef SPI1
 using SPI1 = SPIx<SPI1_BASE>;
+
+#endif
+
+// #if defined(STM32F405xx)
+
+// #undef SPI2
+// using SPI2 = SPIx<SPI2_BASE>;
+// #undef SPI3
+// using SPI3 = SPIx<SPI3_BASE>;
+
+// #endif

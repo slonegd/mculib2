@@ -28,34 +28,17 @@ namespace DMAhelper {
 #endif
 } // namespace DMAhelper {
 
-#if defined(STM32F405xx)
+#if defined(STM32F405xx) || defined(STM32F030x6)
+
 template<uint32_t adr>
 void DMAx<adr>::ClockEnable()
 {
-   constexpr uint32_t mask =
-      (   adr == DMA1_Stream0_BASE
-       or adr == DMA1_Stream1_BASE
-       or adr == DMA1_Stream2_BASE
-       or adr == DMA1_Stream3_BASE
-       or adr == DMA1_Stream4_BASE
-       or adr == DMA1_Stream5_BASE
-       or adr == DMA1_Stream6_BASE
-       or adr == DMA1_Stream7_BASE
-      ) ? RCC_AHB1ENR_DMA1EN_Msk 
-      :
-      (   adr == DMA1_Stream0_BASE
-       or adr == DMA1_Stream1_BASE
-       or adr == DMA1_Stream2_BASE
-       or adr == DMA1_Stream3_BASE
-       or adr == DMA1_Stream4_BASE
-       or adr == DMA1_Stream5_BASE
-       or adr == DMA1_Stream6_BASE
-       or adr == DMA1_Stream7_BASE
-      ) ? RCC_AHB1ENR_DMA2EN_Msk
-      : 0;
-   RCC->AHB1ENR |= mask;
+   RCC::template clockEnable<DMAx<adr>>();
 }
 
+#endif
+
+#if defined(STM32F405xx)
 
 template<uint32_t adr>
 template<int stream>
@@ -79,13 +62,6 @@ void DMAx<adr>::ClearFlagTransferCompleteInterrupt()
 }
 
 #elif defined(STM32F030x6)
-
-template<uint32_t adr>
-void DMAx<adr>::ClockEnable()
-{
-   RCC->AHBENR |= RCC_AHBENR_DMAEN_Msk;
-}
-
 
 template<uint32_t adr>
 template<int stream>

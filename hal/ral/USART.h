@@ -111,9 +111,9 @@ private:
 #endif
 
 #if defined(STM32F405xx)
-   static constexpr RCC_t::Bus bus =
-      Adr == USART1_BASE ? RCC_t::Bus::APB2 :
-      Adr == USART6_BASE ? RCC_t::Bus::APB2 : RCC_t::Bus::APB1;
+   static constexpr RCC::Bus bus =
+      Adr == USART1_BASE ? RCC::Bus::APB2 :
+      Adr == USART6_BASE ? RCC::Bus::APB2 : RCC::Bus::APB1;
 #endif
 
 };

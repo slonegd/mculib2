@@ -72,7 +72,7 @@ void TickUpdater::update()
 {
    auto pt = this->firstTimer;
    while (pt) {
-      if (pt->enable && !pt->counted) {
+      if (pt->enable and !pt->counted) {
          pt->timePassed_++;
          pt->counted = pt->timePassed_ >= pt->timeSet;
       }

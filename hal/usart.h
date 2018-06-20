@@ -131,7 +131,7 @@ void USART<USART_, bufSize, RX, TX, RTS, LED>::init (const Settings& set)
    configureRx.channel = USART_::DMAChannel();
 #endif
    DMArx::Configure (configureRx);
-   // DMAenableRX(); для отладки закомент
+   DMAenableRX(); // для отладки закомент был
 
    DMAtx::SetMemoryAdr ( (uint32_t)buffer );
    DMAtx::SetPeriphAdr ( USART_::TransmitDataAdr() );

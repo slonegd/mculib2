@@ -37,7 +37,10 @@
       "system_error": "cpp",
       "thread": "cpp",
       "tuple": "cpp",
-      "utility": "cpp"
+      "utility": "cpp",
+      "strstream": "cpp",
+      "cinttypes": "cpp",
+      "typeindex": "cpp"
    },
 	// Compiler options for C (e.g. ["-std=c99"])
 	"clang.cflags": [

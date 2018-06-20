@@ -1,10 +1,15 @@
 #pragma once
 
 #include <type_traits>
+#include "DMA.h"
+#include "GPIO.h"
+#include "ADC.h"
+#include "USART.h"
+#include "SPI.h"
 
 #if defined(STM32F405xx) or defined(STM32F030x6)
 
-uint32_t RCC_t::getAPBclock(APBprescaler val)
+uint32_t RCC::getAPBclock(APBprescaler val)
 {
    return val == RCC_ral::APBprescaler::APBnotdiv ? fCPU     :
           val == RCC_ral::APBprescaler::APBdiv2   ? fCPU / 2 :
@@ -14,7 +19,7 @@ uint32_t RCC_t::getAPBclock(APBprescaler val)
 }
 
 
-void RCC_t::setAHBprescaler (AHBprescaler val)
+void RCC::setAHBprescaler (AHBprescaler val)
 {
    uint32_t tmp = conf().reg;
    tmp &= ~_3BIT_TO_MASK(conf(), HPRE);
@@ -23,7 +28,7 @@ void RCC_t::setAHBprescaler (AHBprescaler val)
 }
 
 
-void RCC_t::systemClockSwitch (SystemClockSwitch val)
+void RCC::systemClockSwitch (SystemClockSwitch val)
 {
    uint32_t tmp = conf().reg;
    tmp &= ~_2BIT_TO_MASK(conf(), SW);
@@ -32,48 +37,68 @@ void RCC_t::systemClockSwitch (SystemClockSwitch val)
 }
 
 
-void RCC_t::waitPLLready()
+void RCC::waitPLLready()
 {
    while (IS_CLEAR(clockContr(), PLLRDY)) { }
 }
 
 
-void RCC_t::PLLon()
+void RCC::PLLon()
 {
    SET(clockContr(), PLLON);
 }
 
 
-void RCC_t::waitHSEready()
+void RCC::waitHSEready()
 {
    while (IS_CLEAR(clockContr(), HSERDY)) { }
 }
 
 
-void RCC_t::HSEon()
+void RCC::HSEon()
 {
    SET(clockContr(), HSEON);
 }
+
+///////////////////////////////////////////////////////////////////////////////
+/// clockEnable
+///////////////////////////////////////////////////////////////////////////////
+template<> void RCC::clockEnable<USART1>()
+{
+   SET (APB2en(), USART1EN);
+   while (IS_CLEAR (APB2en(), USART1EN)) { }
+}
+template<> void RCC::clockEnable<USART1alt>()
+{
+   SET (APB2en(), USART1EN);
+   while (IS_CLEAR (APB2en(), USART1EN)) { }
+}
+template<> void RCC::clockEnable<ADC1>()
+{
+   SET (APB2en(), ADC1EN);
+   while (IS_CLEAR (APB2en(), ADC1EN)) { }
+}
+
 
 #endif
 
 
 #if defined(STM32F405xx)
 
-void RCC_t::setPLLsource (PLLsource val)
+void RCC::setPLLsource (PLLsource val)
 {
    BIT_BAND(pllConf(), PLLSRC) = val;
 }
 
 
-uint32_t RCC_t::getAPB2clock()
+uint32_t RCC::getAPB2clock()
 {
    auto tmp = static_cast<APBprescaler>(_3BIT_READ(conf(), PPRE2));
    return getAPBclock (tmp);
 }
 
 
-void RCC_t::setAPB1prescaler (APBprescaler val)
+void RCC::setAPB1prescaler (APBprescaler val)
 {
    uint32_t tmp = conf().reg;
    tmp &= ~_3BIT_TO_MASK(conf(), PPRE1);
@@ -82,7 +107,7 @@ void RCC_t::setAPB1prescaler (APBprescaler val)
 }
 
 
-void RCC_t::setAPB2prescaler (APBprescaler val)
+void RCC::setAPB2prescaler (APBprescaler val)
 {
    uint32_t tmp = conf().reg;
    tmp &= ~_3BIT_TO_MASK(conf(), PPRE2);
@@ -91,14 +116,14 @@ void RCC_t::setAPB2prescaler (APBprescaler val)
 }
 
 
-uint32_t RCC_t::getAPB1clock()
+uint32_t RCC::getAPB1clock()
 {
    auto tmp = static_cast<APBprescaler>(_3BIT_READ(conf(), PPRE1));
    return getAPBclock (tmp);
 }
 
 
-void RCC_t::setPLLP (PLLPdiv val)
+void RCC::setPLLP (PLLPdiv val)
 {
    uint32_t tmp = pllConf().reg;
    tmp &= ~_2BIT_TO_MASK(pllConf(), PLLP);
@@ -108,7 +133,7 @@ void RCC_t::setPLLP (PLLPdiv val)
 
 
 template <uint8_t val>
-void RCC_t::setPLLM()
+void RCC::setPLLM()
 {
    static_assert (
       val >= 2 && val <= 63,
@@ -122,7 +147,7 @@ void RCC_t::setPLLM()
 
 
 template <uint16_t val>
-void RCC_t::setPLLN()
+void RCC::setPLLN()
 {
    static_assert (
       val >= 50 && val <= 432,
@@ -136,7 +161,7 @@ void RCC_t::setPLLN()
 
 
 template <uint8_t val>
-void RCC_t::setPLLQ()
+void RCC::setPLLQ()
 {
    static_assert (
       val >= 2 && val <= 15,
@@ -148,6 +173,120 @@ void RCC_t::setPLLQ()
    pllConf().reg = tmp;
 }
 
+///////////////////////////////////////////////////////////////////////////////
+/// clockEnable
+///////////////////////////////////////////////////////////////////////////////
+template<> void RCC::clockEnable<DMA1>()
+{
+   SET (AHB1en(), DMA1EN);
+   while (IS_CLEAR (AHB1en(), DMA1EN)) { }
+}
+template<> void RCC::clockEnable<DMA2>()
+{
+   SET (AHB1en(), DMA2EN);
+   while (IS_CLEAR (AHB1en(), DMA2EN)) { }
+}
+template<> void RCC::clockEnable<PA>()
+{
+   SET (AHB1en(), GPIOAEN);
+   while (IS_CLEAR (AHB1en(), GPIOAEN)) { }
+}
+template<> void RCC::clockEnable<PB>()
+{
+   SET (AHB1en(), GPIOBEN);
+   while (IS_CLEAR (AHB1en(), GPIOBEN)) { }
+}
+template<> void RCC::clockEnable<PC>()
+{
+   SET (AHB1en(), GPIOCEN);
+   while (IS_CLEAR (AHB1en(), GPIOCEN)) { }
+}
+template<> void RCC::clockEnable<PD>()
+{
+   SET (AHB1en(), GPIODEN);
+   while (IS_CLEAR (AHB1en(), GPIODEN)) { }
+}
+template<> void RCC::clockEnable<PE>()
+{
+   SET (AHB1en(), GPIOEEN);
+   while (IS_CLEAR (AHB1en(), GPIOEEN)) { }
+}
+template<> void RCC::clockEnable<PF>()
+{
+   SET (AHB1en(), GPIOFEN);
+   while (IS_CLEAR (AHB1en(), GPIOFEN)) { }
+}
+template<> void RCC::clockEnable<PG>()
+{
+   SET (AHB1en(), GPIOGEN);
+   while (IS_CLEAR (AHB1en(), GPIOGEN)) { }
+}
+template<> void RCC::clockEnable<PH>()
+{
+   SET (AHB1en(), GPIOHEN);
+   while (IS_CLEAR (AHB1en(), GPIOHEN)) { }
+}
+template<> void RCC::clockEnable<PI>()
+{
+   SET (AHB1en(), GPIOIEN);
+   while (IS_CLEAR (AHB1en(), GPIOIEN)) { }
+}
+template<> void RCC::clockEnable<ADC2>()
+{
+   SET (APB2en(), ADC2EN);
+   while (IS_CLEAR (APB2en(), ADC2EN)) { }
+}
+template<> void RCC::clockEnable<ADC3>()
+{
+   SET (APB2en(), ADC3EN);
+   while (IS_CLEAR (APB2en(), ADC3EN)) { }
+}
+// template<> void RCC::clockEnable<SPI2>()
+// {
+//    SET (APB1en(), SPI2EN);
+//    while (IS_CLEAR (APB1en(), SPI2EN)) { }
+// }
+// template<> void RCC::clockEnable<SPI3>()
+// {
+//    SET (APB1en(), SPI3EN);
+//    while (IS_CLEAR (APB1en(), SPI3EN)) { }
+// }
+template<> void RCC::clockEnable<USART2>()
+{
+   SET (APB1en(), USART2EN);
+   while (IS_CLEAR (APB1en(), USART2EN)) { }
+}
+template<> void RCC::clockEnable<USART3>()
+{
+   SET (APB1en(), USART3EN);
+   while (IS_CLEAR (APB1en(), USART3EN)) { }
+}
+template<> void RCC::clockEnable<USART3alt>()
+{
+   SET (APB1en(), USART3EN);
+   while (IS_CLEAR (APB1en(), USART3EN)) { }
+}
+template<> void RCC::clockEnable<USART6>()
+{
+   SET (APB2en(), USART6EN);
+   while (IS_CLEAR (APB2en(), USART6EN)) { }
+}
+template<> void RCC::clockEnable<USART6alt17>()
+{
+   SET (APB2en(), USART6EN);
+   while (IS_CLEAR (APB2en(), USART6EN)) { }
+}
+template<> void RCC::clockEnable<USART6alt27>()
+{
+   SET (APB2en(), USART6EN);
+   while (IS_CLEAR (APB2en(), USART6EN)) { }
+}
+template<> void RCC::clockEnable<USART6alt26>()
+{
+   SET (APB2en(), USART6EN);
+   while (IS_CLEAR (APB2en(), USART6EN)) { }
+}
+
 
 
 
@@ -155,7 +294,7 @@ void RCC_t::setPLLQ()
 
 #elif defined(STM32F030x6)
 
-void RCC_t::setPLLsource (PLLsource val)
+void RCC::setPLLsource (PLLsource val)
 {
    if (val)
       SET(conf(), PLLSRC);
@@ -164,14 +303,14 @@ void RCC_t::setPLLsource (PLLsource val)
 }
 
 
-uint32_t RCC_t::getAPB2clock()
+uint32_t RCC::getAPB2clock()
 {
    auto tmp = static_cast<APBprescaler>(_3BIT_READ(conf(), PPRE));
    return getAPBclock (tmp);
 }
 
 
-void RCC_t::setAPBprecsaler (APBprescaler val)
+void RCC::setAPBprecsaler (APBprescaler val)
 {
    uint32_t tmp = conf().reg;
    tmp &= ~_3BIT_TO_MASK(conf(), PPRE);
@@ -180,12 +319,51 @@ void RCC_t::setAPBprecsaler (APBprescaler val)
 }
 
 
-void RCC_t::setPLLmultiplier (PLLmultiplier val)
+void RCC::setPLLmultiplier (PLLmultiplier val)
 {
    uint32_t tmp = conf().reg;
    tmp &= ~_4BIT_TO_MASK(conf(), PLLMUL);
    tmp |= VAL_TO_MASK(conf(), PLLMUL, val);
    conf().reg = tmp;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+/// clockEnable
+///////////////////////////////////////////////////////////////////////////////
+template<> void RCC::clockEnable<SPI1>()
+{
+   SET (APB2en(), SPI1EN);
+   while (IS_CLEAR (APB2en(), SPI1EN)) { }
+}
+template<> void RCC::clockEnable<PA>()
+{
+   SET (AHBen(), IOPAEN);
+   while (IS_CLEAR (AHBen(), IOPAEN)) { }
+}
+template<> void RCC::clockEnable<PB>()
+{
+   SET (AHBen(), IOPBEN);
+   while (IS_CLEAR (AHBen(), IOPBEN)) { }
+}
+template<> void RCC::clockEnable<PC>()
+{
+   SET (AHBen(), IOPCEN);
+   while (IS_CLEAR (AHBen(), IOPCEN)) { }
+}
+template<> void RCC::clockEnable<PD>()
+{
+   SET (AHBen(), IOPDEN);
+   while (IS_CLEAR (AHBen(), IOPDEN)) { }
+}
+template<> void RCC::clockEnable<PF>()
+{
+   SET (AHBen(), IOPFEN);
+   while (IS_CLEAR (AHBen(), IOPFEN)) { }
+}
+template<> void RCC::clockEnable<DMA1>()
+{
+   SET (AHBen(), DMAEN);
+   while (IS_CLEAR (AHBen(), DMAEN)) { }
 }
 
 

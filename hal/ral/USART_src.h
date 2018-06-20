@@ -4,6 +4,13 @@
 
 #if defined(STM32F405xx) || defined(STM32F030x6)
 
+template <uint32_t adr, class DMArx_, class DMAtx_>
+void USARTx<adr,DMArx_,DMAtx_>::ClockEnable()
+{
+   RCC::template clockEnable<USARTx<adr,DMArx_,DMAtx_>>();
+}
+
+
 template<uint32_t adr, class DMArx, class DMAtx> 
 bool USARTx<adr,DMArx,DMAtx>::IsIDLEinterrupt()
 {
@@ -53,23 +60,6 @@ void USARTx<adr,DMArx,DMAtx>::SetStopBits (StopBits val)
 
 #if defined(STM32F405xx)
 
-template <uint32_t adr, class DMArx_, class DMAtx_>
-void USARTx<adr,DMArx_,DMAtx_>::ClockEnable()
-{
-   constexpr uint32_t Mask = 
-         Base == USART1_BASE ? RCC_APB2ENR_USART1EN_Msk :
-         Base == USART2_BASE ? RCC_APB1ENR_USART2EN_Msk :
-         Base == USART3_BASE ? RCC_APB1ENR_USART3EN_Msk :
-         Base == USART6_BASE ? RCC_APB2ENR_USART6EN_Msk : 0;
-   constexpr uint32_t Offset = 
-         Base == USART1_BASE ? (uint32_t)RCC_ral::APB2ENR_t::Offset :
-         Base == USART2_BASE ? (uint32_t)RCC_ral::APB1ENR_t::Offset :
-         Base == USART3_BASE ? (uint32_t)RCC_ral::APB1ENR_t::Offset :
-         Base == USART6_BASE ? (uint32_t)RCC_ral::APB2ENR_t::Offset : 0;
-   *(uint32_t*)(RCC_BASE + Offset) |= Mask;
-}
-
-
 template<uint32_t adr, class DMArx, class DMAtx> 
 void USARTx<adr,DMArx,DMAtx>::Enable (bool val)
 {
@@ -94,10 +84,10 @@ void USARTx<adr,DMArx,DMAtx>::TXenable (bool val)
 template<uint32_t adr, class DMArx, class DMAtx> 
 void USARTx<adr,DMArx,DMAtx>::SetBoudRate (Boudrate val)
 {
-   if (bus == RCC_t::Bus::APB1) {
-      boudrate().reg = RCC_t::getAPB1clock() / val;
-   } else if (bus == RCC_t::Bus::APB2) {
-      boudrate().reg = RCC_t::getAPB2clock() / val;
+   if (bus == RCC::Bus::APB1) {
+      boudrate().reg = RCC::getAPB1clock() / val;
+   } else if (bus == RCC::Bus::APB2) {
+      boudrate().reg = RCC::getAPB2clock() / val;
    }
 }
 
@@ -245,13 +235,6 @@ constexpr uint32_t USARTx<adr,DMArx,DMAtx>::TransmitDataAdr()
 
 #elif defined(STM32F030x6)
 
-template <uint32_t adr, class DMArx_, class DMAtx_>
-void USARTx<adr,DMArx_,DMAtx_>::ClockEnable()
-{
-   RCC->APB2ENR |= RCC_APB2ENR_USART1EN_Msk;
-}
-
-
 template<uint32_t adr, class DMArx, class DMAtx> 
 void USARTx<adr,DMArx,DMAtx>::Enable (bool val)
 {
@@ -285,7 +268,7 @@ void USARTx<adr,DMArx,DMAtx>::TXenable (bool val)
 template<uint32_t adr, class DMArx, class DMAtx> 
 void USARTx<adr,DMArx,DMAtx>::SetBoudRate (Boudrate val)
 {
-   boudrate().reg = RCC_t::getAPB2clock() / val;
+   boudrate().reg = RCC::getAPB2clock() / val;
 }
 
 

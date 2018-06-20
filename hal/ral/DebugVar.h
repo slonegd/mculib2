@@ -14,19 +14,19 @@
 #endif
 
 
-#define MAKE_VAR(name) volatile auto name##_d = (name*) name::Base
+#define MAKE_VAR(name) __IO auto name##_d = (name*) name::Base
 
-volatile auto RCC_d = (RCC_t*) RCC;
-volatile auto GPIOA_d = PA::Create();
-volatile auto GPIOB_d = PB::Create();
-volatile auto GPIOC_d = PC::Create();
-volatile auto GPIOD_d = PD::Create();
-volatile auto GPIOF_d = PF::Create();
-volatile auto FLASH_d = (FLASH_t*) FLASH;
+__IO auto RCC_d   = RCC  ::create();
+__IO auto GPIOA_d = PA   ::Create();
+__IO auto GPIOB_d = PB   ::Create();
+__IO auto GPIOC_d = PC   ::Create();
+__IO auto GPIOD_d = PD   ::Create();
+__IO auto GPIOF_d = PF   ::Create();
+__IO auto FLASH_d = FLASH::create();
 MAKE_VAR(DMA1);
 MAKE_VAR(TIM1);
 MAKE_VAR(TIM3);
-volatile auto SysTick_d = (SysTick_t*) SysTick;
+__IO auto SysTick_d = (SysTick_t*) SysTick;
 #if defined(STM32F030x6)
     MAKE_VAR(SPI1);
     MAKE_VAR(DMA1channel1);
@@ -36,7 +36,7 @@ volatile auto SysTick_d = (SysTick_t*) SysTick;
     MAKE_VAR(DMA1channel5);
     MAKE_VAR(ADC1);
 #elif defined(STM32F405xx)
-    volatile auto GPIOE_d = PE::Create();
+    __IO auto GPIOE_d = PE::Create();
     MAKE_VAR(TIM2);
     MAKE_VAR(TIM4);
     MAKE_VAR(TIM5);
@@ -68,8 +68,8 @@ volatile auto SysTick_d = (SysTick_t*) SysTick;
 
 inline void makeDebugVar (void)
 {
-    RCC_d->makeDebugVar();
-    FLASH_d->makeDebugVar();
+    RCC_d->doSome();
+    FLASH_d->doSome();
     GPIOA_d->makeDebugVar();
     GPIOB_d->makeDebugVar();
     // GPIOC_d->makeDebugVar();

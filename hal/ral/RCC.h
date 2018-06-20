@@ -1,11 +1,3 @@
-
-/**
- * RAL над регистрами системы тактирования
- * class RCC_t можно использовать для управления 
- * тактированием с помощью статических функций
- * этого класса
- */
-
 #pragma once
 
 #if defined(STM32F030x6)
@@ -19,8 +11,8 @@
 extern const uint32_t fCPU;
 
 
-
-class RCC_t
+#undef RCC
+class RCC
 {
 public:
    using PLLsource         = RCC_ral::PLLsource;
@@ -36,7 +28,9 @@ public:
 
    static constexpr uint32_t Base = RCC_BASE;
 
-   void makeDebugVar() { CR.bits.res1 = 0; }
+   RCC() = delete;
+   static RCC* create() { return reinterpret_cast<RCC*>(Base); }
+   void doSome() { CR.bits.res1 = 0; }
 
    static void     HSEon();
    static void     waitHSEready();
@@ -47,6 +41,8 @@ public:
    static uint32_t getAPB2clock();
    static void     setAHBprescaler (AHBprescaler val);
    static void     systemClockSwitch (SystemClockSwitch val);
+
+   template<class Periph> static void clockEnable();
 
 #if defined(STM32F405xx)
    static void     setAPB1prescaler (APBprescaler val);
@@ -65,12 +61,18 @@ public:
 
 
 protected:
-   static volatile RCC_ral::CR_t      &clockContr() { return (RCC_ral::CR_t &)      RCC->CR;      }
-   static volatile RCC_ral::CFGR_t    &conf()       { return (RCC_ral::CFGR_t &)    RCC->CFGR;    }
+#define MAKE_REF(Type, name) static __IO Type& name() { return *(Type *)(Base + Type::Offset); }
+   MAKE_REF(RCC_ral::CR_t     , clockContr)
+   MAKE_REF(RCC_ral::CFGR_t   , conf      )
+   MAKE_REF(RCC_ral::APB1ENR_t, APB1en    )
+   MAKE_REF(RCC_ral::APB2ENR_t, APB2en    )
 #if defined (STM32F405xx)
-   static volatile RCC_ral::PLLCFGR_t &pllConf()    { return (RCC_ral::PLLCFGR_t &) RCC->PLLCFGR; }
+   MAKE_REF(RCC_ral::PLLCFGR_t, pllConf   )
+   MAKE_REF(RCC_ral::AHB1ENR_t, AHB1en    )
+#elif defined (STM32F030x6)
+   MAKE_REF(RCC_ral::AHBENR_t,  AHBen     )
 #endif
-
+#undef MAKE_REF
 
 private:
 #if defined (STM32F405xx)
