@@ -28,13 +28,13 @@ MAKE_VAR(TIM1);
 MAKE_VAR(TIM3);
 __IO auto SysTick_d = (SysTick_t*) SysTick;
 #if defined(STM32F030x6)
-    MAKE_VAR(SPI1);
-    MAKE_VAR(DMA1channel1);
-    MAKE_VAR(DMA1channel2);
-    MAKE_VAR(DMA1channel3);
-    MAKE_VAR(DMA1channel4);
-    MAKE_VAR(DMA1channel5);
-    MAKE_VAR(ADC1);
+   __IO auto SPI1_d = SPI1::create();
+   MAKE_VAR(DMA1channel1);
+   MAKE_VAR(DMA1channel2);
+   MAKE_VAR(DMA1channel3);
+   MAKE_VAR(DMA1channel4);
+   MAKE_VAR(DMA1channel5);
+   MAKE_VAR(ADC1);
 #elif defined(STM32F405xx)
     __IO auto GPIOE_d = PE::Create();
     MAKE_VAR(TIM2);
@@ -81,7 +81,7 @@ inline void makeDebugVar (void)
     TIM3_d->makeDebugVar();
     SysTick_d->VAL_t::reg = 0;
 #if defined(STM32F030x6)
-    SPI1_d->makeDebugVar();
+    SPI1_d->doSome();
     DMA1channel1_d->makeDebugVar();
     DMA1channel2_d->makeDebugVar();
     DMA1channel3_d->makeDebugVar();
