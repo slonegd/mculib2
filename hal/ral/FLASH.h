@@ -16,7 +16,7 @@ public:
    using ProgSize = FLASH_ral::ProgSize;
 #endif
 
-   static constexpr uint32_t Base = FLASH_BASE;
+   static constexpr uint32_t Base = FLASH_R_BASE;
 
    FLASH() = delete;
    static FLASH* create() { return reinterpret_cast<FLASH*>(Base); } 
