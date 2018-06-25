@@ -29,8 +29,7 @@ public:
    using DMArx    = DMArx_;
    using DMAtx    = DMAtx_;
    using Channels = DMA_ral::Channels;
-
-   void makeDebugVar() { CR1.bits.res1 = 0; }
+   using Type     = USARTx<Adr,DMArx_,DMAtx_>;
 
    static constexpr uint32_t  Base = Adr;
    static constexpr Channels  DMAChannel();
@@ -43,24 +42,28 @@ public:
    template<class TXpin>  static constexpr bool IsTXsupport();
    template<class RTSpin> static constexpr bool IsRTSsupport();
 
+   USARTx() = delete;
+   static Type* create() { return reinterpret_cast<Type*>(Base); }
+   void doSome() { conf1().bits.res1 = 0; }
+
    static void ClockEnable();
-   static void Enable (bool val);
-   static void RXenable (bool val);
-   static void TXenable (bool val);
+   static void Enable (bool);
+   static void RXenable (bool);
+   static void TXenable (bool);
    static void RTSenable();
    static void DMAtxEnable();
    static void DMArxEnable();
-   static void SetBoudRate (Boudrate val);
-   static void ParityEnable (bool val);
-   static void SetParity (Parity val);
-   static void SetStopBits (StopBits val);
+   static void SetBoudRate (Boudrate);
+   static void ParityEnable (bool);
+   static void SetParity (Parity);
+   static void SetStopBits (StopBits);
    static void EnableIDLEinterrupt();
    static bool IsIDLEinterrupt();
    static void ClearIDLEinterruptFlag();
-   static void sendByte (uint8_t val);
+   static void sendByte (uint8_t);
 
 #if defined(STM32F030x6)
-   static void SetTimeOutBitQty (uint32_t val);
+   static void SetTimeOutBitQty (uint32_t);
    static void EnableReceiveTimeout();
    static void EnableReceiveTimeoutInterupt();
    static bool IsReceiveTimeoutInterrupt();
@@ -70,20 +73,20 @@ public:
 
 protected:
 #define MakeRef(Reg,Ref) USART_ral::Reg& Ref() { return (USART_ral::Reg&) *(uint32_t*)(Base + USART_ral::Reg::Offset); }
-   static volatile MakeRef (BRR_t,  boudrate);
-   static volatile MakeRef (CR1_t,  conf1   );
-   static volatile MakeRef (CR2_t,  conf2   );
-   static volatile MakeRef (CR3_t,  conf3   );
-   static volatile MakeRef (SR_t,   status  );
+   static __IO MakeRef (BRR_t,  boudrate);
+   static __IO MakeRef (CR1_t,  conf1   );
+   static __IO MakeRef (CR2_t,  conf2   );
+   static __IO MakeRef (CR3_t,  conf3   );
+   static __IO MakeRef (SR_t,   status  );
 #if defined(STM32F405xx)
-   static volatile MakeRef (DR_t,   data    );
-   static volatile MakeRef (GTPR_t, gtp     );
+   static __IO MakeRef (DR_t,   data    );
+   static __IO MakeRef (GTPR_t, gtp     );
 #elif defined(STM32F030x6)
-   static volatile MakeRef (RTOR_t, recieverTmeout );
-   static volatile MakeRef (RQR_t,  request        );
-   static volatile MakeRef (ICR_t,  clear          );
-   static volatile MakeRef (RDR_t,  receiveData    );
-   static volatile MakeRef (TDR_t,  transmitData   );
+   static __IO MakeRef (RTOR_t, recieverTmeout );
+   static __IO MakeRef (RQR_t,  request        );
+   static __IO MakeRef (ICR_t,  clear          );
+   static __IO MakeRef (RDR_t,  receiveData    );
+   static __IO MakeRef (TDR_t,  transmitData   );
 #endif
 #undef MakeRef
 
@@ -117,6 +120,10 @@ private:
 #endif
 
 };
+
+
+
+
 
 #if defined(STM32F405xx)
 

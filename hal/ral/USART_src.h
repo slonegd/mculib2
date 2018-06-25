@@ -385,7 +385,7 @@ template<uint32_t adr, class DMArx, class DMAtx>
 constexpr PinConf_t USARTx<adr,DMArx,DMAtx>::PinConfigure()
 {
    return
-      Base == USART1_BASE ? PinConf_t::AlternateFunc1HighSpeed
+      Base == USART1_BASE ? PinConf_t::AlternateFunc1
       :
       PinConf_t::Input;
 }

@@ -1,21 +1,7 @@
-//////////////////////////////////////////////////////////////////////////////
-/** реализую методы
- *      инициализации, поскольку в конструкторе как правило еще
- *  не известно какие настройки подключения
- *      слышать
- *      определять конец пакета
- *      определять сколько пришло
- *      отправлять сколько надо
- *      говорить, что отправка произошла
- *////////////////////////////////////////////////////////////////////////////
 #pragma once
 
 #include "USART.h"
 #include "pins_variadic.h"
-
-namespace USART_HAL {
-
-} // namespace USART_HAL {
 
 
 template<class USART_, uint32_t bufSize, class RX, class TX, class RTS, class LED>
@@ -51,8 +37,21 @@ public:
       StopBits stopBits;
    };
 
-
+   /// приставка s для обозначения сериализованных данных
+   enum sParity   { even = 0b0, odd };
+   enum sStopBits { _1 = 0b0, _2 };
+   enum sBoudrate { _9600 = 0b000, _14400, _19200, _28800, _38400, _57600, _76800, _115200 };
+   struct sSettings {
+      bool      parityEnable :1;
+      sParity   parity       :1;
+      sStopBits stopBits     :1;
+      sBoudrate boudrate     :3;
+      uint16_t  res          :10;
+   };
+   static Settings deserialize (const sSettings& set);
+   
    void init (const Settings& set);
+   void init (const sSettings& set) { init(deserialize(set)); }
    void DMAenableRX();
    void disableRx();
    uint32_t byteQtyRX();
@@ -151,6 +150,20 @@ void USART<USART_, bufSize, RX, TX, RTS, LED>::init (const Settings& set)
 }
 
 
+template <class USART_, uint32_t bufSize, class RX, class TX, class RTS, class LED>
+typename USART<USART_, bufSize, RX, TX, RTS, LED>::Settings
+USART<USART_, bufSize, RX, TX, RTS, LED>::deserialize (const sSettings& set)
+{
+   auto br = set.boudrate == sBoudrate::_9600  ? Boudrate::BR9600  :
+               set.boudrate == sBoudrate::_14400 ? Boudrate::BR14400 :
+               set.boudrate == sBoudrate::_19200 ? Boudrate::BR19200 :
+                                                   Boudrate::BR28800;
+   auto parEn = set.parityEnable ? ParityEn::enable : ParityEn::disable;
+   auto par = set.parity == sParity::even ? Parity::even : Parity::odd;
+   auto sb = set.stopBits == sStopBits::_1 ? StopBits::_1 : StopBits::_2;
+   return { br, parEn, par, sb };
+}
+
 
 template <class USART_, uint32_t bufSize, class RX, class TX, class RTS, class LED>
 void USART<USART_, bufSize, RX, TX, RTS, LED>::DMAenableRX()
@@ -235,7 +248,6 @@ void USART<USART_, bufSize, RX, TX, RTS, LED>::txCompleteHandler()
 
 #if defined(STM32F030x6)
 
-   bool rxTimeOutHandler();
 template <class USART_, uint32_t bufSize, class RX, class TX, class RTS, class LED>
 bool USART<USART_, bufSize, RX, TX, RTS, LED>::rxTimeOutHandler()
 {

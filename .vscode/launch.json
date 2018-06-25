@@ -17,7 +17,7 @@
 		// home
 		// "miDebuggerPath": "/home/slonegd/Code/gcc-arm-none-eabi-6-2017-q2-update/bin/arm-none-eabi-gdb",
 		//	"program": "${workspaceRoot}/build/STM32FX_DISCOVERY.elf",
-			"program": "${workspaceRoot}/build/STM32F4_DISCOVERY.elf",
+			"program": "${workspaceRoot}/build/STM32_F0_DISCOVERY.elf",
 			"miDebuggerServerAddress": "localhost:4242",
 		   
 			"MIMode": "gdb",

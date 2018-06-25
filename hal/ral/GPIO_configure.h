@@ -10,12 +10,13 @@
 
 namespace GPIO {
 
-static constexpr uint32_t MakeMask (GPIO_ral::Mode_t m, 
-                                    GPIO_ral::OutType_t t,
-                                    GPIO_ral::OutSpeed_t s,
-                                    GPIO_ral::PullResistor_t r,
-                                    GPIO_ral::AF af)
-{
+static constexpr uint32_t MakeMask (
+   GPIO_ral::Mode_t m, 
+   GPIO_ral::OutType_t t,
+   GPIO_ral::OutSpeed_t s,
+   GPIO_ral::PullResistor_t r,
+   GPIO_ral::AF af
+) {
    return (uint32_t)m | (uint32_t)t  << 2 
                       | (uint32_t)s  << 3
                       | (uint32_t)r  << 5

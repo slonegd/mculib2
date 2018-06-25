@@ -16,13 +16,14 @@
 
 #define MAKE_VAR(name) __IO auto name##_d = (name*) name::Base
 
-__IO auto RCC_d   = RCC  ::create();
-__IO auto GPIOA_d = PA   ::Create();
-__IO auto GPIOB_d = PB   ::Create();
-__IO auto GPIOC_d = PC   ::Create();
-__IO auto GPIOD_d = PD   ::Create();
-__IO auto GPIOF_d = PF   ::Create();
-__IO auto FLASH_d = FLASH::create();
+__IO auto RCC_d    = RCC   ::create();
+__IO auto GPIOA_d  = PA    ::Create();
+__IO auto GPIOB_d  = PB    ::Create();
+__IO auto GPIOC_d  = PC    ::Create();
+__IO auto GPIOD_d  = PD    ::Create();
+__IO auto GPIOF_d  = PF    ::Create();
+__IO auto FLASH_d  = FLASH ::create();
+__IO auto USART1_d = USART1::create();
 MAKE_VAR(DMA1);
 MAKE_VAR(TIM1);
 MAKE_VAR(TIM3);
@@ -41,10 +42,9 @@ __IO auto SysTick_d = (SysTick_t*) SysTick;
     MAKE_VAR(TIM4);
     MAKE_VAR(TIM5);
     MAKE_VAR(TIM8);
-    MAKE_VAR(USART1);
-    MAKE_VAR(USART2);
-    MAKE_VAR(USART3);
-    MAKE_VAR(USART6);
+    __IO auto USART2_d = USART2::create();
+    __IO auto USART3_d = USART3::create();
+    __IO auto USART6_d = USART6::create();
     MAKE_VAR(DMA1stream0);
     MAKE_VAR(DMA1stream1);
     MAKE_VAR(DMA1stream2);
@@ -70,6 +70,7 @@ inline void makeDebugVar (void)
 {
     RCC_d->doSome();
     FLASH_d->doSome();
+    USART1_d->doSome();
     GPIOA_d->makeDebugVar();
     GPIOB_d->makeDebugVar();
     // GPIOC_d->makeDebugVar();
@@ -94,10 +95,10 @@ inline void makeDebugVar (void)
     TIM4_d->makeDebugVar();
     TIM5_d->makeDebugVar();
     TIM8_d->makeDebugVar();
-    USART1_d->makeDebugVar();
-    USART2_d->makeDebugVar();
-    USART3_d->makeDebugVar();
-    USART6_d->makeDebugVar();
+    
+    USART2_d->doSome();
+    USART3_d->doSome();
+    USART6_d->doSome();
     DMA1stream0_d->makeDebugVar();
     DMA1stream1_d->makeDebugVar();
     DMA1stream2_d->makeDebugVar();

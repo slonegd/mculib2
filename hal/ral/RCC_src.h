@@ -206,15 +206,15 @@ template<> void RCC::clockEnable<PD>()
    SET (AHB1en(), GPIODEN);
    while (IS_CLEAR (AHB1en(), GPIODEN)) { }
 }
-template<> void RCC::clockEnable<PE>()
-{
-   SET (AHB1en(), GPIOEEN);
-   while (IS_CLEAR (AHB1en(), GPIOEEN)) { }
-}
 template<> void RCC::clockEnable<PF>()
 {
    SET (AHB1en(), GPIOFEN);
    while (IS_CLEAR (AHB1en(), GPIOFEN)) { }
+}
+template<> void RCC::clockEnable<PE>()
+{
+   SET (AHB1en(), GPIOEEN);
+   while (IS_CLEAR (AHB1en(), GPIOEEN)) { }
 }
 template<> void RCC::clockEnable<PG>()
 {

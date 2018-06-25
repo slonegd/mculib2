@@ -10,9 +10,11 @@ template<class SPI_, class Data, uint8_t dataSize = 8>
 class SPIoverDMA //  : private SPI_
 {
 public:
+   // без этого буфера не работало, не понял почему
+   volatile uint32_t buf[0];
    union {
-      Data data;
-      uint8_t arr[sizeof(Data)];
+      volatile Data data;
+      volatile uint8_t arr[sizeof(Data)];
    };
 
 
@@ -43,9 +45,9 @@ public:
 private:
    void init()
    {
-      CONFIGURE_PIN (SCK,  AlternateFunc0HighSpeed);
-      CONFIGURE_PIN (MOSI, AlternateFunc0HighSpeed);
-      CONFIGURE_PIN (NSS,  AlternateFunc0HighSpeed);
+      CONFIGURE_PIN (SCK,  AlternateFunc0);
+      CONFIGURE_PIN (MOSI, AlternateFunc0);
+      CONFIGURE_PIN (NSS,  AlternateFunc0);
 
       SPI_::clockEnable();
       SPI_::setAsMaster();

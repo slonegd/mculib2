@@ -9,7 +9,7 @@ enum CRCLength { crc8 = 0b0, crc16 };
 
 struct CR1bits {
    uint32_t  CPHA     :1; // Bit 0 CPHA: Clock phase
-   uint32_t  CPOL     :1; // Bit1 CPOL: Clock polarity
+   uint32_t  CPOL     :1; // Bit 1 CPOL: Clock polarity
    bool      MSTR     :1; // Bit 2 MSTR: Master selection
    Div       BR       :3; // Bits 5:3 BR[2:0]: Baud rate control
    bool      SPE      :1; // Bit 6 SPE: SPI enable
@@ -30,7 +30,7 @@ struct CR1position {
 };
 
 enum Format { Motorolla = 0b0, TI };
-enum DataSize { _4bits = 0b0011, _5bits, _6bits, _7bits, _8bits, _10bits, _11bits, _12bits, _13bits, _14bits, _15bits, _16bits };
+enum DataSize { _4bits = 0b0011, _5bits, _6bits, _7bits, _8bits, _9bits, _10bits, _11bits, _12bits, _13bits, _14bits, _15bits, _16bits };
 
 struct CR2bits {
    bool     RXDMAEN :1; // Bit 0 RXDMAEN: Rx buffer DMA enable

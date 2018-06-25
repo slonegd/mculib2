@@ -46,7 +46,8 @@ public:
 
    MBslave ( UART& uart );
 
-   void init (const typename UART::Settings& val);
+   void init (const typename UART::Settings&);
+   void init (const typename UART::sSettings&);
 
 
    // обрабатывает поступивший запрос, по необходимости формирует ответ
@@ -61,25 +62,27 @@ public:
    // где x - номер применяемого уарта
    void recieveInterruptHandler();
 
-private:
-#if defined(STM32F405xx)
-   Timer timer;
-#endif
-   UART& uart;
-   bool endMessage;
-
-
-
 
    // вызываеться в прерывании по передаче данных
    // для серии F4 DMAn_Streamx_IRQHandler
    // где x - номер канала ДМА, n - номер ДМА
    void transmitInterruptHandler();
 
+private:
+#if defined(STM32F405xx)
+   Timer timer;
+#endif
+   UART& uart;
+   // проверить потом без volatile
+   volatile bool endMessage;
+
+
+
+
 
    using type = MBslave<InRegs_t,OutRegs_t,UART>;
 
-   // SUBSCRIBE_INTERRUPT(recieve , typename UART::Periph_type, recieveInterruptHandler);
+   SUBSCRIBE_INTERRUPT(recieve , typename UART::Periph_type, recieveInterruptHandler);
    SUBSCRIBE_INTERRUPT(transmit, typename UART::DMAtx      , transmitInterruptHandler);
 
 
@@ -126,6 +129,11 @@ void MBslave<In,Out,UART>::init (const typename UART::Settings& val)
 #if defined(STM32F405xx)
    timer.timeSet = 5_ms;
 #endif
+}
+template <class In, class Out, class UART>
+void MBslave<In,Out,UART>::init (const typename UART::sSettings& val)
+{
+   init (UART::deserialize(val));
 }
 
 
@@ -206,8 +214,7 @@ inline void MBslave<In,Out,UART>::operator() (function reaction)
             break;
 
          case Step::MinMessageCheck:
-            if (byteQty >= 8)
-               step = Step::CRCcheck;
+            step = byteQty >= 8 ? Step::CRCcheck : Step::Done;
             break;
 
          case Step::CRCcheck:

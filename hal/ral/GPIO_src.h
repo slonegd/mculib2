@@ -1,5 +1,7 @@
 #pragma once
 
+
+
 template<uint32_t adr>
 void GPIOx<adr>::clockEnable()
 {
