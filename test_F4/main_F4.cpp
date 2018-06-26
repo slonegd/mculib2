@@ -20,7 +20,7 @@ int main(void)
 
    PortsInit ();
 
-   modbus.init ( {
+   modbus.init ( USART_::Settings {
       USART_::Boudrate::BR9600,
       USART_::ParityEn::disable,
       USART_::Parity::even,

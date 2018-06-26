@@ -46,28 +46,29 @@ public:
    static Type* create() { return reinterpret_cast<Type*>(Base); }
    void doSome() { conf1().bits.res1 = 0; }
 
-   static void ClockEnable();
-   static void Enable (bool);
-   static void RXenable (bool);
-   static void TXenable (bool);
-   static void RTSenable();
+   static void clockEnable();
+   static void enable (bool);
+   static void rxEnable (bool);
+   static void txEnable (bool);
+   static void rtsEnable();
    static void DMAtxEnable();
    static void DMArxEnable();
-   static void SetBoudRate (Boudrate);
-   static void ParityEnable (bool);
-   static void SetParity (Parity);
-   static void SetStopBits (StopBits);
-   static void EnableIDLEinterrupt();
-   static bool IsIDLEinterrupt();
-   static void ClearIDLEinterruptFlag();
+   static void setBoudRate (Boudrate);
+   static void parityEnable (bool);
+   static void setParity (Parity);
+   static void setStopBits (StopBits);
+   static void enableIDLEinterrupt();
+   static bool isIDLEinterrupt();
+   static void clearIDLEinterruptFlag();
    static void sendByte (uint8_t);
 
 #if defined(STM32F030x6)
-   static void SetTimeOutBitQty (uint32_t);
-   static void EnableReceiveTimeout();
-   static void EnableReceiveTimeoutInterupt();
-   static bool IsReceiveTimeoutInterrupt();
-   static void ClearReceiveTimeoutInterruptFlag();
+   static void driverEnable();
+   static void setTimeOutBitQty (uint32_t);
+   static void enableReceiveTimeout();
+   static void enableReceiveTimeoutInterupt();
+   static bool isReceiveTimeoutInterrupt();
+   static void clearReceiveTimeoutInterruptFlag();
 #endif
 
 

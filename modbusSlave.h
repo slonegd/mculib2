@@ -18,6 +18,12 @@
 #include <cstring>
 
 
+inline constexpr uint16_t htons (uint16_t val)
+{
+   return ((val & 0x00FF) << 8) | ((val & 0xFF00) >> 8);
+}
+
+
 template <class InRegs_t, class OutRegs_t, class UART>
 class MBslave
 {
@@ -195,7 +201,8 @@ inline void MBslave<In,Out,UART>::operator() (function reaction)
          RegCheck16,
          ValCheck,
          ErrSet,
-         Answer
+         Answer,
+         EnableRX
       } step = Step::AddrCheck;
       uint32_t byteQty {uart.byteQtyRX()};
       uint16_t crc {0};
@@ -203,7 +210,7 @@ inline void MBslave<In,Out,UART>::operator() (function reaction)
       uint16_t HighAddr{0};
       uint16_t RegQty{0};
       bool allGood = true;
-      uint16_t* registrValue = nullptr;
+      // uint16_t* registrValue = nullptr;
       while (step) {
 
          switch (step) {
@@ -211,10 +218,12 @@ inline void MBslave<In,Out,UART>::operator() (function reaction)
          case Step::AddrCheck:
             if (uart.buffer[0] == address or uart.buffer[0] == 0)
                step = Step::MinMessageCheck;
+            else
+               step = Step::EnableRX;
             break;
 
          case Step::MinMessageCheck:
-            step = byteQty >= 8 ? Step::CRCcheck : Step::Done;
+            step = byteQty >= 8 ? Step::CRCcheck : Step::EnableRX;
             break;
 
          case Step::CRCcheck:
@@ -222,7 +231,7 @@ inline void MBslave<In,Out,UART>::operator() (function reaction)
             if (   (uint8_t) crc       != uart.buffer[byteQty-2]
                 or (uint8_t)(crc >> 8) != uart.buffer[byteQty-1] )
             {
-               step = Step::Done;
+               step = Step::EnableRX;
             } else {
                step = Step::FuncCheck;
             }
@@ -244,22 +253,30 @@ inline void MBslave<In,Out,UART>::operator() (function reaction)
 
          case Step::RegCheck03:
             if (byteQty != 8) { //длина пакета не соответсвует спецификации ModBus
-               step = Step::Done;
+               step = Step::EnableRX;
             } else if (HighAddr > (OutRegQty - 1)) {
                error = ErrorCode::RegErr;
                step = Step::ErrSet;
             } else {
                byteQty =  RegQty * 2;
                uart.buffer[2] = byteQty;
-               registrValue = reinterpret_cast<uint16_t*>(uart.buffer + 3);
-               std::memcpy (registrValue, arOutRegs + LowAddr, byteQty);
+               // порядок байт не совпадает, потому простой copy те выйдет
+               // registrValue = reinterpret_cast<uint16_t*>(uart.buffer + 3);
+               // std::memcpy (registrValue, arOutRegs + LowAddr, byteQty);
+               for (uint8_t i = 0; i < RegQty; ++i) {
+                  // htons вылетала в infinity loop
+                  // registrValue[i] = htons (arOutRegs[LowAddr+i]);
+                  uart.buffer[3 + 2*i    ] = arOutRegs[LowAddr+i] >> 8;
+                  uart.buffer[3 + 2*i + 1] = arOutRegs[LowAddr+i];
+               }
                byteQty += 3;
+               step = Step::Answer;
             }
             break;
 
          case Step::RegCheck16:
             if (byteQty != (uint32_t)RegQty * 2 + 9) {	//длина пакета не соответсвует спецификации ModBus
-               step = Step::Done;
+               step = Step::EnableRX;
             } else if (HighAddr > (InRegQty - 1)) {
                error = ErrorCode::RegErr;
                step = Step::ErrSet;
@@ -269,16 +286,19 @@ inline void MBslave<In,Out,UART>::operator() (function reaction)
             break;
 
          case Step::ValCheck:
-            registrValue = reinterpret_cast<uint16_t*>(uart.buffer + 7);
-            for (uint16_t i = 0; i < RegQty; ++i)
-               allGood &= registrValue[i] >= arInRegsMin[i+LowAddr]
-                  and (   registrValue[i] <= arInRegsMax[i+LowAddr]
-                       or arInRegsMax[i+LowAddr] == 0
-               );
+            allGood = true;
+            for (uint16_t i = 0; i < RegQty; ++i) {
+               uint16_t reg;
+               reg = (uint16_t)uart.buffer[7 + 2*i] << 8 | uart.buffer[7 + 2*i + 1];
+               allGood &= reg >= arInRegsMin[i+LowAddr];
+               allGood &= reg <= arInRegsMax[i+LowAddr] or arInRegsMax[i+LowAddr] == 0;
+            }
             if (allGood) {
-               std::memcpy (arInRegs + LowAddr, registrValue, RegQty * 2);
-               while (LowAddr++ <= HighAddr)
-                  reaction(LowAddr);
+               for (uint8_t i = 0; i < RegQty; ++i)
+                  arInRegs[LowAddr+i] = (uint16_t)uart.buffer[7 + 2*i] << 8 
+                                        | uart.buffer[7 + 2*i + 1];
+               while (LowAddr <= HighAddr)
+                  reaction(LowAddr++);
                byteQty = 6;
                step = Step::Answer;
             } else {
@@ -299,6 +319,11 @@ inline void MBslave<In,Out,UART>::operator() (function reaction)
             uart.buffer[byteQty++] = crc;
             uart.buffer[byteQty++] = crc >> 8;
             uart.startTX (byteQty);
+            step = Step::Done;
+            break;
+
+         case Step::EnableRX:
+            uart.DMAenableRX();
             step = Step::Done;
             break;
 

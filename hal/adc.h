@@ -22,7 +22,7 @@ public:
    using Clock      = typename ADC_::Clock;
    using Resolution = typename ADC_::Resolution;
    using SampleTime = typename ADC_::SampleTime;
-   using Channels   = typename DMA_ral::Channels;
+   // using Channels   = typename DMA_ral::Channels;
 
    // mul - множитель для вычисления среднего
    // div - частное для вычисления среднего

@@ -58,7 +58,6 @@ public:
    void sendByte (uint8_t val);
    void startTX (uint32_t qty); 
    void disableTx();
-   bool isCompleteTX();
    bool idleHandler();
    void txCompleteHandler();
 #if defined(STM32F030x6)
@@ -91,25 +90,26 @@ void USART<USART_, bufSize, RX, TX, RTS, LED>::init (const Settings& set)
    CONFIGURE_PIN (LED, Output);
 
    // уарт
-   USART_::ClockEnable();
-   USART_::SetBoudRate (set.boudrate);
+   USART_::clockEnable();
+   USART_::setBoudRate (set.boudrate);
    if (set.parityEn == ParityEn::enable) {
-      USART_::ParityEnable (true);
-      USART_::SetParity(set.parity);
+      USART_::parityEnable (true);
+      USART_::setParity(set.parity);
    } else {
-      USART_::ParityEnable (false);
+      USART_::parityEnable (false);
    }
-   USART_::SetStopBits (set.stopBits);
-   USART_::RXenable (true);
-   USART_::TXenable (true);
-   USART_::RTSenable();
+   USART_::setStopBits (set.stopBits);
+   USART_::rxEnable (true);
+   USART_::txEnable (true);
+   USART_::rtsEnable();
    USART_::DMArxEnable();
    USART_::DMAtxEnable();
 #if defined(STM32F030x6)
-   USART_::SetTimeOutBitQty(42); // 3.5 слова в битах
-   USART_::EnableReceiveTimeout();
+   USART_::setTimeOutBitQty(42); // 3.5 слова в битах
+   USART_::enableReceiveTimeout();
+   USART_::driverEnable();
 #endif
-   USART_::Enable (true);
+   USART_::enable (true);
 
    // дма
    DMArx::ClockEnable();
@@ -140,9 +140,9 @@ void USART<USART_, bufSize, RX, TX, RTS, LED>::init (const Settings& set)
 
    // прерывания
 #if defined(STM32F405xx)
-   USART_::EnableIDLEinterrupt();
+   USART_::enableIDLEinterrupt();
 #elif defined(STM32F030x6)
-   USART_::EnableReceiveTimeoutInterupt();
+   USART_::enableReceiveTimeoutInterupt();
 #endif
    NVIC_EnableIRQ(USART_::IRQn());
    DMAtx::EnableTransferCompleteInterrupt();
@@ -153,11 +153,14 @@ void USART<USART_, bufSize, RX, TX, RTS, LED>::init (const Settings& set)
 template <class USART_, uint32_t bufSize, class RX, class TX, class RTS, class LED>
 typename USART<USART_, bufSize, RX, TX, RTS, LED>::Settings
 USART<USART_, bufSize, RX, TX, RTS, LED>::deserialize (const sSettings& set)
-{
-   auto br = set.boudrate == sBoudrate::_9600  ? Boudrate::BR9600  :
-               set.boudrate == sBoudrate::_14400 ? Boudrate::BR14400 :
-               set.boudrate == sBoudrate::_19200 ? Boudrate::BR19200 :
-                                                   Boudrate::BR28800;
+{ enum sBoudrate { _9600 = 0b000, _14400, _19200, _28800, _38400, _57600, _76800, _115200 };
+   auto br = set.boudrate == sBoudrate::_14400  ? Boudrate::BR14400  :
+             set.boudrate == sBoudrate::_19200  ? Boudrate::BR19200  :
+             set.boudrate == sBoudrate::_28800  ? Boudrate::BR28800  :
+             set.boudrate == sBoudrate::_38400  ? Boudrate::BR38400  :
+             set.boudrate == sBoudrate::_57600  ? Boudrate::BR57600  :
+             set.boudrate == sBoudrate::_76800  ? Boudrate::BR76800  :
+             set.boudrate == sBoudrate::_115200 ? Boudrate::BR115200 : Boudrate::BR9600;
    auto parEn = set.parityEnable ? ParityEn::enable : ParityEn::disable;
    auto par = set.parity == sParity::even ? Parity::even : Parity::odd;
    auto sb = set.stopBits == sStopBits::_1 ? StopBits::_1 : StopBits::_2;
@@ -198,6 +201,7 @@ template <class USART_, uint32_t bufSize, class RX, class TX, class RTS, class L
 void USART<USART_, bufSize, RX, TX, RTS, LED>::startTX (uint32_t qty)
 {
    LED::set();
+   DMArx::Disable();
    DMAtx::Disable();
    DMAtx::SetQtyTransactions (qty);
    DMAtx::Enable();
@@ -212,22 +216,15 @@ void USART<USART_, bufSize, RX, TX, RTS, LED>::disableTx()
 
 
 template <class USART_, uint32_t bufSize, class RX, class TX, class RTS, class LED>
-bool USART<USART_, bufSize, RX, TX, RTS, LED>::isCompleteTX()
-{
-   return false; // PLACEHOLDER!!!!!!!!!!!!!!!!!!!!!!!!
-}
-
-
-template <class USART_, uint32_t bufSize, class RX, class TX, class RTS, class LED>
 bool USART<USART_, bufSize, RX, TX, RTS, LED>::idleHandler()
 {
-   bool tmp = USART_::IsIDLEinterrupt();
+   bool tmp = USART_::isIDLEinterrupt();
    if (tmp) {
       disableRx();
       // TODO:
       // метод сбрасывает все флаги прерывания,
       // но в этом приложении пофиг
-      USART_::ClearIDLEinterruptFlag();
+      USART_::clearIDLEinterruptFlag();
    }
    return tmp;
 }
@@ -238,8 +235,8 @@ void USART<USART_, bufSize, RX, TX, RTS, LED>::txCompleteHandler()
 {
    if ( DMAtx::IsTransferCompleteInterrupt() ) {
       LED::clear();
-      // DMAtx::Disable();
-      // DMAenableRX();
+      disableRx();
+      DMAenableRX();
       DMAtx::ClearFlagTransferCompleteInterrupt();
    }
 }
@@ -251,9 +248,10 @@ void USART<USART_, bufSize, RX, TX, RTS, LED>::txCompleteHandler()
 template <class USART_, uint32_t bufSize, class RX, class TX, class RTS, class LED>
 bool USART<USART_, bufSize, RX, TX, RTS, LED>::rxTimeOutHandler()
 {
-   bool tmp = USART_::IsReceiveTimeoutInterrupt();
+   bool tmp = USART_::isReceiveTimeoutInterrupt();
    if (tmp) {
-      USART_::ClearReceiveTimeoutInterruptFlag();
+      DMArx::Disable();
+      USART_::clearReceiveTimeoutInterruptFlag();
    }
    return tmp;
 }

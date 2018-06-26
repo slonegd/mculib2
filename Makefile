@@ -36,10 +36,6 @@ CPP_SOURCES_F4 = test_F4/main_F4.cpp
 CPP_SOURCES_F0 = test_F0/main_F0.cpp
 CPP_SOURCES_F1 = test_F1/main_F1.cpp
 
-C_SOURCES_F4 = STM32F4_files/system_stm32f4xx.c
-C_SOURCES_F0 = STM32F0_files/system_stm32f0xx.c 
-C_SOURCES_F1 = STM32F1_files/system_stm32f1xx.c
-
 ASM_SOURCES_F4 = STM32F4_files/startup_stm32f405xx.s
 ASM_SOURCES_F0 = STM32F0_files/startup_stm32f030x6.s
 ASM_SOURCES_F1 = STM32F1_files/startup_stm32f103xb.s
@@ -156,24 +152,18 @@ $(BUILD_DIR)/$(TARGET_F1).elf $(BUILD_DIR)/$(TARGET_F1).hex $(BUILD_DIR)/$(TARGE
 #######################################
 # list of objects
 
-OBJECTS_F4 = $(addprefix $(BUILD_DIR)/,$(notdir $(C_SOURCES_F4:.c=.o)))
-vpath %.c $(sort $(dir $(C_SOURCES_F4)))
 OBJECTS_F4 += $(addprefix $(BUILD_DIR)/,$(notdir $(CPP_SOURCES_F4:.cpp=.o)))
 vpath %.cpp $(sort $(dir $(CPP_SOURCES_F4)))
 # list of ASM program objects
 OBJECTS_F4 += $(addprefix $(BUILD_DIR)/,$(notdir $(ASM_SOURCES_F4:.s=.o)))
 vpath %.s $(sort $(dir $(ASM_SOURCES_F4)))
 
-OBJECTS_F0 = $(addprefix $(BUILD_DIR)/,$(notdir $(C_SOURCES_F0:.c=.o)))
-vpath %.c $(sort $(dir $(C_SOURCES_F0)))
 OBJECTS_F0 += $(addprefix $(BUILD_DIR)/,$(notdir $(CPP_SOURCES_F0:.cpp=.o)))
 vpath %.cpp $(sort $(dir $(CPP_SOURCES_F0)))
 # list of ASM program objects
 OBJECTS_F0 += $(addprefix $(BUILD_DIR)/,$(notdir $(ASM_SOURCES_F0:.s=.o)))
 vpath %.s $(sort $(dir $(ASM_SOURCES_F0)))
 
-OBJECTS_F1 = $(addprefix $(BUILD_DIR)/,$(notdir $(C_SOURCES_F1:.c=.o)))
-vpath %.c $(sort $(dir $(C_SOURCES_F1)))
 OBJECTS_F1 += $(addprefix $(BUILD_DIR)/,$(notdir $(CPP_SOURCES_F1:.cpp=.o)))
 vpath %.cpp $(sort $(dir $(CPP_SOURCES_F1)))
 # list of ASM program objects
@@ -184,26 +174,17 @@ vpath %.s $(sort $(dir $(ASM_SOURCES_F1)))
 $(BUILD_DIR)/main_F4.o: $(CPP_SOURCES_F4) Makefile | $(BUILD_DIR) 
 	$(CPP) -c $(CFLAGS_F4) $(CPPSTD) -fno-rtti -Wa,-a,-ad,-alms=$(BUILD_DIR)/$(notdir $(<:.cpp=.lst)) $< -o $@
 
-$(BUILD_DIR)/system_stm32f4xx.o: $(C_SOURCES_F4) Makefile | $(BUILD_DIR) 
-	$(CC) -c $(CFLAGS_F4) -std=c99 -Wa,-a,-ad,-alms=$(BUILD_DIR)/$(notdir $(<:.c=.lst)) $< -o $@
-
 $(BUILD_DIR)/startup_stm32f405xx.o: $(ASM_SOURCES_F4) Makefile | $(BUILD_DIR)
 	$(AS) -c $(CFLAGS_F4) $< -o $@
 
 $(BUILD_DIR)/main_F0.o:$(CPP_SOURCES_F0) Makefile | $(BUILD_DIR) 
 	$(CPP) -c $(CFLAGS_F0) $(CPPSTD) -fno-rtti -Wa,-a,-ad,-alms=$(BUILD_DIR)/$(notdir $(<:.cpp=.lst)) $< -o $@
 
-$(BUILD_DIR)/system_stm32f0xx.o: $(C_SOURCES_F0) Makefile | $(BUILD_DIR) 
-	$(CC) -c $(CFLAGS_F0) -std=c99 -Wa,-a,-ad,-alms=$(BUILD_DIR)/$(notdir $(<:.c=.lst)) $< -o $@
-
 $(BUILD_DIR)/startup_stm32f030x6.o: $(ASM_SOURCES_F0) Makefile | $(BUILD_DIR)
 	$(AS) -c $(CFLAGS_F0) $< -o $@
 
 $(BUILD_DIR)/main_F1.o:$(CPP_SOURCES_F1) Makefile | $(BUILD_DIR) 
 	$(CPP) -c $(CFLAGS_F1) $(CPPSTD) -fno-rtti -Wa,-a,-ad,-alms=$(BUILD_DIR)/$(notdir $(<:.cpp=.lst)) $< -o $@
-
-$(BUILD_DIR)/system_stm32f1xx.o: $(C_SOURCES_F1) Makefile | $(BUILD_DIR) 
-	$(CC) -c $(CFLAGS_F1) -std=c99 -Wa,-a,-ad,-alms=$(BUILD_DIR)/$(notdir $(<:.c=.lst)) $< -o $@
 
 $(BUILD_DIR)/startup_stm32f103xb.o: $(ASM_SOURCES_F1) Makefile | $(BUILD_DIR)
 	$(AS) -c $(CFLAGS_F1) $< -o $@

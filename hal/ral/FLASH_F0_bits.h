@@ -20,20 +20,17 @@ struct ACRposition {
 };
 
 struct SRbits {
-   bool     EOP    :1; // Bit 0 EOP: End of operation
-   bool     OPERR  :1; // Bit 1 OPERR: Operation error
-   uint32_t res1   :2; // Bits 3:2 Reserved, must be kept cleared.
-   bool     WRPERR :1; // Bit 4 WRPERR: Write protection error
-   bool     PGAERR :1; // Bit 5 PGAERR: Programming alignment error
-   bool     PGPERR :1; // Bit 6 PGPERR: Programming parallelism error
-   bool     PGSERR :1; // Bit 7 PGSERR: Programming sequence error
-   uint32_t res2   :8; // Bits 15:8 Reserved, must be kept cleared.
-   bool     BSY    :1; // Bit 16 BSY: Busy
-   uint32_t res3   :15; // Bits 31:17 Reserved, must be kept cleared.
+   bool     BSY      :1; // Bit 0 BSY: Busy
+   uint32_t res1     :1; // Bit 1 Reserved, must be kept at reset value
+   bool     PGERR    :1; // Bit 2 PGERR: Programming error
+   uint32_t res2     :1; // Bit 3 Reserved, must be kept at reset value.
+   bool     WRPRTERR :1; // Bit 4 WRPRTERR: Write protection error
+   bool     EOP      :1; // Bit 5 EOP: End of operation
+   uint32_t res3     :26;
 };
 
 struct SRposition {
-   enum { EOP = 0, OPERR, WRPERR = 4, PGAERR, PGPERR, PGSERR, BSY = 16 };
+   enum { BSY = 0, PGERR = 2, WRPRTERR = 4, EOP };
 };
 
 struct CRbits {

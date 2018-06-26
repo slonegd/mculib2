@@ -76,12 +76,12 @@ private:
    uint8_t* original = (uint8_t*)this;
    int32_t flashOffset;
    bool needErase;
-   struct ByteInd_t {
-      uint8_t byte;
-      uint8_t ind;   
+   struct Pair {
+      uint8_t key; 
+      uint8_t value;
    };
    union Flash_t {
-      ByteInd_t data[SectorSize/2];
+      Pair     data[SectorSize/2];
       uint16_t word[SectorSize/2];
    };
    volatile Flash_t& flash = *(Flash_t*)SectorAddr ;
@@ -122,9 +122,9 @@ bool Flash<Data,sector>::readFromFlash ()
    bool indExist[QtyBytes] = {false};
    for (uint32_t i = 0; i < SectorSize; i++) {
       uint8_t index;
-      index = flash.data[i].ind;
+      index = flash.data[i].key;
       if ( index < QtyBytes) {
-         copy[index] = flash.data[i].byte;
+         copy[index] = flash.data[i].value;
          indExist[index] = true;
       } else if (index == 0xFF) {
          flashOffset = i;
@@ -152,7 +152,7 @@ bool Flash<Data,sector>::readFromFlash ()
       tmp &= indExist[i];
    }
    if (tmp) {
-      memcpy(original, copy, QtyBytes);
+      memcpy (original, copy, QtyBytes);
       return true;
    } else {
       return false;
@@ -200,7 +200,7 @@ void Flash<Data,sector>::tick()
             FLASH::setProgSize (FLASH::ProgSize::x16);
          #endif
          dataWrite = original[byteN];
-         flash.word[flashOffset] = (uint16_t)byteN << 8 | dataWrite;
+         flash.word[flashOffset] = (uint16_t)dataWrite << 8 | byteN;
          state = CheckWrite;
       }
       break;

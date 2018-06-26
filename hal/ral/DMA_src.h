@@ -58,7 +58,7 @@ void DMAx<adr>::ClearFlagTransferCompleteInterrupt()
    static_assert (stream >= 0 and stream <= 7, "DMAstream 0-7");
    constexpr int n = DMAhelper::DMAn<stream>();
    constexpr uint32_t pos = DMAhelper::TCIpos<stream>();
-   clear().reg[n] &= ~((uint32_t)1 << pos);
+   clear().reg[n] |= ((uint32_t)1 << pos);
 }
 
 #elif defined(STM32F030x6)
@@ -79,7 +79,7 @@ void DMAx<adr>::ClearFlagTransferCompleteInterrupt()
 {
    static_assert (stream >= 1 and stream <= 5, "DMAstream 1-5");
    constexpr uint32_t mask = DMAhelper::TCImask<stream>();
-   clear().reg &= ~mask;
+   clear().reg |= mask;
 }
 
 #endif
