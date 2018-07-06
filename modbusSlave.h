@@ -64,16 +64,6 @@ public:
    template <class function>
    void operator() (function reaction);
 
-   // вызываеться в прерывании по приёму данных USARTx_IRQHandler
-   // где x - номер применяемого уарта
-   void recieveInterruptHandler();
-
-
-   // вызываеться в прерывании по передаче данных
-   // для серии F4 DMAn_Streamx_IRQHandler
-   // где x - номер канала ДМА, n - номер ДМА
-   void transmitInterruptHandler();
-
 private:
 #if defined(STM32F405xx)
    Timer timer;
@@ -82,14 +72,17 @@ private:
    // проверить потом без volatile
    volatile bool endMessage;
 
+   void uartInterrupt();
+   void DMAinterrupt();
+
 
 
 
 
    using type = MBslave<InRegs_t,OutRegs_t,UART>;
 
-   SUBSCRIBE_INTERRUPT(recieve , typename UART::Periph_type, recieveInterruptHandler);
-   SUBSCRIBE_INTERRUPT(transmit, typename UART::DMAtx      , transmitInterruptHandler);
+   SUBSCRIBE_INTERRUPT(uart_ , typename UART::Periph_type, uartInterrupt);
+   SUBSCRIBE_INTERRUPT(dma_  , typename UART::DMAtx      , DMAinterrupt);
 
 
 };
@@ -132,9 +125,9 @@ template <class In, class Out, class UART>
 void MBslave<In,Out,UART>::init (const typename UART::Settings& val)
 {
    uart.init (val);
-#if defined(STM32F405xx)
-   timer.timeSet = 5_ms;
-#endif
+   #if defined(STM32F405xx)
+      timer.timeSet = 5_ms;
+   #endif
 }
 template <class In, class Out, class UART>
 void MBslave<In,Out,UART>::init (const typename UART::sSettings& val)
@@ -146,14 +139,16 @@ void MBslave<In,Out,UART>::init (const typename UART::sSettings& val)
 
 
 
-
-
 template <class In, class Out, class UART>
-void MBslave<In,Out,UART>::recieveInterruptHandler()
+void MBslave<In,Out,UART>::uartInterrupt()
 {
 #if defined(STM32F405xx)
-   if ( uart.idleHandler() )
+   if ( uart.isIDLE() )
       timer.start();
+   if ( uart.isTXcomplete() ) {
+      uart.txCompleteHandler();
+   }
+   uart.clearAllInterruptFlags();
 #elif defined(STM32F030x6)
    if ( uart.rxTimeOutHandler() )
       endMessage = true;
@@ -165,9 +160,9 @@ void MBslave<In,Out,UART>::recieveInterruptHandler()
 
 
 template <class In, class Out, class UART>
-void MBslave<In,Out,UART>::transmitInterruptHandler()
+void MBslave<In,Out,UART>::DMAinterrupt()
 {
-   uart.txCompleteHandler();
+   uart.DMAtxCompleteHandler();
 }
 
 
@@ -323,7 +318,7 @@ inline void MBslave<In,Out,UART>::operator() (function reaction)
             break;
 
          case Step::EnableRX:
-            uart.DMAenableRX();
+            uart.enableRX();
             step = Step::Done;
             break;
 

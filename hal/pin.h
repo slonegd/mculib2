@@ -53,6 +53,7 @@ public:
    template<PinConf_t pinConf>
    static void configure() { Port::template configure<pinConf, pin>(); }
    #define CONFIGURE_PIN(Pin,Conf) Pin::template configure<PinConf_t::Conf>()
+   #define CONFIGURE_PIN_VALUE(Pin,Conf) Pin::template configure<Conf>()
 
    template<AF af>
    static void configureAltFunction();

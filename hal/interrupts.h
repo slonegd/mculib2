@@ -3,7 +3,7 @@
 
 #if defined(STM32F405xx) || defined(STM32F030x6)
 
-// extern "C" void USART1_IRQHandler()       { Interrupt<USART1>     ::interrupt(); }
+extern "C" void USART1_IRQHandler()       { Interrupt<USART1>     ::interrupt(); }
 
 #endif
 
@@ -89,17 +89,17 @@ extern "C" void DMA2_Stream5_IRQHandler() { Interrupt<DMA2stream5>::interrupt();
 extern "C" void DMA2_Stream6_IRQHandler() { Interrupt<DMA2stream6>::interrupt(); }
 extern "C" void DMA2_Stream7_IRQHandler() { Interrupt<DMA2stream7>::interrupt(); }
 extern "C" void USART2_IRQHandler()       { Interrupt<USART2>     ::interrupt(); }
-// extern "C" void USART3_IRQHandler()       { Interrupt<USART3>     ::interrupt(); }
+extern "C" void USART3_IRQHandler()       { Interrupt<USART3>     ::interrupt(); }
 
 #endif
 
 
 #if defined(STM32F030x6)
 
-// extern "C" void DMA1_Channel1_IRQHandler()   { Interrupt<DMA1channel1>::interrupt(); }
-// extern "C" void DMA1_Channel2_3_IRQHandler() { Interrupt<DMA1channel2>::interrupt();
-//                                                Interrupt<DMA1channel3>::interrupt(); }
-// extern "C" void DMA1_Channel4_5_IRQHandler() { Interrupt<DMA1channel4>::interrupt();
-//                                                Interrupt<DMA1channel5>::interrupt(); }
+extern "C" void DMA1_Channel1_IRQHandler()   { Interrupt<DMA1channel1>::interrupt(); }
+extern "C" void DMA1_Channel2_3_IRQHandler() { Interrupt<DMA1channel2>::interrupt();
+                                               Interrupt<DMA1channel3>::interrupt(); }
+extern "C" void DMA1_Channel4_5_IRQHandler() { Interrupt<DMA1channel4>::interrupt();
+                                               Interrupt<DMA1channel5>::interrupt(); }
 
 #endif // 

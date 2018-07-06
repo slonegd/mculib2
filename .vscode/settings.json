@@ -63,5 +63,6 @@
     "C_Cpp.intelliSenseEngine": "Default",
     "editor.fontSize": 14,
     "editor.tabSize": 3,
-    "editor.renderWhitespace": "boundary"
+   "editor.renderWhitespace": "boundary",
+   "C_Cpp.dimInactiveRegions": false
 }

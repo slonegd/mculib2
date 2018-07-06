@@ -18,7 +18,7 @@ struct Interruptable
 template<class Periph>
 struct Interrupt
 {
-   /// список поддерживаемой переферии для серии f4
+   /// список поддерживаемой переферии
    static_assert (
    #if defined(STM32F405xx)
          std::is_same<Periph, DMA1stream0>::value
@@ -39,7 +39,7 @@ struct Interrupt
       or std::is_same<Periph, DMA2stream7>::value
       or std::is_same<Periph, USART1     >::value
       or std::is_same<Periph, USART2     >::value
-      // or std::is_same<Periph, USART3     >::value
+      or std::is_same<Periph, USART3     >::value
    #elif defined(STM32F030x6)
          std::is_same<Periph, DMA1channel1>::value
       or std::is_same<Periph, DMA1channel2>::value
@@ -97,3 +97,7 @@ Interruptable* Interrupt<Periph>::first {nullptr};
    } \
    void interrupt() override { up.function(); } \
 } name {*this}
+
+
+
+#include "interrupts.h"

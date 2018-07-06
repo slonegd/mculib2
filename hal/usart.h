@@ -20,7 +20,7 @@ public:
       USART_::template IsRTSsupport<RTS>(),
       "выбранный вывод не поддерживает функцию RTS"
    );
-   // volatile uint8_t buffer[bufSize];
+
    uint8_t buffer[bufSize];
 
    using Periph_type = USART_;
@@ -52,20 +52,18 @@ public:
    
    void init (const Settings& set);
    void init (const sSettings& set) { init(deserialize(set)); }
-   void DMAenableRX();
-   void disableRx();
+   void enableRX();
    uint32_t byteQtyRX();
-   void sendByte (uint8_t val);
-   void startTX (uint32_t qty); 
-   void disableTx();
-   bool idleHandler();
-   void txCompleteHandler();
+   void startTX (uint32_t qty);
+   void DMAtxCompleteHandler();
 #if defined(STM32F030x6)
    bool rxTimeOutHandler();
+#elif defined(STM32F405xx)
+   bool isIDLE();
+   bool isTXcomplete();
+   void clearAllInterruptFlags();
+   void txCompleteHandler();
 #endif
-
-
-private:
 
 };
 
@@ -86,8 +84,13 @@ template <class USART_, uint32_t bufSize, class RX, class TX, class RTS, class L
 void USART<USART_, bufSize, RX, TX, RTS, LED>::init (const Settings& set)
 {
    // пины
-   Pins<RX,TX,RTS>::template configure<USART_::PinConfigure()>();
-   CONFIGURE_PIN (LED, Output);
+   #if defined(STM32F030x6)
+      Pins<RX,TX,RTS>::template configure<USART_::PinConfigure()>();
+      CONFIGURE_PIN (LED, Output);
+   #elif defined(STM32F405xx)
+      Pins<RX,TX>::template configure<USART_::PinConfigure()>();
+      CONFIGURE_PIN (TYPE(Pins<LED,RTS>), Output);
+   #endif
 
    // уарт
    USART_::clockEnable();
@@ -101,14 +104,14 @@ void USART<USART_, bufSize, RX, TX, RTS, LED>::init (const Settings& set)
    USART_::setStopBits (set.stopBits);
    USART_::rxEnable (true);
    USART_::txEnable (true);
-   USART_::rtsEnable();
    USART_::DMArxEnable();
    USART_::DMAtxEnable();
-#if defined(STM32F030x6)
-   USART_::setTimeOutBitQty(42); // 3.5 слова в битах
-   USART_::enableReceiveTimeout();
-   USART_::driverEnable();
-#endif
+   #if defined(STM32F030x6)
+      USART_::setTimeOutBitQty(42); // 3.5 слова в битах
+      USART_::enableReceiveTimeout();
+      USART_::rtsEnable();
+      USART_::driverEnable();
+   #endif
    USART_::enable (true);
 
    // дма
@@ -126,11 +129,11 @@ void USART<USART_, bufSize, RX, TX, RTS, LED>::init (const Settings& set)
    configureRx.memInc = true;
    configureRx.perInc = false;
    configureRx.circularMode = true;
-#if defined(STM32F405xx)
-   configureRx.channel = USART_::DMAChannel();
-#endif
+   #if defined(STM32F405xx)
+      configureRx.channel = USART_::DMAChannel();
+   #endif
    DMArx::Configure (configureRx);
-   DMAenableRX(); // для отладки закомент был
+   DMArx::Enable();
 
    DMAtx::SetMemoryAdr ( (uint32_t)buffer );
    DMAtx::SetPeriphAdr ( USART_::TransmitDataAdr() );
@@ -139,14 +142,14 @@ void USART<USART_, bufSize, RX, TX, RTS, LED>::init (const Settings& set)
    DMAtx::Configure (configureTx);
 
    // прерывания
-#if defined(STM32F405xx)
-   USART_::enableIDLEinterrupt();
-#elif defined(STM32F030x6)
-   USART_::enableReceiveTimeoutInterupt();
-#endif
-   NVIC_EnableIRQ(USART_::IRQn());
+   #if defined(STM32F405xx)
+      USART_::enableIDLEinterrupt();
+   #elif defined(STM32F030x6)
+      USART_::enableReceiveTimeoutInterupt();
+   #endif
+   NVIC_EnableIRQ (USART_::IRQn());
    DMAtx::EnableTransferCompleteInterrupt();
-   NVIC_EnableIRQ(DMAtx::IRQn());
+   NVIC_EnableIRQ (DMAtx::IRQn());
 }
 
 
@@ -169,17 +172,11 @@ USART<USART_, bufSize, RX, TX, RTS, LED>::deserialize (const sSettings& set)
 
 
 template <class USART_, uint32_t bufSize, class RX, class TX, class RTS, class LED>
-void USART<USART_, bufSize, RX, TX, RTS, LED>::DMAenableRX()
+void USART<USART_, bufSize, RX, TX, RTS, LED>::enableRX()
 {
+   DMArx::Disable(); 
    DMArx::SetQtyTransactions (bufSize);
    DMArx::Enable(); 
-}
-
-
-template <class USART_, uint32_t bufSize, class RX, class TX, class RTS, class LED>
-void USART<USART_, bufSize, RX, TX, RTS, LED>::disableRx()
-{
-   DMArx::Disable();
 }
 
 
@@ -191,15 +188,11 @@ uint32_t USART<USART_, bufSize, RX, TX, RTS, LED>::byteQtyRX()
 
 
 template <class USART_, uint32_t bufSize, class RX, class TX, class RTS, class LED>
-void USART<USART_, bufSize, RX, TX, RTS, LED>::sendByte (uint8_t val)
-{
-   USART_::sendByte(val);
-}
-
-
-template <class USART_, uint32_t bufSize, class RX, class TX, class RTS, class LED>
 void USART<USART_, bufSize, RX, TX, RTS, LED>::startTX (uint32_t qty)
 {
+   #if defined(STM32F405xx)
+      RTS::set();
+   #endif
    LED::set();
    DMArx::Disable();
    DMAtx::Disable();
@@ -208,35 +201,18 @@ void USART<USART_, bufSize, RX, TX, RTS, LED>::startTX (uint32_t qty)
 }
 
 
-template <class USART_, uint32_t bufSize, class RX, class TX, class RTS, class LED>
-void USART<USART_, bufSize, RX, TX, RTS, LED>::disableTx()
-{
-   DMAtx::Disable();
-}
-
 
 template <class USART_, uint32_t bufSize, class RX, class TX, class RTS, class LED>
-bool USART<USART_, bufSize, RX, TX, RTS, LED>::idleHandler()
-{
-   bool tmp = USART_::isIDLEinterrupt();
-   if (tmp) {
-      disableRx();
-      // TODO:
-      // метод сбрасывает все флаги прерывания,
-      // но в этом приложении пофиг
-      USART_::clearIDLEinterruptFlag();
-   }
-   return tmp;
-}
-
-
-template <class USART_, uint32_t bufSize, class RX, class TX, class RTS, class LED>
-void USART<USART_, bufSize, RX, TX, RTS, LED>::txCompleteHandler()
+void USART<USART_, bufSize, RX, TX, RTS, LED>::DMAtxCompleteHandler()
 {
    if ( DMAtx::IsTransferCompleteInterrupt() ) {
-      LED::clear();
-      disableRx();
-      DMAenableRX();
+      DMAtx::Disable();
+      #if defined(STM32F030x6)
+         LED::clear();
+         enableRX();
+      #elif defined(STM32F405xx)
+         USART_::enableTXcompleteInterrupt (true);
+      #endif
       DMAtx::ClearFlagTransferCompleteInterrupt();
    }
 }
@@ -255,7 +231,40 @@ bool USART<USART_, bufSize, RX, TX, RTS, LED>::rxTimeOutHandler()
    }
    return tmp;
 }
-   
+
+#elif defined(STM32F405xx)
+
+template <class USART_, uint32_t bufSize, class RX, class TX, class RTS, class LED>
+void USART<USART_, bufSize, RX, TX, RTS, LED>::txCompleteHandler()
+{
+   USART_::enableTXcompleteInterrupt (false);
+   RTS::clear();
+   LED::clear();
+   enableRX();
+}
+
+
+template <class USART_, uint32_t bufSize, class RX, class TX, class RTS, class LED>
+bool USART<USART_, bufSize, RX, TX, RTS, LED>::isIDLE()
+{
+   return USART_::isIDLEinterrupt();
+}
+
+
+template <class USART_, uint32_t bufSize, class RX, class TX, class RTS, class LED>
+bool USART<USART_, bufSize, RX, TX, RTS, LED>::isTXcomplete()
+{
+   return USART_::isTXcompleteInterrupt() and USART_::isTXcompleteInterruptEnable();
+}
+
+
+template <class USART_, uint32_t bufSize, class RX, class TX, class RTS, class LED>
+void USART<USART_, bufSize, RX, TX, RTS, LED>::clearAllInterruptFlags()
+{
+   USART_::clearAllInterruptFlags();
+}
+
+
 #endif
 
 

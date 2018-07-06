@@ -25,3 +25,6 @@ struct Pins<Last>
       Last::template configure<val>();
    }
 };
+
+
+#define TYPE(...) __VA_ARGS__

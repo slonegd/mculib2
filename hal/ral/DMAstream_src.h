@@ -90,14 +90,14 @@ void DMAstream<adr>::EnableTransferCompleteInterrupt()
 template<uint32_t adr>
 constexpr int DMAstream<adr>::stream()
 {
-   return adr == DMA1_Stream0_BASE or DMA2_Stream0_BASE ? 0 :
-          adr == DMA1_Stream1_BASE or DMA2_Stream1_BASE ? 1 :
-          adr == DMA1_Stream2_BASE or DMA2_Stream2_BASE ? 2 :
-          adr == DMA1_Stream3_BASE or DMA2_Stream3_BASE ? 3 :
-          adr == DMA1_Stream4_BASE or DMA2_Stream4_BASE ? 4 :
-          adr == DMA1_Stream5_BASE or DMA2_Stream5_BASE ? 5 :
-          adr == DMA1_Stream6_BASE or DMA2_Stream6_BASE ? 6 :
-          adr == DMA1_Stream7_BASE or DMA2_Stream7_BASE ? 7 : -1;
+   return adr == DMA1_Stream0_BASE or adr == DMA2_Stream0_BASE ? 0 :
+          adr == DMA1_Stream1_BASE or adr == DMA2_Stream1_BASE ? 1 :
+          adr == DMA1_Stream2_BASE or adr == DMA2_Stream2_BASE ? 2 :
+          adr == DMA1_Stream3_BASE or adr == DMA2_Stream3_BASE ? 3 :
+          adr == DMA1_Stream4_BASE or adr == DMA2_Stream4_BASE ? 4 :
+          adr == DMA1_Stream5_BASE or adr == DMA2_Stream5_BASE ? 5 :
+          adr == DMA1_Stream6_BASE or adr == DMA2_Stream6_BASE ? 6 :
+          adr == DMA1_Stream7_BASE or adr == DMA2_Stream7_BASE ? 7 : -1;
 }
 
 
@@ -113,14 +113,14 @@ constexpr IRQn_Type DMAstream<adr>::IRQn()
       adr == DMA1_Stream5_BASE ? DMA1_Stream5_IRQn :
       adr == DMA1_Stream6_BASE ? DMA1_Stream6_IRQn :
       adr == DMA1_Stream7_BASE ? DMA1_Stream7_IRQn :
-      adr == DMA2_Stream0_BASE ? DMA1_Stream0_IRQn :
-      adr == DMA2_Stream1_BASE ? DMA1_Stream1_IRQn :
-      adr == DMA2_Stream2_BASE ? DMA1_Stream2_IRQn :
-      adr == DMA2_Stream3_BASE ? DMA1_Stream3_IRQn :
-      adr == DMA2_Stream4_BASE ? DMA1_Stream4_IRQn :
-      adr == DMA2_Stream5_BASE ? DMA1_Stream5_IRQn :
-      adr == DMA2_Stream6_BASE ? DMA1_Stream6_IRQn :
-      adr == DMA2_Stream7_BASE ? DMA1_Stream7_IRQn : NonMaskableInt_IRQn;
+      adr == DMA2_Stream0_BASE ? DMA2_Stream0_IRQn :
+      adr == DMA2_Stream1_BASE ? DMA2_Stream1_IRQn :
+      adr == DMA2_Stream2_BASE ? DMA2_Stream2_IRQn :
+      adr == DMA2_Stream3_BASE ? DMA2_Stream3_IRQn :
+      adr == DMA2_Stream4_BASE ? DMA2_Stream4_IRQn :
+      adr == DMA2_Stream5_BASE ? DMA2_Stream5_IRQn :
+      adr == DMA2_Stream6_BASE ? DMA2_Stream6_IRQn :
+      adr == DMA2_Stream7_BASE ? DMA2_Stream7_IRQn : NonMaskableInt_IRQn;
 }
 
 

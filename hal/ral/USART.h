@@ -58,8 +58,9 @@ public:
    static void setParity (Parity);
    static void setStopBits (StopBits);
    static void enableIDLEinterrupt();
+   static void enableTXcompleteInterrupt (bool);
    static bool isIDLEinterrupt();
-   static void clearIDLEinterruptFlag();
+   static bool isTXcompleteInterrupt();
    static void sendByte (uint8_t);
 
 #if defined(STM32F030x6)
@@ -69,6 +70,10 @@ public:
    static void enableReceiveTimeoutInterupt();
    static bool isReceiveTimeoutInterrupt();
    static void clearReceiveTimeoutInterruptFlag();
+   static void clearIDLEinterruptFlag();
+#elif defined(STM32F405xx)
+   static void clearAllInterruptFlags();
+   static bool isTXcompleteInterruptEnable();
 #endif
 
 

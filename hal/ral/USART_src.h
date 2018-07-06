@@ -19,6 +19,13 @@ bool USARTx<adr,DMArx,DMAtx>::isIDLEinterrupt()
 
 
 template<uint32_t adr, class DMArx, class DMAtx> 
+bool USARTx<adr,DMArx,DMAtx>::isTXcompleteInterrupt()
+{
+   return IS_SET(status(), TC);
+}
+
+
+template<uint32_t adr, class DMArx, class DMAtx> 
 void USARTx<adr,DMArx,DMAtx>::enableIDLEinterrupt()
 {
    SET(conf1(), IDLEIE);
@@ -80,6 +87,19 @@ void USARTx<adr,DMArx,DMAtx>::txEnable (bool val)
    BIT_BAND(conf1(), TE) = val;
 }
 
+template<uint32_t adr, class DMArx, class DMAtx> 
+void USARTx<adr,DMArx,DMAtx>::enableTXcompleteInterrupt (bool val)
+{
+   BIT_BAND(conf1(), TCIE) = val;
+}
+
+
+template<uint32_t adr, class DMArx, class DMAtx> 
+bool USARTx<adr,DMArx,DMAtx>::isTXcompleteInterruptEnable()
+{
+   return BIT_BAND(conf1(), TCIE);
+}
+
 
 template<uint32_t adr, class DMArx, class DMAtx> 
 void USARTx<adr,DMArx,DMAtx>::setBoudRate (Boudrate val)
@@ -107,7 +127,7 @@ void USARTx<adr,DMArx,DMAtx>::setParity (Parity val)
 
 
 template<uint32_t adr, class DMArx, class DMAtx> 
-void USARTx<adr,DMArx,DMAtx>::clearIDLEinterruptFlag()
+void USARTx<adr,DMArx,DMAtx>::clearAllInterruptFlags()
 {
    status().reg;
    data().reg;
@@ -270,6 +290,16 @@ void USARTx<adr,DMArx,DMAtx>::txEnable (bool val)
       SET(conf1(), TE);
    else
       CLEAR(conf1(), TE);
+}
+
+
+template<uint32_t adr, class DMArx, class DMAtx> 
+void USARTx<adr,DMArx,DMAtx>::enableTXcompleteInterrupt (bool val)
+{
+   if (val)
+      SET(conf1(), TCIE);
+   else
+      CLEAR(conf1(), TCIE);
 }
 
 
