@@ -35,12 +35,16 @@ namespace NTC {
       static constexpr uint32_t value = resist;
    };
 
-   /// расчёт значений АЦП с дополнительныйм резистором 5кОм
-   template<size_t i, size_t j> 
-   constexpr uint32_t t2904() { return 4096 * Reisist2904<i,j>::value / (5000 + Reisist2904<i,j>::value); }
+   /// расчёт значений АЦП с дополнительныйм резистором 20кОм от 5 вольт
+   /// 3.3V -> 4096
+   template<size_t i, size_t j>
+   constexpr uint32_t t2904() 
+   {
+      return 4096 * 50 / 33 * Reisist2904<i,j>::value / (20000 + Reisist2904<i,j>::value);
+   }
 
    /// таблица значений с АЦП, индекс - температура
-   constexpr uint32_t u2904[] {
+   constexpr uint32_t u2904[] = {
       t2904<0,0>(),  t2904<0,1>(),  t2904<0,2>(),  t2904<0,3>(),  t2904<0,4>(),
       t2904<1,0>(),  t2904<1,1>(),  t2904<1,2>(),  t2904<1,3>(),  t2904<1,4>(),
       t2904<2,0>(),  t2904<2,1>(),  t2904<2,2>(),  t2904<2,3>(),  t2904<2,4>(),
