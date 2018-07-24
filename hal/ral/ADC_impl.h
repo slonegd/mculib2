@@ -25,7 +25,7 @@ namespace ADC_ral {
 #endif
 
 
-   template <class ADC_, class Pin> constexpr uint8_t ADCin() { return
+   template <class ADC_, class Pin> constexpr uint8_t ADCchannel() { return
       IS_SAME(ADC_,ADC1)
 #if defined(STM32F405xx)
       or IS_SAME(ADC_,ADC2)
@@ -72,7 +72,7 @@ namespace ADC_ral {
 
 
    template <class ADC_, class Pin> constexpr bool PinEnabled() {
-      return ADCin<ADC_,Pin>() != 255;
+      return ADCchannel<ADC_,Pin>() != 255;
    }
 
 #if defined(STM32F405xx)   

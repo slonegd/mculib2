@@ -18,7 +18,7 @@ struct SRposition {
    enum { AWD = 0, EOC, JEOC, JSTRT, STRT, OVR };
 };
 
-enum Resolution { _12bit  = 0b00, _10bit, _8bit, _6bit };
+enum Resolution { _12bits  = 0b00, _10bits, _8bits, _6bits };
 
 struct CRbits {
    __IO uint32_t   AWDCH   :5; // Bits 4:0 AWDCH[4:0]: Analog watchdog channel select bits
@@ -41,7 +41,7 @@ struct CRbits {
 
 struct CRposition {
    enum { AWDCH = 0, EOCIE = 5, AWDIE, JEOCIE, SCAN, AWDSGL, JAUTO, DISCEN, JDISCEN,
-      DISCNUM, JAWDEN = 22, AWDEN, OVRIE = 26
+      DISCNUM, JAWDEN = 22, AWDEN, RES, OVRIE = 26
    };
 };
 

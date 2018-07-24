@@ -50,11 +50,21 @@ struct CDR_t : DataRegistr                   , Offset_t<0x08> {};
 class ADCC
 {
 public:
+   using Clock = ADC_ral::Clock;
+
+
    static constexpr uint32_t Base = ADC1_BASE + 0x300;
 
    ADCC() = delete;
-   static ADCC* create() { return reinterpret_cast<ADCC*>(Base); }
    void makeDebugVar() { control().bits.res1 = 0; }
+
+   static void setClock (Clock val)
+   {
+      uint32_t tmp = control().reg;
+      tmp &= ~_2BIT_TO_MASK(control(), ADCPRE);
+      tmp |= VAL_TO_MASK(control(), ADCPRE, val);
+      control().reg = tmp;
+   }
 
 
 

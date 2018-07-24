@@ -43,7 +43,6 @@ public:
    template<class RTSpin> static constexpr bool IsRTSsupport();
 
    USARTx() = delete;
-   static Type* create() { return reinterpret_cast<Type*>(Base); }
    void doSome() { conf1().bits.res1 = 0; }
 
    static void clockEnable();

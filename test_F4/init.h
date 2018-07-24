@@ -16,6 +16,7 @@
 #include "literals.h"
 #include "inputCounter.h"
 #include "encoder.h"
+#include "adc.h"
 
 
 
@@ -98,6 +99,9 @@ inline void reaction (uint16_t regAdr)
       default: ;
    }
 }
+
+
+ADCaverage<ADC1,PA0> adc;
 
 
 

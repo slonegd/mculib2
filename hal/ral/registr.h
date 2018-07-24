@@ -48,6 +48,10 @@ template <uint32_t offset>
 struct Offset_t { enum { Offset = offset }; };
 
 
+template<class T>
+T* create() { return reinterpret_cast<T*>(T::Base); }
+
+
 #define _1BIT_TO_MASK(reg, pos) ((uint32_t)0b1         << std::remove_reference<decltype(reg)>::type::pos)
 #define _2BIT_TO_MASK(reg, pos) ((uint32_t)0b11        << std::remove_reference<decltype(reg)>::type::pos)
 #define _3BIT_TO_MASK(reg, pos) ((uint32_t)0b111       << std::remove_reference<decltype(reg)>::type::pos)

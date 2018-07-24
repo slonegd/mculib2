@@ -17,9 +17,9 @@ public:
 
    using DataDirection = DMA_ral::DataDirection;
    using DataSize      = DMA_ral::DataSize;
-#if defined(STM32F405xx)
-   using Channels = DMA_ral::Channels;
-#endif
+   #if defined(STM32F405xx)
+      using Channels = DMA_ral::Channels;
+   #endif
    using DMA = typename DMAn<Base>::type;
 
 
@@ -34,9 +34,9 @@ public:
       bool          memInc;
       bool          perInc;
       bool          circularMode;
-#if defined(STM32F405xx)
-      Channels      channel;
-#endif
+      #if defined(STM32F405xx)
+         Channels   channel;
+      #endif
    };
 
    static void ClockEnable();

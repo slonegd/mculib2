@@ -14,9 +14,13 @@
 // PIN - вывод микроконтроллера, с которого преобразование
 // bufSize - размер буфера в word (2 байта)
 // DMA_ - поток ДМА (параметр опционный)
-template<class ADC_, class PIN, uint16_t bufSize,
-         class DMA_ = typename ADC_ral::DefaultStream<ADC_>::Type >
-class ADCaverage : private ADC_
+template <
+   class ADC_,
+   class PIN,
+   uint16_t bufSize = 16,
+   class DMA_ = typename ADC_ral::DefaultStream<ADC_>::Type
+>
+class ADCaverage// : private ADC_
 {
 public:
    using Clock      = typename ADC_::Clock;
@@ -31,23 +35,21 @@ public:
                Resolution resolution = Resolution::_12bits,
                SampleTime sampleTime = SampleTime::Default);
    ADCaverage& withMultipler (uint32_t val) { mul = val; return this; }
-   ADCaverage& withDivider (uint32_t val) { mul = val; return this; }
+   ADCaverage& withDivider   (uint32_t val) { div = val; return this; }
    ADCaverage& changeResolution (Resolution val)
    {
-      disable();
+      ADC_::disable();
       ADC_::setResolution (val);
-      enable();
+      ADC_::enable();
       return this;
    }
    ADCaverage& changeSampleTime (SampleTime val)
    {
-      disable();
+      ADC_::disable();
       ADC_::setSampleTime (val);
-      enable();
+      ADC_::enable();
       return this;
    }
-   void enable();
-   void disable();
    // расчитывает сумму всех элементов буфера
    uint32_t computeSum();
    // возвращает ранее рассчитаную сумму буфера
@@ -63,7 +65,7 @@ private:
    uint32_t avg;
    uint32_t mul;
    uint32_t div;
-   static const int8_t ADCin = ADC_ral::ADCin<ADC_,PIN>();
+   static constexpr int8_t channel = ADC_ral::ADCchannel<ADC_,PIN>();
    void init (Clock clock, Resolution resolution, SampleTime sampleTime);
 };
 
@@ -92,24 +94,6 @@ ADCaverage (uint32_t mul, uint32_t div, Clock clock, Resolution resolution, Samp
 }
 
 
-template<class ADC_, class PIN, uint16_t bufSize, class DMA_>
-void ADCaverage<ADC_, PIN, bufSize, DMA_>::enable()
-{
-   if (ADC_::isReady())
-      ADC_::setBusy();
-   ADC_::enable();
-   while ( !ADC_::isReady() ) { }
-}
-
-
-template<class ADC_, class PIN, uint16_t bufSize, class DMA_>
-void ADCaverage<ADC_, PIN, bufSize, DMA_>::disable()
-{
-   ADC_::stop();
-   while ( ADC_::isStoping() ) { }
-   ADC_::disable();
-   while ( !ADC_::isDisable() ) { }
-}
 
 
 template<class ADC_, class PIN, uint16_t bufSize, class DMA_>
@@ -134,15 +118,21 @@ init(Clock clock, Resolution resolution, SampleTime sampleTime)
    ADC_::clockEnable();
    ADC_::setClock (clock);
    ADC_::setResolution (resolution);
-   ADC_::setSampleTime (sampleTime);
+   #if defined(STM32F030x6)
+      ADC_::setSampleTime (sampleTime);
+   #elif defined(STM32F405xx)
+      ADC_::template setSampleTime<channel> (sampleTime);
+   #endif
    ADC_::setContinuousMode();
-   ADC_::setChannel (ADCin);
+   #if defined(STM32F030x6)
+      ADC_::setChannel (channel);
+   #endif
    ADC_::DMAenable();
    ADC_::setCircularDMA();
 
    DMA_::ClockEnable();
    DMA_::SetMemoryAdr ( (uint32_t)buf );
-   DMA_::SetPeriphAdr ( (uint32_t) &(ADC_::data()) );
+   DMA_::SetPeriphAdr ( ADC_::getDataAdr() );
    DMA_::SetQtyTransactions (bufSize);
    typename DMA_::Configure_t conf;
    conf.dataDir = DMA_::DataDirection::PerToMem;
@@ -151,17 +141,13 @@ init(Clock clock, Resolution resolution, SampleTime sampleTime)
    conf.memInc = true;
    conf.perInc = false;
    conf.circularMode = true;
+   #if defined(STM32F405xx)
+      conf.channel = ADC_::DMAchannel();
+   #endif
    DMA_::Configure (conf);
 
    DMA_::Enable();
-   enable();
+   ADC_::enable();
    ADC_::start();
 }
-
-
-
-
-
-
-
 

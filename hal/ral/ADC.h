@@ -13,48 +13,58 @@ template <uint32_t adr>
 class ADCx
 {
 public:
-   static const uint32_t Base = adr;
-
    using Channels   = DMA_ral::Channels;
    using Clock      = ADC_ral::Clock;
    using Resolution = ADC_ral::Resolution;
    using SampleTime = ADC_ral::SampleTime;
+   using Type       = ADCx<adr>;
 
-   void makeDebugVar() { status().bits.res1 = 0; }
+   static const uint32_t Base = adr;
+
+   ADCx() = delete;
+   void doSome() { status().bits.res1 = 0; }
 
    static void clockEnable();
    static void enable();
    static void disable();
    static bool isDisable();
+   static void start();
+   static void DMAenable();
+   static void setCircularDMA();
+   static void setContinuousMode();
+   static void setClock (Clock val);
+   static void setResolution (Resolution val);
+   static uint32_t getDataAdr();
+
+#if defined(STM32F030x6)
    static bool isReady();
    static void setBusy();
    static void stop();
-   static void start();
    static bool isStoping();
-   static void DMAenable();
-   static void setCircularDMA();
-   static void setResolution (Resolution val);
-   static void setContinuousMode();
    static void setSampleTime (SampleTime val);
    static void setChannel (uint8_t val);
-   static void setClock (Clock val);
+#elif defined(STM32F405xx)
+   template <uint8_t channel>
+   static void setSampleTime (SampleTime val);
+   static constexpr Channels DMAchannel();
+#endif
 
 
 
 protected:
-   #define MakeRef(Reg,Ref) ADC_ral::Reg& Ref() { return (ADC_ral::Reg&) *(uint32_t*)(Base + ADC_ral::Reg::Offset); }
-   static volatile MakeRef(SR_t,    status    );
-   static volatile MakeRef(DR_t,    data      );
-   static volatile MakeRef(CR_t,    control   );
-   static volatile MakeRef(SMPR_t,  sampleTime);
+#define MakeRef(Reg,Ref) ADC_ral::Reg& Ref() { return (ADC_ral::Reg&) *(uint32_t*)(Base + ADC_ral::Reg::Offset); }
+   static __IO MakeRef(SR_t,    status    );
+   static __IO MakeRef(DR_t,    data      );
+   static __IO MakeRef(CR_t,    control   );
+   static __IO MakeRef(SMPR_t,  sampleTime);
 #if defined(STM32F030x6)
-   static volatile MakeRef(CFGR1_t, conf1     );
-   static volatile MakeRef(CFGR2_t, conf2     );
-   static volatile MakeRef(CHSELR_t,channelSelect);
+   static __IO MakeRef(CFGR1_t, conf1     );
+   static __IO MakeRef(CFGR2_t, conf2     );
+   static __IO MakeRef(CHSELR_t,channelSelect);
 #elif defined(STM32F405xx)
-   static volatile MakeRef(CR2_t,   control2  );
+   static __IO MakeRef(CR2_t,   control2  );
 #endif
-   #undef MakeRef
+#undef MakeRef
 
 
 private:
