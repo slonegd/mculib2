@@ -61,6 +61,7 @@ public:
    static bool isIDLEinterrupt();
    static bool isTXcompleteInterrupt();
    static void sendByte (uint8_t);
+   static void clearInterruptFlags();
 
 #if defined(STM32F030x6)
    static void driverEnable();
@@ -71,7 +72,6 @@ public:
    static void clearReceiveTimeoutInterruptFlag();
    static void clearIDLEinterruptFlag();
 #elif defined(STM32F405xx)
-   static void clearAllInterruptFlags();
    static bool isTXcompleteInterruptEnable();
 #endif
 

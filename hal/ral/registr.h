@@ -1,8 +1,14 @@
 #pragma once
 
 #if defined(STM32F030x6)
-   #include "stm32f0xx.h"
+   #define STM32F0
 #elif defined(STM32F405xx)
+   #define STM32F4
+#endif
+
+#if defined(STM32F0)
+   #include "stm32f0xx.h"
+#elif defined(STM32F4)
    #include "stm32f4xx.h"
 #endif
 

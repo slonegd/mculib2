@@ -14,6 +14,9 @@ struct Pins
       First::template configure<val>();
       Pins<Other...>::template configure<val>();
    }
+
+   static constexpr std::size_t qty() { return 1 + sizeof...(Other); }
+
 };
 
 template<class Last>
@@ -24,6 +27,9 @@ struct Pins<Last>
    {
       Last::template configure<val>();
    }
+
+   static constexpr std::size_t qty() { return 1; }
+
 };
 
 

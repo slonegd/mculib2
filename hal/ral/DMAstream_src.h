@@ -48,6 +48,13 @@ void DMAstream<adr>::ClearFlagTransferCompleteInterrupt()
 
 
 template<uint32_t adr>
+void DMAstream<adr>::clearInterruptFlags()
+{
+   DMA::template clearInterruptFlags<stream()>();
+}
+
+
+template<uint32_t adr>
 bool DMAstream<adr>::IsTransferCompleteInterrupt()
 {
    return DMA::template IsTransferCompleteInterrupt<stream()>();

@@ -148,7 +148,6 @@ void MBslave<In,Out,UART>::uartInterrupt()
    if ( uart.isTXcomplete() ) {
       uart.txCompleteHandler();
    }
-   uart.clearAllInterruptFlags();
 #elif defined(STM32F030x6)
    if ( uart.rxTimeOutHandler() )
       endMessage = true;

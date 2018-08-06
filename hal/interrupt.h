@@ -5,10 +5,10 @@
 
 
 /// интерфейс для подписки на прерывания
-struct Interruptable
+struct Interrupting
 {
    virtual void interrupt()  = 0;
-   Interruptable* next {nullptr};
+   Interrupting* next {nullptr};
 };
 
 
@@ -54,10 +54,10 @@ struct Interrupt
    );
 
 
-   static Interruptable* first;
+   static Interrupting* first;
 
 
-   static void subscribe(Interruptable* ps)
+   static void subscribe(Interrupting* ps)
    {
       auto p = first;
       if (p) {
@@ -77,11 +77,14 @@ struct Interrupt
          p->interrupt();
          p = p->next;
       }
+      Periph::clearInterruptFlags();
    }
 };
 
 template<class Periph>
-Interruptable* Interrupt<Periph>::first {nullptr};
+Interrupting* Interrupt<Periph>::first {nullptr};
+
+
 
 
 
@@ -90,7 +93,7 @@ Interruptable* Interrupt<Periph>::first {nullptr};
 /// при этом методы interrupt разных прерываний не конфликтуют,
 /// поскольку в разных структурах помощниках
 /// в классе должен быть определён type - тип самого класса
-#define SUBSCRIBE_INTERRUPT(name, periph, function) struct name##_t : Interruptable { \
+#define SUBSCRIBE_INTERRUPT(name, periph, function) struct name##_t : Interrupting { \
    type& up; \
    name##_t (type& up) : up(up) { \
       Interrupt<periph>::subscribe (this); \

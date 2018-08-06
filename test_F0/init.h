@@ -100,8 +100,8 @@ inline void reaction (uint16_t regAdr)
 
 
 // 
-constexpr uint16_t BufferSize = 256;
-ADCaverage<ADC1, PA0, BufferSize> current;
+constexpr uint16_t bufferSize = 256;
+ADCaverageSized<bufferSize, ADC1, PA0> current;
 
 
 // эта функция вызывается первой в startup файле

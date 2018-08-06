@@ -61,7 +61,6 @@ public:
 #elif defined(STM32F405xx)
    bool isIDLE();
    bool isTXcomplete();
-   void clearAllInterruptFlags();
    void txCompleteHandler();
 #endif
 
@@ -257,12 +256,6 @@ bool USART<USART_, bufSize, RX, TX, RTS, LED>::isTXcomplete()
    return USART_::isTXcompleteInterrupt() and USART_::isTXcompleteInterruptEnable();
 }
 
-
-template <class USART_, uint32_t bufSize, class RX, class TX, class RTS, class LED>
-void USART<USART_, bufSize, RX, TX, RTS, LED>::clearAllInterruptFlags()
-{
-   USART_::clearAllInterruptFlags();
-}
 
 
 #endif

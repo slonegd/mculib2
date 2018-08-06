@@ -37,19 +37,25 @@ template<class T, class ... Types> struct At<1,T,Types...> {
 };
 
 // определяет первое положение конкретного типа из вариадика, пример:
-// const uint8_t at = Position<T, Types...>::value;
-template<uint8_t n, class T, class U, class ... Types> struct PositionIterator {
-   static const uint8_t value =
+// const int at = Position<T, Types...>::value;
+// возвращает -1 если такого нет
+template<int n, class T, class U, class ... Types>
+struct PositionIterator {
+   static const int value =
       std::is_same<T,U>::value ? n : PositionIterator<n + 1, T, Types...>::value;
 };
-template<uint8_t n, class T, class U> struct PositionIterator<n, T, U> {
-   static const uint8_t value =
-      std::is_same<T,U>::value ? n : 0;
+template<int n, class T, class U>
+struct PositionIterator<n, T, U> {
+   static const int value =
+      std::is_same<T,U>::value ? n : -1;
 };
 template<class T, class U, class ... Types> struct Position {
-   static const uint8_t value =
+   static const int value =
       PositionIterator<1, T, U, Types...>::value;
 };
+
+template<class T, class ... Ts>
+constexpr int position_v = Position<T,Ts...>::value;
 
 
 

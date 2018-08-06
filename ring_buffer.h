@@ -1,13 +1,32 @@
 #pragma once
 
-template<std::size_t n, class T = uint32_t>
+#include <cstdint>
+
+template<int n, class T = uint32_t>
 class RingBuffer
 {
-   T data[n];
-   std::size_t index {0};
+protected:
+   T data[n] {0};
+   int index {0};
 public:
    void push (T val) {
       data[index++] = val;
       if (index == n) index = 0;
    }
+};
+
+
+/// дополнительно хранит сумму
+template<int n, class T = uint32_t>
+class SumRingBuffer : private RingBuffer<n, T>
+{
+   T sum;
+public:
+   void pushAndCompute (T val) {
+      sum -= this->data[this->index];
+      this->push(val);
+      sum += val;
+   }
+   T getSum() { return sum; }
+   T getAvg() { return sum / n; }
 };

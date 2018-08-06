@@ -28,6 +28,14 @@ namespace DMAhelper {
 #endif
 } // namespace DMAhelper {
 
+///////////////////////////////////////////////////////////////////////////////
+//  ██   ██       ███████
+//  ██   ██       ██   ██
+//  ██   ██       ██   ██
+//  ███████       ██   ██
+//       ██       ██   ██
+//       ██       ███████
+///////////////////////////////////////////////////////////////////////////////
 #if defined(STM32F405xx) || defined(STM32F030x6)
 
 template<uint32_t adr>
@@ -37,7 +45,14 @@ void DMAx<adr>::ClockEnable()
 }
 
 #endif
-
+///////////////////////////////////////////////////////////////////////////////
+//  ██   ██
+//  ██   ██
+//  ██   ██
+//  ███████
+//       ██
+//       ██
+///////////////////////////////////////////////////////////////////////////////
 #if defined(STM32F405xx)
 
 template<uint32_t adr>
@@ -61,6 +76,29 @@ void DMAx<adr>::ClearFlagTransferCompleteInterrupt()
    clear().reg[n] |= ((uint32_t)1 << pos);
 }
 
+
+template<uint32_t adr>
+template<int stream>
+void DMAx<adr>::clearInterruptFlags()
+{
+   static_assert (stream >= 0 and stream <= 7, "DMAstream 1-7");
+   constexpr std::size_t index = stream <= 3 ? 0 : 1;
+   constexpr uint32_t value = 0b101111;
+   constexpr std::size_t shift = stream == 1 or stream == 5 ? 6  :
+                                 stream == 2 or stream == 6 ? 16 :
+                                 stream == 3 or stream == 7 ? 22 : 0;
+   constexpr uint32_t mask = value << shift;
+   clear().reg[index] |= mask;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//  ███████
+//  ██   ██
+//  ██   ██
+//  ██   ██
+//  ██   ██
+//  ███████
+///////////////////////////////////////////////////////////////////////////////
 #elif defined(STM32F030x6)
 
 template<uint32_t adr>
@@ -79,6 +117,16 @@ void DMAx<adr>::ClearFlagTransferCompleteInterrupt()
 {
    static_assert (stream >= 1 and stream <= 5, "DMAstream 1-5");
    constexpr uint32_t mask = DMAhelper::TCImask<stream>();
+   clear().reg |= mask;
+}
+
+
+template<uint32_t adr>
+template<int stream>
+void DMAx<adr>::clearInterruptFlags()
+{
+   static_assert (stream >= 1 and stream <= 5, "DMAstream 1-5");
+   constexpr uint32_t mask = 0b1111 << ((stream - 1) * 4);
    clear().reg |= mask;
 }
 

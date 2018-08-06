@@ -43,7 +43,7 @@ int main(void)
 
       if (ledTimer.event()) {
          GreenLed::toggle();
-         current.computeAverage();
+         current.computeAvg();
          buzzer.beep(1_s);
       }
 

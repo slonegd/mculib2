@@ -2,6 +2,16 @@
 
 #include <type_traits>
 
+///////////////////////////////////////////////////////////////////////////////
+//  ██   ██       ███████
+//  ██   ██       ██   ██
+//  ██   ██       ██   ██
+//  ███████       ██   ██
+//       ██       ██   ██
+//       ██       ███████
+///////////////////////////////////////////////////////////////////////////////
+
+
 #if defined(STM32F405xx) || defined(STM32F030x6)
 
 template <uint32_t adr, class DMArx_, class DMAtx_>
@@ -64,7 +74,14 @@ void USARTx<adr,DMArx,DMAtx>::setStopBits (StopBits val)
 
 #endif
 
-
+///////////////////////////////////////////////////////////////////////////////
+//  ██   ██
+//  ██   ██
+//  ██   ██
+//  ███████
+//       ██
+//       ██
+///////////////////////////////////////////////////////////////////////////////
 #if defined(STM32F405xx)
 
 template<uint32_t adr, class DMArx, class DMAtx> 
@@ -127,7 +144,7 @@ void USARTx<adr,DMArx,DMAtx>::setParity (Parity val)
 
 
 template<uint32_t adr, class DMArx, class DMAtx> 
-void USARTx<adr,DMArx,DMAtx>::clearAllInterruptFlags()
+void USARTx<adr,DMArx,DMAtx>::clearInterruptFlags()
 {
    status().reg;
    data().reg;
@@ -253,6 +270,15 @@ constexpr uint32_t USARTx<adr,DMArx,DMAtx>::TransmitDataAdr()
 }
 
 
+///////////////////////////////////////////////////////////////////////////////
+//  ███████
+//  ██   ██
+//  ██   ██
+//  ██   ██
+//  ██   ██
+//  ███████
+///////////////////////////////////////////////////////////////////////////////
+
 #elif defined(STM32F030x6)
 
 
@@ -341,6 +367,13 @@ template<uint32_t adr, class DMArx, class DMAtx>
 void USARTx<adr,DMArx,DMAtx>::sendByte (uint8_t val)
 {
    transmitData().reg = val;
+}
+
+
+template<uint32_t adr, class DMArx, class DMAtx> 
+void USARTx<adr,DMArx,DMAtx>::clearInterruptFlags()
+{
+   clear().reg = 0b100000101001011111;
 }
 
 

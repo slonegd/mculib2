@@ -51,6 +51,7 @@ public:
    static void EnableTransferCompleteInterrupt();
    static bool IsTransferCompleteInterrupt();
    static void ClearFlagTransferCompleteInterrupt();
+   static void clearInterruptFlags();
    
 
 

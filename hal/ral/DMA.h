@@ -15,6 +15,8 @@ public:
    static bool IsTransferCompleteInterrupt();
    template<int stream>
    static void ClearFlagTransferCompleteInterrupt();
+   template<int stream>
+   static void clearInterruptFlags();
 
 
 protected:
