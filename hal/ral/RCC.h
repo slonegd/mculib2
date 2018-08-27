@@ -1,5 +1,6 @@
 #pragma once
 
+#include "defines.h"
 #if defined(STM32F030x6)
    #include "RCC_F0_bits.h"
 #elif defined(STM32F405xx)
