@@ -1,5 +1,8 @@
 #pragma once
 
+#include <stdint.h>
+#include <cstddef>
+
 namespace NTC {
    /// таблица значений 10кОм характеристика R/T 2904 B25/100 4300K
    constexpr uint32_t resist_k2904[] {

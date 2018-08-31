@@ -10,7 +10,7 @@
 
 
 template<class TIM_, class Pin_>
-class InputCounter : private ItickSubscribed
+class InputCounter : TickSubscriber
 {
 public:
    InputCounter();
@@ -21,8 +21,7 @@ private:
    static constexpr uint8_t channel = Channel<TIM_,Pin_>();
    uint16_t frequency {0};
    uint16_t tickCounter {0};
-   void tick() override;
-   friend TickUpdater;
+   void notify() override;
 };
 
 
@@ -55,7 +54,7 @@ InputCounter<TIM_,Pin_>::InputCounter()
 
 
 template<class TIM_, class Pin_>
-void InputCounter<TIM_,Pin_>::tick()
+void InputCounter<TIM_,Pin_>::notify()
 {
    if (++tickCounter == 500_ms) {
       tickCounter = 0;

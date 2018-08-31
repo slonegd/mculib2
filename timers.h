@@ -2,23 +2,29 @@
 
 #include <stdint.h>
 #include "SysTick.h"
+#include "subscriber.h"
 
 
-struct TickUpdater;
-/// интерфейс для подписывания на вызов tick каждый тик
-struct ItickSubscribed
+struct TickUpdater : Publisher
 {
-   virtual void tick() = 0;
-   ItickSubscribed* next {nullptr};
-};
+#if not defined(TEST) 
+   TickUpdater() { InitSysTimerInt<1>(); }
+#endif
+} tickUpdater;
+
+extern "C" void SysTick_Handler()
+{
+   tickUpdater.notify();
+}
+
+using TickSubscriber = Subscriber;
 
 
-class Timer
+
+class Timer : TickSubscriber
 {
 public:
-   Timer();
-
-   // void     setTime (uint32_t ms);
+   Timer() { tickUpdater.subscribe (this); }
    void     start   (uint32_t ms); /// запускает счёт с текущего значения счётчика, устанавливает время
    bool     event();   /// возвращает true, если таймер натикал и перезапускает его
    bool     done();    /// возвращает true, если таймер натикал и НЕ перезапускает его
@@ -40,83 +46,26 @@ private:
    volatile bool     counted {false};
    volatile uint32_t timePassed_ {0};	
 
-   Timer* next {nullptr};
-   friend TickUpdater;
-
-   void init();
+   void notify() override;
 
 };
 
 
-struct TickUpdater
+
+
+void Timer::notify()
 {
-   Timer* firstTimer {nullptr};
-   ItickSubscribed* firstObserver {nullptr};
-   TickUpdater() { InitSysTimerInt<1> (); }
-   /// обновляет значения счётчиков каждого таймера, начиная с firstTimer
-   void update();
-   /// подписывает на выполнение tick каждый тик
-   void subscribe (ItickSubscribed* ps);
-} tickUpdater;
-
-
-extern "C" void SysTick_Handler()
-{
-   tickUpdater.update();
-}
-
-/// можно определить у себя и добавить выполнение на каждый тик
-// extern void doEveryTick() __attribute__((weak));
-
-void TickUpdater::update()
-{
-   auto pt = this->firstTimer;
-   while (pt) {
-      if (pt->enable and !pt->counted) {
-         pt->timePassed_++;
-         pt->counted = pt->timePassed_ >= pt->timeSet;
-      }
-      pt = pt->next;
-   }
-   auto po = this->firstObserver;
-   while (po) {
-      po->tick();
-      po = po->next;
+   if (enable and not counted) {
+      timePassed_++;
+      counted = timePassed_ >= timeSet;
    }
 }
 
 
-void TickUpdater::subscribe (ItickSubscribed* ps)
-{
-   auto p = firstObserver;
-   if (p) {
-      while (p->next)
-         p = p->next;
-      p->next = ps;
-   } else {  
-      firstObserver = ps;
-   } 
-}
 
 
 
-Timer::Timer()
-{
-   init();
-}
 
-
-void Timer::init()
-{
-   auto p = tickUpdater.firstTimer;
-   if (p) {
-      while (p->next)
-         p = p->next;
-      p->next = this;
-   } else {
-      tickUpdater.firstTimer = this;
-   }
-} 
 
 
 void Timer::start (uint32_t ms)

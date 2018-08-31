@@ -14,7 +14,7 @@
 // Types - это список пинов всех кнопок
 // inverted = true, если нажатая кнопка даёт 1 на входе
 template<bool inverted, class ... Types>
-class Buttons : private ItickSubscribed
+class Buttons : TickSubscriber
 {
 public:
    static constexpr uint16_t MinPressed = 10_ms;
@@ -33,7 +33,7 @@ public:
 
    // запускает/останавливает таймер отслеживания времени нажатия
    // должна периодически вызываться
-   void tick() override
+   void notify() override
    {
       // (Types::IsSet() or ... ); - аналог в 17 стандарте
       bool tmp = inverted ? List<Types...>::IsAnyClear() : List<Types...>::IsAnySet();

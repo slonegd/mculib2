@@ -27,7 +27,7 @@ class Flash : public DATA
 public:
    // конструктор принимает значения, которые необходимо записать
    // при первой прошивке (по умолчанию)
-   Flash (DATA d) : flashUpdater(this)
+   Flash (DATA d)
    {
       static_assert (
          SectorAddr != 0,
@@ -95,7 +95,7 @@ private:
    /// пришлось делать эту структуру, потому что
    /// основная при наследовании ItickSubscribed затирала базовый класс
    /// почему так и не выяснил
-   class FlashUpdater : private ItickSubscribed
+   class FlashUpdater : TickSubscriber
    {
    public:
       FlashUpdater (Flash<DATA,sector>* parent) : parent(parent)
@@ -104,8 +104,8 @@ private:
       }
    private:
       Flash<DATA,sector>* parent;
-      void tick() override { parent->tick(); }
-   } flashUpdater;
+      void notify() override { parent->tick(); }
+   } flashUpdater {this};
    void tick();
 };
 

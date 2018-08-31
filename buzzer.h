@@ -15,7 +15,7 @@
 
 
 template<class PWM, uint8_t QueueSize = 6>
-class Buzzer : ItickSubscribed
+class Buzzer : TickSubscriber
 {
 public:
    // freq - частота кварцевой пищалки
@@ -36,7 +36,7 @@ private:
    uint8_t currentN;
    Timer timer;
    PWM& pwm;
-   void tick() override;
+   void notify() override;
 };
 
 
@@ -86,7 +86,7 @@ void Buzzer<PWM, QueueSize>::beep (uint32_t ms, uint8_t qty)
 
 
 template<class PWM, uint8_t QueueSize> 
-void Buzzer<PWM, QueueSize>::tick()
+void Buzzer<PWM, QueueSize>::notify()
 {
    if ( timer.event() ) {
       queue[currentN++] = 0;

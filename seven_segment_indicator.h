@@ -10,7 +10,7 @@ template<
    class A_, class B_, class C_, class D_, class E_, class F_, class G_, class H_,
    class ... Ks_
 >
-class SSI : private ItickSubscribed // seven-segment indicator 
+class SSI : TickSubscriber // seven-segment indicator 
 {
 public:
    static constexpr uint32_t indicatorQty = sizeof...(Ks_);
@@ -38,7 +38,7 @@ private:
    const uint8_t refreshTime;
    using indicators = PinList<Ks_...>;
    using segments = PinList<H_,G_,F_,E_,D_,C_,B_,A_>;
-   void tick() override;
+   void notify() override;
 
 };
 
@@ -70,7 +70,7 @@ static constexpr uint8_t symbols[] = {
 
 
 template<class A_, class B_, class C_, class D_, class E_, class F_, class G_, class H_,class ... Ks_>
-void SSI<A_,B_,C_,D_,E_,F_,G_,H_,Ks_...>::tick()
+void SSI<A_,B_,C_,D_,E_,F_,G_,H_,Ks_...>::notify()
 {
    if (++tickCounter == refreshTime) {
       tickCounter = 0;
