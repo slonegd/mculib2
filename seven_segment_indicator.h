@@ -24,7 +24,7 @@ public:
    {
       Pins<A_,B_,C_,D_,E_,F_,G_,H_,Ks_...>
          ::template configure<PinConf_t::Output>();
-      tickUpdater.subscribe (this);
+      subscribe();
    }
 
 

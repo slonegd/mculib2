@@ -5,7 +5,7 @@
    #include "GPIO.h"
    #include "DMA.h"
    #include "TIM.h"
-   #include "SysTick_.h"
+   #include "SysTick.h"
 #if defined(STM32F030x6)
    #include "SPI.h"
    #include "ADC.h"
@@ -27,7 +27,6 @@ __IO auto USART1_d = create<USART1>();
 MAKE_VAR(DMA1);
 MAKE_VAR(TIM1);
 MAKE_VAR(TIM3);
-__IO auto SysTick_d = (SysTick_t*) SysTick;
 #if defined(STM32F030x6)
    __IO auto SPI1_d = SPI1::create();
    MAKE_VAR(DMA1channel1);
@@ -80,7 +79,6 @@ inline void makeDebugVar (void)
     DMA1_d->makeDebugVar();
     TIM1_d->makeDebugVar();
     TIM3_d->makeDebugVar();
-    SysTick_d->VAL_t::reg = 0;
 #if defined(STM32F030x6)
     SPI1_d->doSome();
     DMA1channel1_d->makeDebugVar();

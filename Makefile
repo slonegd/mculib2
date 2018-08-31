@@ -23,7 +23,7 @@ TARGET_F1 = STM32F1_DISCOVERY
 # debug build?
 DEBUG = 1
 # optimization
-OPT = -O2
+OPT = -Os
 CPPSTD =-std=c++17
 
 # Build path
@@ -110,7 +110,7 @@ ASFLAGS_F4 = $(MCU_F4) $(OPT) -Wall -fdata-sections -ffunction-sections
 ASFLAGS_F0 = $(MCU_F0) $(OPT) -Wall -fdata-sections -ffunction-sections
 ASFLAGS_F1 = $(MCU_F1) $(OPT) -Wall -fdata-sections -ffunction-sections
 
-CFLAGS = -Wall -Wno-register -fdata-sections -ffunction-sections -fno-exceptions 
+CFLAGS = -Wall -Wno-register -fdata-sections -ffunction-sections -fno-exceptions -fno-strict-volatile-bitfields
 CFLAGS_F4 = $(MCU_F4) $(C_DEFS_F4) $(C_INCLUDES) $(C_INCLUDES_F4) $(OPT) $(CFLAGS)
 CFLAGS_F0 = $(MCU_F0) $(C_DEFS_F0) $(C_INCLUDES) $(C_INCLUDES_F0) $(OPT) $(CFLAGS)
 CFLAGS_F1 = $(MCU_F1) $(C_DEFS_F1) $(C_INCLUDES) $(C_INCLUDES_F1) $(OPT) $(CFLAGS)

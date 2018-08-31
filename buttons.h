@@ -27,12 +27,11 @@ public:
    {
       Pins<Types...>::template configure<PinConf_t::Input>();
       timer.timeSet = 100_s; // 100 s просто большое время
-      tickUpdater.subscribe (this);
+      subscribe();
    }
 
 
    // запускает/останавливает таймер отслеживания времени нажатия
-   // должна периодически вызываться
    void notify() override
    {
       // (Types::IsSet() or ... ); - аналог в 17 стандарте

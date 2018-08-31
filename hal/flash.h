@@ -100,7 +100,7 @@ private:
    public:
       FlashUpdater (Flash<DATA,sector>* parent) : parent(parent)
       {
-          tickUpdater.subscribe (this);
+          subscribe();
       }
    private:
       Flash<DATA,sector>* parent;

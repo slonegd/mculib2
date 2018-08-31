@@ -14,6 +14,10 @@
 
 #include <type_traits>
 
+template<class Periph> struct Pointer {
+   static auto get() { return reinterpret_cast<Periph*>(Periph::Base); }
+};
+
 template<class Bits>
 struct BitsRegistr {
    union {

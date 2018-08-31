@@ -48,7 +48,7 @@ InputCounter<TIM_,Pin_>::InputCounter()
                                         PinConf_t::AlternateFunc1;
    Pin_::template configure<conf>();
    TIM_::counterEnable();
-   tickUpdater.subscribe (this);
+   subscribe();
 }
 
 

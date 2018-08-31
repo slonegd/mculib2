@@ -37,6 +37,7 @@ private:
    Timer timer;
    PWM& pwm;
    void notify() override;
+   
 };
 
 
@@ -51,7 +52,7 @@ Buzzer<PWM, QueueSize>::Buzzer(PWM& pwm, uint32_t freq)
 {
    pwm.freq = freq;
    pwm.fillRatio = 500_from1000;
-   tickUpdater.subscribe (this);
+   subscribe();
 }
 
 

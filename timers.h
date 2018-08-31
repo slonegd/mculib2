@@ -8,7 +8,7 @@
 struct TickUpdater : Publisher
 {
 #if not defined(TEST) 
-   TickUpdater() { InitSysTimerInt<1>(); }
+   TickUpdater() { SysTick::initInterrupt<1>(); }
 #endif
 } tickUpdater;
 
@@ -17,14 +17,20 @@ extern "C" void SysTick_Handler()
    tickUpdater.notify();
 }
 
-using TickSubscriber = Subscriber;
+
+class TickSubscriber : Subscriber
+{
+protected:
+   bool subscribed {false};
+   void subscribe();
+   void unsubscribe();
+};
 
 
 
 class Timer : TickSubscriber
 {
 public:
-   Timer() { tickUpdater.subscribe (this); }
    void     start   (uint32_t ms); /// запускает счёт с текущего значения счётчика, устанавливает время
    bool     event();   /// возвращает true, если таймер натикал и перезапускает его
    bool     done();    /// возвращает true, если таймер натикал и НЕ перезапускает его
@@ -38,47 +44,32 @@ public:
    template<class function>
    void     event (function); /// выполняет function, когда дотикал и перезапускает таймер
 
-
-
    volatile uint32_t timeSet {0};
 private:
-   volatile bool     enable  {false};
-   volatile bool     counted {false};
    volatile uint32_t timePassed_ {0};	
 
    void notify() override;
-
 };
-
 
 
 
 void Timer::notify()
 {
-   if (enable and not counted) {
-      timePassed_++;
-      counted = timePassed_ >= timeSet;
-   }
+   timePassed_++;
 }
-
-
-
-
-
 
 
 
 void Timer::start (uint32_t ms)
 {
    timeSet = ms;
-   enable = true;
+   subscribe();
 }
 
 
 bool Timer::event()
 {
-   if (counted) {
-      counted = false;
+   if (timePassed_ >= timeSet) {
       timePassed_ = 0;
       return (true);
    } else {
@@ -87,29 +78,46 @@ bool Timer::event()
 }
 
 
-template<class function>
-void Timer::event (function f)
+template<class Functor>
+void Timer::event (Functor functor)
 {
-   if (counted) {
-      counted = false;
+   if (timePassed_ >= timeSet) {
       timePassed_ = 0;
-      f();
+      functor();
    }
 }
 
 
 void Timer::stop()
 {
-   counted = false;
-   enable = false; 
    timePassed_ = 0;
+   unsubscribe();
 }
 
 
-bool     Timer::done()       { return counted; }
-void     Timer::pause()      { enable = false; }
-void     Timer::start()      { enable = true;  }
-bool     Timer::isCount()    { return enable and !counted; }
+bool     Timer::done()       { return timePassed_ >= timeSet; }
+void     Timer::pause()      { unsubscribe(); }
+void     Timer::start()      { subscribe();  }
+bool     Timer::isCount()    { return subscribed; }
 uint32_t Timer::timePassed() { return timePassed_; }
 uint32_t Timer::timeLeft(  ) { return timeSet - timePassed_; }
 bool     Timer::isGreater (uint32_t val) { return timePassed_ > val; }
+
+
+
+void TickSubscriber::unsubscribe()
+{
+   if (subscribed) {
+      subscribed = false;
+      tickUpdater.unsubscribe (this);
+   }
+}
+
+
+void TickSubscriber::subscribe()
+{
+   if (not subscribed) {
+      subscribed = true;
+      tickUpdater.subscribe (this);
+   }
+}

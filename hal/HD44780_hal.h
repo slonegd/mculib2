@@ -11,7 +11,7 @@
 
 #include "pin.h"
 #include "pinlist.h"
-#include "SysTick_.h"
+#include "SysTick.h"
 
 
 namespace HD44780_HAL {
@@ -143,8 +143,8 @@ private:
 
     void delayTick (uint32_t tickQty)
     {
-        volatile uint32_t tmp = SysTick_::get() - tickQty;
-        while (tmp < SysTick_::get()) { }
+        volatile uint32_t tmp = SysTick::get() - tickQty;
+        while (tmp < SysTick::get()) { }
     }
 
     void sendNibble (char data)
