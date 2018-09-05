@@ -8,69 +8,67 @@ extern "C" void USART1_IRQHandler()       { Interrupt<USART1>     ::interrupt();
 #endif
 
 #if defined(STM32F405xx)
-/**
- * список прерываний, которые не описаны
- * 
- * WWDG_IRQHandler
- * PVD_IRQHandler
- * TAMP_STAMP_IRQHandler
- * RTC_WKUP_IRQHandler
- * FLASH_IRQHandler
- * RCC_IRQHandler
- * EXTI0_IRQHandler
- * EXTI1_IRQHandler
- * EXTI2_IRQHandler
- * EXTI3_IRQHandler
- * EXTI4_IRQHandler
- * ADC_IRQHandler
- * CAN1_TX_IRQHandler
- * CAN1_RX0_IRQHandler
- * CAN1_RX1_IRQHandler
- * CAN1_SCE_IRQHandler
- * EXTI9_5_IRQHandler
- * TIM1_BRK_TIM9_IRQHandler
- * TIM1_UP_TIM10_IRQHandler
- * TIM1_TRG_COM_TIM11_IRQHandler
- * TIM1_CC_IRQHandler
- * TIM2_IRQHandler
- * TIM3_IRQHandler
- * TIM4_IRQHandler
- * I2C1_EV_IRQHandler
- * I2C1_ER_IRQHandler
- * I2C2_EV_IRQHandler
- * I2C2_ER_IRQHandler
- * SPI1_IRQHandler
- * SPI2_IRQHandler
- * EXTI15_10_IRQHandler
- * RTC_Alarm_IRQHandler
- * OTG_FS_WKUP_IRQHandler
- * TIM8_BRK_TIM12_IRQHandler
- * TIM8_UP_TIM13_IRQHandler
- * TIM8_TRG_COM_TIM14_IRQHandler
- * TIM8_CC_IRQHandler
- * FSMC_IRQHandler
- * SDIO_IRQHandler
- * TIM5_IRQHandler
- * SPI3_IRQHandler
- * UART4_IRQHandler
- * UART5_IRQHandler
- * TIM6_DAC_IRQHandler
- * TIM7_IRQHandler
- * CAN2_TX_IRQHandler 
- * CAN2_RX0_IRQHandler
- * CAN2_RX1_IRQHandler
- * CAN2_SCE_IRQHandler
- * OTG_FS_IRQHandler
- * USART6_IRQHandler
- * I2C3_EV_IRQHandler
- * I2C3_ER_IRQHandler
- * OTG_HS_EP1_OUT_IRQHandler
- * OTG_HS_EP1_IN_IRQHandler
- * OTG_HS_WKUP_IRQHandler
- * OTG_HS_IRQHandler
- * HASH_RNG_IRQHandler
- * FPU_IRQHandler
- **/
+
+// список прерываний, которые не описаны
+extern "C" void WWDG_IRQHandler               () { while(1) {} }
+extern "C" void PVD_IRQHandler                () { while(1) {} }
+extern "C" void TAMP_STAMP_IRQHandler         () { while(1) {} }
+extern "C" void RTC_WKUP_IRQHandler           () { while(1) {} }
+extern "C" void FLASH_IRQHandler              () { while(1) {} }
+extern "C" void RCC_IRQHandler                () { while(1) {} }
+extern "C" void EXTI0_IRQHandler              () { while(1) {} }
+extern "C" void EXTI1_IRQHandler              () { while(1) {} }
+extern "C" void EXTI2_IRQHandler              () { while(1) {} }
+extern "C" void EXTI3_IRQHandler              () { while(1) {} }
+extern "C" void EXTI4_IRQHandler              () { while(1) {} }
+extern "C" void ADC_IRQHandler                () { while(1) {} }
+extern "C" void CAN1_TX_IRQHandler            () { while(1) {} }
+extern "C" void CAN1_RX0_IRQHandler           () { while(1) {} }
+extern "C" void CAN1_RX1_IRQHandler           () { while(1) {} }
+extern "C" void CAN1_SCE_IRQHandler           () { while(1) {} }
+extern "C" void EXTI9_5_IRQHandler            () { while(1) {} }
+extern "C" void TIM1_BRK_TIM9_IRQHandler      () { while(1) {} }
+extern "C" void TIM1_UP_TIM10_IRQHandler      () { while(1) {} }
+extern "C" void TIM1_TRG_COM_TIM11_IRQHandler () { while(1) {} }
+extern "C" void TIM1_CC_IRQHandler            () { while(1) {} }
+extern "C" void TIM2_IRQHandler               () { while(1) {} }
+extern "C" void TIM3_IRQHandler               () { while(1) {} }
+extern "C" void TIM4_IRQHandler               () { while(1) {} }
+extern "C" void I2C1_EV_IRQHandler            () { while(1) {} }
+extern "C" void I2C1_ER_IRQHandler            () { while(1) {} }
+extern "C" void I2C2_EV_IRQHandler            () { while(1) {} }
+extern "C" void I2C2_ER_IRQHandler            () { while(1) {} }
+extern "C" void SPI1_IRQHandler               () { while(1) {} }
+extern "C" void SPI2_IRQHandler               () { while(1) {} }
+extern "C" void EXTI15_10_IRQHandler          () { while(1) {} }
+extern "C" void RTC_Alarm_IRQHandler          () { while(1) {} }
+extern "C" void OTG_FS_WKUP_IRQHandler        () { while(1) {} }
+extern "C" void TIM8_BRK_TIM12_IRQHandler     () { while(1) {} }
+extern "C" void TIM8_UP_TIM13_IRQHandler      () { while(1) {} }
+extern "C" void TIM8_TRG_COM_TIM14_IRQHandler () { while(1) {} }
+extern "C" void TIM8_CC_IRQHandler            () { while(1) {} }
+extern "C" void FSMC_IRQHandler               () { while(1) {} }
+extern "C" void SDIO_IRQHandler               () { while(1) {} }
+extern "C" void TIM5_IRQHandler               () { while(1) {} }
+extern "C" void SPI3_IRQHandler               () { while(1) {} }
+extern "C" void UART4_IRQHandler              () { while(1) {} }
+extern "C" void UART5_IRQHandler              () { while(1) {} }
+extern "C" void TIM6_DAC_IRQHandler           () { while(1) {} }
+extern "C" void TIM7_IRQHandler               () { while(1) {} }
+extern "C" void CAN2_TX_IRQHandler            () { while(1) {} }
+extern "C" void CAN2_RX0_IRQHandler           () { while(1) {} }
+extern "C" void CAN2_RX1_IRQHandler           () { while(1) {} }
+extern "C" void CAN2_SCE_IRQHandler           () { while(1) {} }
+extern "C" void OTG_FS_IRQHandler             () { while(1) {} }
+extern "C" void USART6_IRQHandler             () { while(1) {} }
+extern "C" void I2C3_EV_IRQHandler            () { while(1) {} }
+extern "C" void I2C3_ER_IRQHandler            () { while(1) {} }
+extern "C" void OTG_HS_EP1_OUT_IRQHandler     () { while(1) {} }
+extern "C" void OTG_HS_EP1_IN_IRQHandler      () { while(1) {} }
+extern "C" void OTG_HS_WKUP_IRQHandler        () { while(1) {} }
+extern "C" void OTG_HS_IRQHandler             () { while(1) {} }
+extern "C" void HASH_RNG_IRQHandler           () { while(1) {} }
+extern "C" void FPU_IRQHandler                () { while(1) {} }
 
 extern "C" void DMA1_Stream0_IRQHandler() { Interrupt<DMA1stream0>::interrupt(); }
 extern "C" void DMA1_Stream1_IRQHandler() { Interrupt<DMA1stream1>::interrupt(); }

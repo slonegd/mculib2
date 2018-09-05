@@ -119,6 +119,46 @@ void ADCx<adr>::setSampleTime ( SampleTime val )
 
 
 template <uint32_t adr>
+template <size_t n, uint8_t channel> // n - номер по порядку (1 - 16)
+void ADCx<adr>::setRegularSequenceOrder()
+{
+   static_assert (n >= 1 and n <= 16);
+   if      constexpr (n == 1)  sqr().bits.SQ1  = channel;
+   else if constexpr (n == 2)  sqr().bits.SQ2  = channel;
+   else if constexpr (n == 3)  sqr().bits.SQ3  = channel;
+   else if constexpr (n == 4)  sqr().bits.SQ4  = channel;
+   else if constexpr (n == 5)  sqr().bits.SQ5  = channel;
+   else if constexpr (n == 6)  sqr().bits.SQ6  = channel;
+   else if constexpr (n == 7)  sqr().bits.SQ7  = channel;
+   else if constexpr (n == 8)  sqr().bits.SQ8  = channel;
+   else if constexpr (n == 9)  sqr().bits.SQ9  = channel;
+   else if constexpr (n == 10) sqr().bits.SQ10 = channel;
+   else if constexpr (n == 11) sqr().bits.SQ11 = channel;
+   else if constexpr (n == 12) sqr().bits.SQ12 = channel;
+   else if constexpr (n == 13) sqr().bits.SQ13 = channel;
+   else if constexpr (n == 14) sqr().bits.SQ14 = channel;
+   else if constexpr (n == 15) sqr().bits.SQ15 = channel;
+   else if constexpr (n == 16) sqr().bits.SQ16 = channel;
+}
+
+
+template <uint32_t adr>
+template <size_t length> // n - номер по порядку (1 - 16)
+void ADCx<adr>::setRegularSequenceLength()
+{
+   static_assert (length >= 0 and length <= 16);
+   sqr().bits.L  = length;
+}
+
+
+template <uint32_t adr>
+void ADCx<adr>::setScanMode()
+{
+   control().bits.SCAN = true;
+}
+
+
+template <uint32_t adr>
 constexpr typename ADCx<adr>::Channels
 ADCx<adr>::DMAchannel()
 {

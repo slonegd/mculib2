@@ -9,9 +9,9 @@ namespace ADC_ral {
 
    template <class ADC_> struct DefaultStream;
 #if defined(STM32F405xx)
-   template<> struct DefaultStream<ADC1> { using Type = DMA1stream0; };
-   template<> struct DefaultStream<ADC2> { using Type = DMA1stream2; };
-   template<> struct DefaultStream<ADC3> { using Type = DMA1stream0; };
+   template<> struct DefaultStream<ADC1> { using Type = DMA2stream0; };
+   template<> struct DefaultStream<ADC2> { using Type = DMA2stream2; };
+   template<> struct DefaultStream<ADC3> { using Type = DMA2stream0; };
 #elif defined(STM32F030x6)
    template<> struct DefaultStream<ADC1> { using Type = DMA1channel1; };
 #endif
@@ -80,13 +80,13 @@ namespace ADC_ral {
    {
       return 
          ( IS_SAME(ADC_,ADC1) 
-           and (IS_SAME(DMA_,DMA1stream0) or IS_SAME(DMA_,DMA1stream4))
+           and (IS_SAME(DMA_,DMA2stream0) or IS_SAME(DMA_,DMA2stream4))
          ) or (
            IS_SAME(ADC_,ADC2) 
-           and (IS_SAME(DMA_,DMA1stream2) or IS_SAME(DMA_,DMA1stream3))
+           and (IS_SAME(DMA_,DMA2stream2) or IS_SAME(DMA_,DMA2stream3))
          ) or (
            IS_SAME(ADC_,ADC3) 
-           and (IS_SAME(DMA_,DMA1stream0) or IS_SAME(DMA_,DMA1stream1))
+           and (IS_SAME(DMA_,DMA2stream0) or IS_SAME(DMA_,DMA2stream1))
          );
    }
 #elif defined(STM32F030x6)

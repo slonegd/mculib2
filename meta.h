@@ -37,6 +37,7 @@ template<class T, class ... Types> struct At<1,T,Types...> {
 };
 
 // определяет первое положение конкретного типа из вариадика, пример:
+// начиная с 1
 // const int at = Position<T, Types...>::value;
 // возвращает -1 если такого нет
 template<int n, class T, class U, class ... Types>

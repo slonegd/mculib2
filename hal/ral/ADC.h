@@ -46,7 +46,13 @@ public:
 #elif defined(STM32F405xx)
    template <uint8_t channel>
    static void setSampleTime (SampleTime val);
+   template <size_t n, uint8_t channel> // n - номер по порядку (1 - 16)
+   static void setRegularSequenceOrder();
+   template <size_t>
+   static void setRegularSequenceLength();
+   static void setScanMode();
    static constexpr Channels DMAchannel();
+
 #endif
 
 
@@ -57,6 +63,7 @@ protected:
    static __IO MakeRef(DR_t,    data      );
    static __IO MakeRef(CR_t,    control   );
    static __IO MakeRef(SMPR_t,  sampleTime);
+   static __IO MakeRef(SQR_t,   sqr       );
 #if defined(STM32F030x6)
    static __IO MakeRef(CFGR1_t, conf1     );
    static __IO MakeRef(CFGR2_t, conf2     );
@@ -79,9 +86,7 @@ private:
    ADC_ral::JOFR4_t  JOFR4;  // ADC injected channel data offset register 4
    ADC_ral::HTR_t    HTR;    // ADC watchdog higher threshold register
    ADC_ral::LTR_t    LTR;    // ADC watchdog lower threshold register
-   ADC_ral::SQR1_t   SQR1;   // ADC regular sequence register 1
-   ADC_ral::SQR2_t   SQR2;   // ADC regular sequence register 2
-   ADC_ral::SQR3_t   SQR3;   // ADC regular sequence register 3
+   ADC_ral::SQR_t    SQR;   // ADC regular sequence register 1 2 3
    ADC_ral::JSQR_t   JQR;    // ADC injected sequence register
    ADC_ral::JDR1_t   JDR1;   // ADC injected data register 1
    ADC_ral::JDR2_t   JDR2;   // ADC injected data register 2

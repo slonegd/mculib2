@@ -11,7 +11,7 @@ protected:
 public:
    void push (T val) {
       data[index++] = val;
-      if (index == n) index = 0;
+      index %= n;
    }
 };
 

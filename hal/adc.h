@@ -46,7 +46,7 @@ public:
       uint32_t div = 1, // div - частное для вычисления среднего
       Clock clock = Clock::PCLKdiv4,
       Resolution resolution = Resolution::_12bits,
-      SampleTime sampleTime = SampleTime::Default
+      SampleTime sampleTime = SampleTime::_480CLK
    );
    ADCaverageFull& withMultipler    (uint32_t);
    ADCaverageFull& withDivider      (uint32_t);

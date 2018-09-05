@@ -174,6 +174,8 @@ inline void MBslave<In,Out,UART>::operator() (function reaction)
 {
 #if defined(STM32F405xx)
    endMessage = timer.done() ? timer.stop(), true : false;
+   if (endMessage)
+       std::remove_reference_t<decltype(uart)>::DMArx::Disable();
 #endif
 
    if (endMessage) {

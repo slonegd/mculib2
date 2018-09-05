@@ -7,8 +7,8 @@
 /// интерфейс для подписки на прерывания
 struct Interrupting
 {
-   virtual void interrupt()  = 0;
    Interrupting* next {nullptr};
+   virtual void interrupt() = 0;
 };
 
 

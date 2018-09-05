@@ -1,4 +1,5 @@
 #include "adc.h"
+#include "meta.h"
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -78,8 +79,8 @@ ADCaverageFull<ADC_, bufSize, DMA_, PIN...>&
 ADCaverageFull<ADC_, bufSize, DMA_, PIN...>::withInterrupt()
 {
    Interrupt<DMA_>::subscribe (this);
-   DMA_::EnableTransferCompleteInterrupt();
-   NVIC_EnableIRQ (DMA_::IRQn());
+//    DMA_::EnableTransferCompleteInterrupt();
+//    NVIC_EnableIRQ (DMA_::IRQn());
    return *this;
 }
 
@@ -129,21 +130,22 @@ init(Clock clock, Resolution resolution, SampleTime sampleTime)
    ADC_::setClock (clock);
    ADC_::setResolution (resolution);
    #if defined(STM32F0)
-      ADC_::setSampleTime (sampleTime);
+       ADC_::setSampleTime (sampleTime);
+      (ADC_::setChannel (ADC_ral::ADCchannel<ADC_,PIN>()) , ...);
    #elif defined(STM32F4)
       (ADC_::template setSampleTime<ADC_ral::ADCchannel<ADC_,PIN>()> (sampleTime) , ...);
+      (ADC_::template setRegularSequenceOrder<position_v<PIN,PIN...>,ADC_ral::ADCchannel<ADC_,PIN>()>(), ...);
+       ADC_::template setRegularSequenceLength<sizeof...(PIN)>();
+       ADC_::setScanMode();
    #endif
    ADC_::setContinuousMode();
-   #if defined(STM32F0)
-      (ADC_::setChannel (ADC_ral::ADCchannel<ADC_,PIN>()) , ...);
-   #endif
    ADC_::DMAenable();
    ADC_::setCircularDMA();
 
    DMA_::ClockEnable();
    DMA_::SetMemoryAdr ( (uint32_t)buf );
    DMA_::SetPeriphAdr ( ADC_::getDataAdr() );
-   DMA_::SetQtyTransactions (bufSize);
+   DMA_::SetQtyTransactions (bufSize * sizeof...(PIN));
    typename DMA_::Configure_t conf;
    conf.dataDir = DMA_::DataDirection::PerToMem;
    conf.memSize = DMA_::DataSize::word16;
@@ -155,8 +157,7 @@ init(Clock clock, Resolution resolution, SampleTime sampleTime)
       conf.channel = ADC_::DMAchannel();
    #endif
    DMA_::Configure (conf);
-
-   DMA_::Enable();
+//    DMA_::Enable();
    ADC_::enable();
    ADC_::start();
 }
