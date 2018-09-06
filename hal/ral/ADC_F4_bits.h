@@ -21,22 +21,22 @@ struct SRposition {
 enum Resolution { _12bits  = 0b00, _10bits, _8bits, _6bits };
 
 struct CRbits {
-   __IO uint32_t   AWDCH   :5; // Bits 4:0 AWDCH[4:0]: Analog watchdog channel select bits
-   __IO bool       EOCIE   :1; // Bit 5 EOCIE: Interrupt enable for EOC
-   __IO bool       AWDIE   :1; // Bit 6 AWDIE: Analog watchdog interrupt enable
-   __IO bool       JEOCIE  :1; // Bit 7 JEOCIE: Interrupt enable for injected channels
-   __IO bool       SCAN    :1; // Bit 8 SCAN: Scan mode
-   __IO uint32_t   AWDSGL  :1; // Bit 9 AWDSGL: Enable the watchdog on a single channel in scan mode
-   __IO bool       JAUTO   :1; // Bit 10 JAUTO: Automatic injected group conversion
-   __IO bool       DISCEN  :1; // Bit 11 DISCEN: Discontinuous mode on regular channels
-   __IO bool       JDISCEN :1; // Bit 12 JDISCEN: Discontinuous mode on injected channels
-   __IO uint32_t   DISCNUM :3; // Bits 15:13 DISCNUM[2:0]: Discontinuous mode channel count
-   __IO uint32_t   res1    :6; // Bits 21:16 Reserved, must be kept at reset value.
-   __IO bool       JAWDEN  :1; // Bit 22 JAWDEN: Analog watchdog enable on injected channels
-   __IO bool       AWDEN   :1; // Bit 23 AWDEN: Analog watchdog enable on regular channels
-   __IO Resolution RES     :2; // Bits 25:24 RES[1:0]: Resolution
-   __IO bool       OVRIE   :1; // Bit 26 OVRIE: Overrun interrupt enable
-   __IO uint32_t   res2    :5; // Bits 31:27 Reserved, must be kept at reset value.
+   uint32_t   AWDCH   :5; // Bits 4:0 AWDCH[4:0]: Analog watchdog channel select bits
+   bool       EOCIE   :1; // Bit 5 EOCIE: Interrupt enable for EOC
+   bool       AWDIE   :1; // Bit 6 AWDIE: Analog watchdog interrupt enable
+   bool       JEOCIE  :1; // Bit 7 JEOCIE: Interrupt enable for injected channels
+   bool       SCAN    :1; // Bit 8 SCAN: Scan mode
+   uint32_t   AWDSGL  :1; // Bit 9 AWDSGL: Enable the watchdog on a single channel in scan mode
+   bool       JAUTO   :1; // Bit 10 JAUTO: Automatic injected group conversion
+   bool       DISCEN  :1; // Bit 11 DISCEN: Discontinuous mode on regular channels
+   bool       JDISCEN :1; // Bit 12 JDISCEN: Discontinuous mode on injected channels
+   uint32_t   DISCNUM :3; // Bits 15:13 DISCNUM[2:0]: Discontinuous mode channel count
+   uint32_t   res1    :6; // Bits 21:16 Reserved, must be kept at reset value.
+   bool       JAWDEN  :1; // Bit 22 JAWDEN: Analog watchdog enable on injected channels
+   bool       AWDEN   :1; // Bit 23 AWDEN: Analog watchdog enable on regular channels
+   Resolution RES     :2; // Bits 25:24 RES[1:0]: Resolution
+   bool       OVRIE   :1; // Bit 26 OVRIE: Overrun interrupt enable
+   uint32_t   res2    :5; // Bits 31:27 Reserved, must be kept at reset value.
 };
 
 struct CRposition {

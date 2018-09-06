@@ -56,6 +56,7 @@ changeResolution (Resolution val)
    ADC_::disable();
    ADC_::setResolution (val);
    ADC_::enable();
+   ADC_::start();
    return *this;
 }
 
@@ -67,8 +68,9 @@ ADCaverageFull<ADC_, bufSize, DMA_, PIN...>::
 changeSampleTime (SampleTime val)
 {
    ADC_::disable();
-   ADC_::setSampleTime (val);
+   (ADC_::template setSampleTime<ADC_ral::ADCchannel<ADC_,PIN>()> (val) , ...);
    ADC_::enable();
+   ADC_::start();
    return *this;
 }
 
@@ -79,8 +81,8 @@ ADCaverageFull<ADC_, bufSize, DMA_, PIN...>&
 ADCaverageFull<ADC_, bufSize, DMA_, PIN...>::withInterrupt()
 {
    Interrupt<DMA_>::subscribe (this);
-//    DMA_::EnableTransferCompleteInterrupt();
-//    NVIC_EnableIRQ (DMA_::IRQn());
+   DMA_::EnableTransferCompleteInterrupt();
+   NVIC_EnableIRQ (DMA_::IRQn());
    return *this;
 }
 
@@ -93,7 +95,7 @@ auto ADCaverageFull<ADC_, bufSize, DMA_, PIN...>::get() const
       position_v<PIN_, PIN...> != -1,
       "указанный вывод не из списка шаблонных параметров класса"
    );
-   return avg[position_v<PIN_, PIN...>];
+   return avg[position_v<PIN_, PIN...> - 1];
 }
 
 
@@ -157,7 +159,7 @@ init(Clock clock, Resolution resolution, SampleTime sampleTime)
       conf.channel = ADC_::DMAchannel();
    #endif
    DMA_::Configure (conf);
-//    DMA_::Enable();
+   DMA_::Enable();
    ADC_::enable();
    ADC_::start();
 }

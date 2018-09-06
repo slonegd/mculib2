@@ -68,7 +68,14 @@ public:
 
 private:
    void init (Clock, Resolution, SampleTime);
-   void interrupt() override { computeSum(); computeAvg(); }
+   void interrupt() override
+   {
+      ADC_::disable();
+      computeSum();
+      computeAvg();
+      ADC_::enable();
+      ADC_::start();
+   }
   //  static constexpr int8_t channel = ADC_ral::ADCchannel<ADC_,PIN>();
 };
 
@@ -92,22 +99,24 @@ class DoubleFiltrADC : Interrupting
    SumRingBuffer<n, ValueType> buffer [sizeof...(PIN)];
    ValueType                   avg    [sizeof...(PIN)];
    using ADCavg = ADCaverage<ADC_,PIN...>;
-   ADCavg adc;
+   ADCavg adc {};
 public:
-   DoubleFiltrADC() : adc { ADCavg().withInterrupt() }
+   DoubleFiltrADC()
    {
+      adc.withInterrupt();
+      // adc.changeSampleTime (ADCavg::SampleTime::_3CLK);
       Interrupt<typename ADCavg::DMAstream>::subscribe (this);
    }
-   auto     get()       const { return buffer[0].getAvg(); }   
-   operator ValueType() const { return buffer[0].getAvg(); }
+   auto     get()       { return buffer[0].getAvg(); }   
+   operator ValueType() { return buffer[0].getAvg(); }
 
    template <class PIN_>
-   auto get() { return buffer[position_v<PIN_, PIN...>].getAvg(); }
+   auto get() { return buffer[position_v<PIN_, PIN...> - 1].getAvg(); }
    
 private:
    void interrupt() override
    {
-      ( buffer [position_v<PIN, PIN...>]
+      ( buffer [position_v<PIN, PIN...> - 1]
          .pushAndCompute (adc.template get<PIN>())
         , ...
       );
