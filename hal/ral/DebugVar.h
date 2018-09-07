@@ -27,7 +27,6 @@ __IO auto USART1_d = create<USART1>();
 MAKE_VAR(DMA1);
 MAKE_VAR(TIM1);
 MAKE_VAR(TIM3);
-MAKE_VAR(ADC1);
 #if defined(STM32F030x6)
    __IO auto SPI1_d = SPI1::create();
    MAKE_VAR(DMA1channel1);
@@ -79,7 +78,6 @@ inline void makeDebugVar (void)
     DMA1_d->makeDebugVar();
     TIM1_d->makeDebugVar();
     TIM3_d->makeDebugVar();
-    ADC1_d->doSome();
 #if defined(STM32F030x6)
     SPI1_d->doSome();
     DMA1channel1_d->makeDebugVar();

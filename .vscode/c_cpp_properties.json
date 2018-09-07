@@ -5,7 +5,7 @@
             "includePath": [
                 "/usr/include",
                 "/usr/local/include",
-                "${workspaceRoot}"
+                "${workspaceFolder}"
             ],
             "defines": [],
             "intelliSenseMode": "clang-x64",
@@ -13,7 +13,7 @@
                 "path": [
                     "/usr/include",
                     "/usr/local/include",
-                    "${workspaceRoot}"
+                    "${workspaceFolder}"
                 ],
                 "limitSymbolsToIncludedHeaders": true,
                 "databaseFilename": ""
@@ -37,17 +37,13 @@
                 "/usr/include",
                 "/usr/include/x86_64-linux-gnu",
                 "/usr/include/newlib",
-                "${workspaceRoot}",
-                "${workspaceRoot}/hal",
-                "${workspaceRoot}/hal/ral",
-                "${workspaceRoot}/loki",
-                "${workspaceRoot}/STMF0_files",
-                "${workspaceRoot}/STMF0_files/CMSIS",
-                "${workspaceRoot}/test_F0",
-                "/usr/include/c++/5/tr1",
-                "/usr/lib/llvm-3.8/lib/clang/3.8.0/include",
-                "/usr/include/c++/5",
-                "/usr/include/x86_64-linux-gnu/c++/5",
+                "${workspaceFolder}",
+                "${workspaceFolder}/hal",
+                "${workspaceFolder}/hal/ral",
+                "${workspaceFolder}/loki",
+                "${workspaceFolder}/STMF4_files",
+                "${workspaceFolder}/STMF4_files/CMSIS",
+                "${workspaceFolder}/test_F0",
                 "${workspaceFolder}/STM32F0_files"
             ],
             "defines": [
@@ -64,13 +60,13 @@
                     "/usr/include",
                     "/usr/include/x86_64-linux-gnu",
                     "/usr/include/newlib",
-                    "${workspaceRoot}",
-                    "${workspaceRoot}/hal",
-                    "${workspaceRoot}/hal/ral",
-                    "${workspaceRoot}/loki",
-                    "${workspaceRoot}/STMF0_files",
-                    "${workspaceRoot}/STMF0_files/CMSIS",
-                    "${workspaceRoot}/test_F0"
+                    "${workspaceFolder}",
+                    "${workspaceFolder}/hal",
+                    "${workspaceFolder}/hal/ral",
+                    "${workspaceFolder}/loki",
+                    "${workspaceFolder}/STMF0_files",
+                    "${workspaceFolder}/STMF0_files/CMSIS",
+                    "${workspaceFolder}/test_F0"
                 ],
                 "limitSymbolsToIncludedHeaders": true,
                 "databaseFilename": ""
@@ -83,7 +79,7 @@
             "name": "Win32",
             "includePath": [
                 "C:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/include",
-                "${workspaceRoot}"
+                "${workspaceFolder}"
             ],
             "defines": [
                 "_DEBUG",
@@ -93,7 +89,7 @@
             "browse": {
                 "path": [
                     "C:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/include/*",
-                    "${workspaceRoot}"
+                    "${workspaceFolder}"
                 ],
                 "limitSymbolsToIncludedHeaders": true,
                 "databaseFilename": ""

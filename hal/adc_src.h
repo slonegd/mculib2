@@ -16,11 +16,11 @@ ADCaverageFull (uint32_t mul, uint32_t div, Clock clock, Resolution resolution, 
 
 {
    static_assert (
-      (ADC_ral::PinEnabled<ADC_,PIN>() and ...),
+      (ADC_::template PINenabled<PIN>() and ...),
       "Вывод контроллера не поддерживает функцию АЦП"
    );
    static_assert (
-      ADC_ral::DMAenabled<ADC_,DMA_>(),
+      ADC_::template DMAenabled<DMA_>(),
       "Поток ДМА не работает с этим АЦП"
    );
    init(clock, resolution, sampleTime);
@@ -68,7 +68,7 @@ ADCaverageFull<ADC_, bufSize, DMA_, PIN...>::
 changeSampleTime (SampleTime val)
 {
    ADC_::disable();
-   (ADC_::template setSampleTime<ADC_ral::ADCchannel<ADC_,PIN>()> (val) , ...);
+   (ADC_::template setSampleTime<ADC_::template ADCchannel<PIN>()> (val) , ...);
    ADC_::enable();
    ADC_::start();
    return *this;
@@ -135,8 +135,8 @@ init(Clock clock, Resolution resolution, SampleTime sampleTime)
        ADC_::setSampleTime (sampleTime);
       (ADC_::setChannel (ADC_ral::ADCchannel<ADC_,PIN>()) , ...);
    #elif defined(STM32F4)
-      (ADC_::template setSampleTime<ADC_ral::ADCchannel<ADC_,PIN>()> (sampleTime) , ...);
-      (ADC_::template setRegularSequenceOrder<position_v<PIN,PIN...>,ADC_ral::ADCchannel<ADC_,PIN>()>(), ...);
+      (ADC_::template setSampleTime<ADC_::template ADCchannel<PIN>()> (sampleTime) , ...);
+      (ADC_::template setRegularSequenceOrder<position_v<PIN,PIN...>,ADC_::template ADCchannel<PIN>()>(), ...);
        ADC_::template setRegularSequenceLength<sizeof...(PIN)>();
        ADC_::setScanMode();
    #endif

@@ -238,6 +238,9 @@ util:
 	#/home/peltikhin/code/EmbeddedArm/stlink/build/Release/src/gdbserver/st-util
 	st-util
 debug: clean all flash_stlink util
+
+test_:
+	$(MAKE) -C ./tests/
   
 #######################################
 # dependencies

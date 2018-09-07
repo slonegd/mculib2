@@ -24,7 +24,7 @@
 template <
    class ADC_,
    uint16_t bufSize = 16,
-   class DMA_ = typename ADC_ral::DefaultStream<ADC_>::Type,
+   class DMA_ = typename ADC_::DefaultStream,
    class ... PIN
 >
 class ADCaverageFull : Interrupting
@@ -82,10 +82,10 @@ private:
 
 /// хелперы, чтоб не указывать значения по умолчанию
 template <class ADC_, class ... PIN>
-using ADCaverage = ADCaverageFull<ADC_, 16, typename ADC_ral::DefaultStream<ADC_>::Type, PIN...>;
+using ADCaverage = ADCaverageFull<ADC_, 16, typename ADC_::DefaultStream, PIN...>;
 
 template <uint16_t bufSize, class ADC_, class ... PIN>
-using ADCaverageSized = ADCaverageFull<ADC_, bufSize, typename ADC_ral::DefaultStream<ADC_>::Type, PIN...>;
+using ADCaverageSized = ADCaverageFull<ADC_, bufSize, typename ADC_::DefaultStream, PIN...>;
 
 
 
