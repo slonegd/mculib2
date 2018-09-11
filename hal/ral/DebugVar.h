@@ -8,7 +8,6 @@
    #include "SysTick.h"
 #if defined(STM32F030x6)
    #include "SPI.h"
-   #include "ADC.h"
 #elif defined(STM32F405xx)
    #include "USART.h"
 #endif

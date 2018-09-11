@@ -1,6 +1,5 @@
 #pragma once
 
-#include "ADC.h"
 #include "pin.h"
 #include <type_traits>
 
@@ -13,13 +12,6 @@
 //       00       0000000
 ///////////////////////////////////////////////////////////////////////////////
 #if defined(STM32F405xx) || defined(STM32F030x6)
-
-template <uint32_t adr, class Pointer>
-size_t template_ADC<adr,Pointer>::getDataAdr()
-{
-   return reinterpret_cast<size_t>(&(Pointer::get()->DR));
-}
-
 
 #endif
 
@@ -35,82 +27,17 @@ size_t template_ADC<adr,Pointer>::getDataAdr()
 
 #if defined(STM32F405xx)
 
-template <uint32_t adr, class Pointer>
-void template_ADC<adr,Pointer>::enable()
-{
-   Pointer::get()->CR2.ADON = true;
-}
-
-
-template <uint32_t adr, class Pointer>
-void template_ADC<adr,Pointer>::disable()
-{
-   Pointer::get()->CR2.ADON = false;
-}
-
-
-template <uint32_t adr, class Pointer>
-bool template_ADC<adr,Pointer>::is_disable()
-{
-   return not Pointer::get()->CR2.ADON;
-}
-
-
-template <uint32_t adr, class Pointer>
-void template_ADC<adr,Pointer>::start()
-{
-   Pointer::get()->CR2.SWSTART = true;
-}
-
-
-template <uint32_t adr, class Pointer>
-void template_ADC<adr,Pointer>::DMAenable()
-{
-   Pointer::get()->CR2.DMA = true;
-}
-
-
-template <uint32_t adr, class Pointer>
-void template_ADC<adr,Pointer>::setCircularDMA()
-{
-   Pointer::get()->CR2.DDS = true;
-}
-
-
-template <uint32_t adr, class Pointer>
-void template_ADC<adr,Pointer>::setContinuousMode()
-{
-   Pointer::get()->CR2.CONT = true;
-}
-
-
-template <uint32_t adr, class Pointer>
-void template_ADC<adr,Pointer>::setClock (Clock v)
-{
-   ADCC::setClock (v);
-}
-
-
-template <uint32_t adr, class Pointer>
-void template_ADC<adr,Pointer>::setResolution (Resolution v)
-{
-   Pointer::get()->CR1.RES = v;
-}
-
 
 namespace ADC_detail {
    template<> struct DefaultStream_impl<ADC1> { using type = DMA2stream0; };
    template<> struct DefaultStream_impl<ADC2> { using type = DMA2stream2; };
    template<> struct DefaultStream_impl<ADC3> { using type = DMA2stream1; };
-
-//    template<class T>
-//    using DefaultStream_t = typename DefaultStream_impl<T>::type;
 }
 
 
 template <uint32_t adr, class Pointer>
 template <class PIN>
-constexpr uint8_t template_ADC<adr,Pointer>::ADCchannel()
+constexpr uint8_t template_ADC<adr,Pointer>::channel()
 {
    return
       std::is_same_v<template_ADC,ADC1> or std::is_same_v<template_ADC,ADC2> ? (
@@ -152,6 +79,14 @@ constexpr uint8_t template_ADC<adr,Pointer>::ADCchannel()
 
 
 template <uint32_t adr, class Pointer>
+template <class PIN>
+constexpr bool template_ADC<adr,Pointer>::PINenabled()
+{
+   return template_ADC<adr,Pointer>::channel<PIN>() != 255;
+}
+
+
+template <uint32_t adr, class Pointer>
 template <class DMA>
 constexpr bool template_ADC<adr,Pointer>::DMAenabled()
 {
@@ -163,16 +98,8 @@ constexpr bool template_ADC<adr,Pointer>::DMAenabled()
 
 
 template <uint32_t adr, class Pointer>
-template <class PIN>
-constexpr bool template_ADC<adr,Pointer>::PINenabled()
-{
-   return template_ADC<adr,Pointer>::ADCchannel<PIN>() != 255;
-}
-
-
-template <uint32_t adr, class Pointer>
 template <uint8_t channel>
-void template_ADC<adr,Pointer>::setSampleTime (SampleTime v)
+void template_ADC<adr,Pointer>::set (SampleTime v)
 {
    static_assert (channel >= 0 and channel <= 18);
    if      constexpr (channel == 0)  Pointer::get()->SMPR.SMP0  = v;
@@ -198,27 +125,27 @@ void template_ADC<adr,Pointer>::setSampleTime (SampleTime v)
 
 
 template <uint32_t adr, class Pointer>
-template <size_t n, uint8_t channel> // n - номер по порядку (1 - 16)
+template <size_t order, uint8_t channel> // n - номер по порядку (1 - 16)
 void template_ADC<adr,Pointer>::setRegularSequenceOrder()
 {
-   static_assert (n >= 1 and n <= 16);
+   static_assert (order >= 1 and order <= 16);
    static_assert (channel >= 0 and channel <= 18);
-   if      constexpr (n == 1)  Pointer::get()->SQR.SQ1  = channel;
-   else if constexpr (n == 2)  Pointer::get()->SQR.SQ2  = channel;
-   else if constexpr (n == 3)  Pointer::get()->SQR.SQ3  = channel;
-   else if constexpr (n == 4)  Pointer::get()->SQR.SQ4  = channel;
-   else if constexpr (n == 5)  Pointer::get()->SQR.SQ5  = channel;
-   else if constexpr (n == 6)  Pointer::get()->SQR.SQ6  = channel;
-   else if constexpr (n == 7)  Pointer::get()->SQR.SQ7  = channel;
-   else if constexpr (n == 8)  Pointer::get()->SQR.SQ8  = channel;
-   else if constexpr (n == 9)  Pointer::get()->SQR.SQ9  = channel;
-   else if constexpr (n == 10) Pointer::get()->SQR.SQ10 = channel;
-   else if constexpr (n == 11) Pointer::get()->SQR.SQ11 = channel;
-   else if constexpr (n == 12) Pointer::get()->SQR.SQ12 = channel;
-   else if constexpr (n == 13) Pointer::get()->SQR.SQ13 = channel;
-   else if constexpr (n == 14) Pointer::get()->SQR.SQ14 = channel;
-   else if constexpr (n == 15) Pointer::get()->SQR.SQ15 = channel;
-   else if constexpr (n == 16) Pointer::get()->SQR.SQ16 = channel;
+   if      constexpr (order == 1)  Pointer::get()->SQR.SQ1  = channel;
+   else if constexpr (order == 2)  Pointer::get()->SQR.SQ2  = channel;
+   else if constexpr (order == 3)  Pointer::get()->SQR.SQ3  = channel;
+   else if constexpr (order == 4)  Pointer::get()->SQR.SQ4  = channel;
+   else if constexpr (order == 5)  Pointer::get()->SQR.SQ5  = channel;
+   else if constexpr (order == 6)  Pointer::get()->SQR.SQ6  = channel;
+   else if constexpr (order == 7)  Pointer::get()->SQR.SQ7  = channel;
+   else if constexpr (order == 8)  Pointer::get()->SQR.SQ8  = channel;
+   else if constexpr (order == 9)  Pointer::get()->SQR.SQ9  = channel;
+   else if constexpr (order == 10) Pointer::get()->SQR.SQ10 = channel;
+   else if constexpr (order == 11) Pointer::get()->SQR.SQ11 = channel;
+   else if constexpr (order == 12) Pointer::get()->SQR.SQ12 = channel;
+   else if constexpr (order == 13) Pointer::get()->SQR.SQ13 = channel;
+   else if constexpr (order == 14) Pointer::get()->SQR.SQ14 = channel;
+   else if constexpr (order == 15) Pointer::get()->SQR.SQ15 = channel;
+   else if constexpr (order == 16) Pointer::get()->SQR.SQ16 = channel;
 }
 
 
@@ -228,13 +155,6 @@ void template_ADC<adr,Pointer>::setRegularSequenceLength()
 {
    static_assert (length >= 1 and length <= 16);
    Pointer::get()->SQR.L = length - 1;
-}
-
-
-template <uint32_t adr, class Pointer>
-void template_ADC<adr,Pointer>::setScanMode()
-{
-   Pointer::get()->CR1.SCAN = true;
 }
 
 
@@ -261,122 +181,93 @@ constexpr typename template_ADC<adr,Pointer>::Channels template_ADC<adr,Pointer>
 ///////////////////////////////////////////////////////////////////////////////
 #elif defined(STM32F030x6)
 
-template <uint32_t adr>
-void ADCx<adr>::disable()
+
+template <uint32_t adr, class Pointer>
+void template_ADC<adr,Pointer>::enable()
+{
+   if (is_ready())
+      setBusy();
+   Pointer::get()->CR.ADEN = true;
+   while ( not is_ready() ) { }
+}
+
+
+template <uint32_t adr, class Pointer>
+void template_ADC<adr,Pointer>::disable()
 {
    stop();
-   while ( isStoping() ) { }
-   SET(control(), ADDIS);
-   while ( not isDisable() ) { }
+   while ( is_stoping() ) { }
+   Pointer::get()->CR.ADDIS = true;
+   while ( not is_disable() ) { }
 }
 
 
-template <uint32_t adr>
-bool ADCx<adr>::isDisable()
+template <uint32_t adr, class Pointer>
+template<uint8_t channel>
+void template_ADC<adr,Pointer>::setChannel()
 {
-   return IS_SET(control(), ADDIS);
+   static_assert (channel >= 0 and channel <= 17);
+   if      constexpr (channel == 0)  Pointer::get()->CHSELR.CHSEL0  = true;
+   else if constexpr (channel == 1)  Pointer::get()->CHSELR.CHSEL1  = true;
+   else if constexpr (channel == 2)  Pointer::get()->CHSELR.CHSEL2  = true;
+   else if constexpr (channel == 3)  Pointer::get()->CHSELR.CHSEL3  = true;
+   else if constexpr (channel == 4)  Pointer::get()->CHSELR.CHSEL4  = true;
+   else if constexpr (channel == 5)  Pointer::get()->CHSELR.CHSEL5  = true;
+   else if constexpr (channel == 6)  Pointer::get()->CHSELR.CHSEL6  = true;
+   else if constexpr (channel == 7)  Pointer::get()->CHSELR.CHSEL7  = true;
+   else if constexpr (channel == 8)  Pointer::get()->CHSELR.CHSEL8  = true;
+   else if constexpr (channel == 9)  Pointer::get()->CHSELR.CHSEL9  = true;
+   else if constexpr (channel == 10) Pointer::get()->CHSELR.CHSEL10 = true;
+   else if constexpr (channel == 11) Pointer::get()->CHSELR.CHSEL11 = true;
+   else if constexpr (channel == 12) Pointer::get()->CHSELR.CHSEL12 = true;
+   else if constexpr (channel == 13) Pointer::get()->CHSELR.CHSEL13 = true;
+   else if constexpr (channel == 14) Pointer::get()->CHSELR.CHSEL14 = true;
+   else if constexpr (channel == 15) Pointer::get()->CHSELR.CHSEL15 = true;
+   else if constexpr (channel == 16) Pointer::get()->CHSELR.CHSEL16 = true;
+   else if constexpr (channel == 17) Pointer::get()->CHSELR.CHSEL17 = true;
 }
 
 
-template <uint32_t adr>
-bool ADCx<adr>::isReady()
-{
-   return IS_SET(status(), ADRDY);
+namespace ADC_detail {
+   template<> struct DefaultStream_impl<ADC1> { using type = DMA1channel1; };
 }
 
 
-template <uint32_t adr>
-void ADCx<adr>::setBusy()
+template <uint32_t adr, class Pointer>
+template <class PIN>
+constexpr uint8_t template_ADC<adr,Pointer>::channel()
 {
-   SET(status(), ADRDY);
+   return
+      std::is_same_v<PIN,PA0> ? 0  :
+      std::is_same_v<PIN,PA1> ? 1  :
+      std::is_same_v<PIN,PA2> ? 2  :
+      std::is_same_v<PIN,PA3> ? 3  :
+      std::is_same_v<PIN,PA4> ? 4  :
+      std::is_same_v<PIN,PA5> ? 5  :
+      std::is_same_v<PIN,PA6> ? 6  :
+      std::is_same_v<PIN,PA7> ? 7  :
+      std::is_same_v<PIN,PB0> ? 8  :
+      std::is_same_v<PIN,PB1> ? 9  :
+      std::is_same_v<PIN,PC0> ? 10 :
+      std::is_same_v<PIN,PC1> ? 11 :
+      std::is_same_v<PIN,PC2> ? 12 :
+      std::is_same_v<PIN,PC3> ? 13 :
+      std::is_same_v<PIN,PC4> ? 14 :
+      std::is_same_v<PIN,PC5> ? 15 : 255;
 }
 
-
-template <uint32_t adr>
-void ADCx<adr>::stop()
+template <uint32_t adr, class Pointer>
+template <class PIN>
+constexpr bool template_ADC<adr,Pointer>::PINenabled()
 {
-   SET(control(), ADSTP);
+   return template_ADC<adr,Pointer>::channel<PIN>() != 255;
 }
 
-
-template <uint32_t adr>
-void ADCx<adr>::start()
+template <uint32_t adr, class Pointer>
+template <class DMA>
+constexpr bool template_ADC<adr,Pointer>::DMAenabled()
 {
-   SET(control(), ADSTART);
-}
-
-
-template <uint32_t adr>
-bool ADCx<adr>::isStoping()
-{
-   return IS_SET(control(), ADSTP);
-}
-
-template <uint32_t adr>
-void ADCx<adr>::setClock ( Clock val )
-{
-   uint32_t tmp = conf2().reg;
-   tmp &= ~_2BIT_TO_MASK(conf2(), CKMODE);
-   tmp |= VAL_TO_MASK(conf2(), CKMODE, val);
-   conf2().reg = tmp;
-}
-
-
-template <uint32_t adr>
-void ADCx<adr>::enable()
-{
-   if (isReady())
-      setBusy();
-   SET(control(), ADEN);
-   while ( not isReady() ) { }
-}
-
-
-template <uint32_t adr>
-void ADCx<adr>::DMAenable()
-{
-   SET(conf1(), DMAEN);
-}
-
-
-template <uint32_t adr>
-void ADCx<adr>::setCircularDMA()
-{
-   SET(conf1(), DMACFG);
-}
-
-
-template <uint32_t adr>
-void ADCx<adr>::setContinuousMode()
-{
-   SET(conf1(), CONT);
-}
-
-
-template <uint32_t adr>
-void ADCx<adr>::setResolution ( Resolution val )
-{
-   uint32_t tmp = conf1().reg;
-   tmp &= ~_2BIT_TO_MASK(conf1(), RES);
-   tmp |= VAL_TO_MASK(conf1(), RES, val);
-   conf1().reg = tmp;
-}
-
-
-template <uint32_t adr>
-void ADCx<adr>::setSampleTime ( SampleTime val )
-{
-   uint32_t tmp = sampleTime().reg;
-   tmp &= ~_3BIT_TO_MASK(sampleTime(), SMP);
-   tmp |= VAL_TO_MASK(sampleTime(), SMP, val);
-   sampleTime().reg = tmp;
-}
-
-
-template <uint32_t adr>
-void ADCx<adr>::setChannel (uint8_t val )
-{
-   channelSelect().reg |= ((uint32_t)1 << val);
+   return std::is_same_v<DMA,DMA1channel1>;
 }
 
 #endif

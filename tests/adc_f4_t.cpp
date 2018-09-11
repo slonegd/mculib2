@@ -1,17 +1,17 @@
 #define STM32F405xx
 
 #include "RCC.h"
-#include "ADC.h"
+#include "adc_periph.h"
 #include <iostream>
 #include <type_traits>
 
 struct MockPointer
 {
-   static ADC_TypeDef * p;
-   static auto get() { return reinterpret_cast<ADC_t<0>*>(p); }
+   static ADC1::CMSIS_type* p;
+   static auto get() { return reinterpret_cast<ADC1::periph_type*>(p); }
 };
-ADC_TypeDef mock;
-ADC_TypeDef* MockPointer::p = &mock;
+ADC1::CMSIS_type mock;
+ADC1::CMSIS_type* MockPointer::p = &mock;
 using TADC = template_ADC<0, MockPointer>;
 
 // тесты возвращают true, если прошли
@@ -74,13 +74,13 @@ bool setResolution()
 {
    bool good {true};
    mock.CR1 = 0;
-   TADC::setResolution (TADC::Resolution::_6bits);
+   TADC::set (TADC::Resolution::_6bits);
    good &= mock.CR1 == (ADC_CR1_RES_0 | ADC_CR1_RES_1);
-   TADC::setResolution (TADC::Resolution::_12bits);
+   TADC::set (TADC::Resolution::_12bits);
    good &= mock.CR1 == 0;
-   TADC::setResolution (TADC::Resolution::_8bits);
+   TADC::set (TADC::Resolution::_8bits);
    good &= mock.CR1 == ADC_CR1_RES_1;
-   TADC::setResolution (TADC::Resolution::_10bits);
+   TADC::set (TADC::Resolution::_10bits);
    good &= mock.CR1 == ADC_CR1_RES_0;
    return good;
 }
@@ -109,60 +109,60 @@ static_assert ( ADC3::DMAenabled<DMA2stream1>() );
 static_assert ( not ADC3::DMAenabled<DMA2stream2>() );
 static_assert ( not ADC3::DMAenabled<DMA1stream0>() );
 
-static_assert ( ADC1::ADCchannel<PA0>() == 0  );
-static_assert ( ADC1::ADCchannel<PA1>() == 1  );
-static_assert ( ADC1::ADCchannel<PA2>() == 2  );
-static_assert ( ADC1::ADCchannel<PA3>() == 3  );
-static_assert ( ADC1::ADCchannel<PA4>() == 4  );
-static_assert ( ADC1::ADCchannel<PA5>() == 5  );
-static_assert ( ADC1::ADCchannel<PA6>() == 6  );
-static_assert ( ADC1::ADCchannel<PA7>() == 7  );
-static_assert ( ADC1::ADCchannel<PB0>() == 8  );
-static_assert ( ADC1::ADCchannel<PB1>() == 9  );
-static_assert ( ADC1::ADCchannel<PC0>() == 10 );
-static_assert ( ADC1::ADCchannel<PC1>() == 11 );
-static_assert ( ADC1::ADCchannel<PC2>() == 12 );
-static_assert ( ADC1::ADCchannel<PC3>() == 13 );
-static_assert ( ADC1::ADCchannel<PC4>() == 14 );
-static_assert ( ADC1::ADCchannel<PC5>() == 15 );
+static_assert ( ADC1::channel<PA0>() == 0  );
+static_assert ( ADC1::channel<PA1>() == 1  );
+static_assert ( ADC1::channel<PA2>() == 2  );
+static_assert ( ADC1::channel<PA3>() == 3  );
+static_assert ( ADC1::channel<PA4>() == 4  );
+static_assert ( ADC1::channel<PA5>() == 5  );
+static_assert ( ADC1::channel<PA6>() == 6  );
+static_assert ( ADC1::channel<PA7>() == 7  );
+static_assert ( ADC1::channel<PB0>() == 8  );
+static_assert ( ADC1::channel<PB1>() == 9  );
+static_assert ( ADC1::channel<PC0>() == 10 );
+static_assert ( ADC1::channel<PC1>() == 11 );
+static_assert ( ADC1::channel<PC2>() == 12 );
+static_assert ( ADC1::channel<PC3>() == 13 );
+static_assert ( ADC1::channel<PC4>() == 14 );
+static_assert ( ADC1::channel<PC5>() == 15 );
 
-static_assert ( ADC2::ADCchannel<PA0>() == 0  );
-static_assert ( ADC2::ADCchannel<PA1>() == 1  );
-static_assert ( ADC2::ADCchannel<PA2>() == 2  );
-static_assert ( ADC2::ADCchannel<PA3>() == 3  );
-static_assert ( ADC2::ADCchannel<PA4>() == 4  );
-static_assert ( ADC2::ADCchannel<PA5>() == 5  );
-static_assert ( ADC2::ADCchannel<PA6>() == 6  );
-static_assert ( ADC2::ADCchannel<PA7>() == 7  );
-static_assert ( ADC2::ADCchannel<PB0>() == 8  );
-static_assert ( ADC2::ADCchannel<PB1>() == 9  );
-static_assert ( ADC2::ADCchannel<PC0>() == 10 );
-static_assert ( ADC2::ADCchannel<PC1>() == 11 );
-static_assert ( ADC2::ADCchannel<PC2>() == 12 );
-static_assert ( ADC2::ADCchannel<PC3>() == 13 );
-static_assert ( ADC2::ADCchannel<PC4>() == 14 );
-static_assert ( ADC2::ADCchannel<PC5>() == 15 );
+static_assert ( ADC2::channel<PA0>() == 0  );
+static_assert ( ADC2::channel<PA1>() == 1  );
+static_assert ( ADC2::channel<PA2>() == 2  );
+static_assert ( ADC2::channel<PA3>() == 3  );
+static_assert ( ADC2::channel<PA4>() == 4  );
+static_assert ( ADC2::channel<PA5>() == 5  );
+static_assert ( ADC2::channel<PA6>() == 6  );
+static_assert ( ADC2::channel<PA7>() == 7  );
+static_assert ( ADC2::channel<PB0>() == 8  );
+static_assert ( ADC2::channel<PB1>() == 9  );
+static_assert ( ADC2::channel<PC0>() == 10 );
+static_assert ( ADC2::channel<PC1>() == 11 );
+static_assert ( ADC2::channel<PC2>() == 12 );
+static_assert ( ADC2::channel<PC3>() == 13 );
+static_assert ( ADC2::channel<PC4>() == 14 );
+static_assert ( ADC2::channel<PC5>() == 15 );
 
-static_assert ( ADC3::ADCchannel<PA0>() == 0  );
-static_assert ( ADC3::ADCchannel<PA1>() == 1  );
-static_assert ( ADC3::ADCchannel<PA2>() == 2  );
-static_assert ( ADC3::ADCchannel<PA3>() == 3  );
-static_assert ( ADC3::ADCchannel<PF6>() == 4  );
-static_assert ( ADC3::ADCchannel<PF7>() == 5  );
-static_assert ( ADC3::ADCchannel<PF8>() == 6  );
-static_assert ( ADC3::ADCchannel<PF9>() == 7  );
-static_assert ( ADC3::ADCchannel<PF10>()== 8  );
-static_assert ( ADC3::ADCchannel<PF3>() == 9  );
-static_assert ( ADC3::ADCchannel<PC0>() == 10 );
-static_assert ( ADC3::ADCchannel<PC1>() == 11 );
-static_assert ( ADC3::ADCchannel<PC2>() == 12 );
-static_assert ( ADC3::ADCchannel<PC3>() == 13 );
-static_assert ( ADC3::ADCchannel<PF4>() == 14 );
-static_assert ( ADC3::ADCchannel<PF5>() == 15 );
+static_assert ( ADC3::channel<PA0>() == 0  );
+static_assert ( ADC3::channel<PA1>() == 1  );
+static_assert ( ADC3::channel<PA2>() == 2  );
+static_assert ( ADC3::channel<PA3>() == 3  );
+static_assert ( ADC3::channel<PF6>() == 4  );
+static_assert ( ADC3::channel<PF7>() == 5  );
+static_assert ( ADC3::channel<PF8>() == 6  );
+static_assert ( ADC3::channel<PF9>() == 7  );
+static_assert ( ADC3::channel<PF10>()== 8  );
+static_assert ( ADC3::channel<PF3>() == 9  );
+static_assert ( ADC3::channel<PC0>() == 10 );
+static_assert ( ADC3::channel<PC1>() == 11 );
+static_assert ( ADC3::channel<PC2>() == 12 );
+static_assert ( ADC3::channel<PC3>() == 13 );
+static_assert ( ADC3::channel<PF4>() == 14 );
+static_assert ( ADC3::channel<PF5>() == 15 );
 
-static_assert ( ADC1::ADCchannel<PC6>() == 255 );
-static_assert ( ADC2::ADCchannel<PA8>() == 255 );
-static_assert ( ADC3::ADCchannel<PA4>() == 255 );
+static_assert ( ADC1::channel<PC6>() == 255 );
+static_assert ( ADC2::channel<PA8>() == 255 );
+static_assert ( ADC3::channel<PA4>() == 255 );
 
 static_assert ( ADC1::PINenabled<PA0>() );
 static_assert ( not ADC1::PINenabled<PC6>() );
@@ -179,52 +179,52 @@ bool setSampleTime()
    mock.SMPR1 = 0;
    mock.SMPR2 = 0;
 
-   TADC::setSampleTime<0>(TADC::SampleTime::_15CLK);
+   TADC::set<0>(TADC::SampleTime::_15CLK);
    good &=     (mock.SMPR2 & ADC_SMPR2_SMP0_0)
        and not (mock.SMPR2 & ADC_SMPR2_SMP0_1)
        and not (mock.SMPR2 & ADC_SMPR2_SMP0_2);
 
-   TADC::setSampleTime<1>(TADC::SampleTime::_28CLK);
+   TADC::set<1>(TADC::SampleTime::_28CLK);
    good &= not (mock.SMPR2 & ADC_SMPR2_SMP1_0)
        and     (mock.SMPR2 & ADC_SMPR2_SMP1_1)
        and not (mock.SMPR2 & ADC_SMPR2_SMP1_2);
 
-   TADC::setSampleTime<1>(TADC::SampleTime::_84CLK);
+   TADC::set<1>(TADC::SampleTime::_84CLK);
    good &= not (mock.SMPR2 & ADC_SMPR2_SMP1_0)
        and not (mock.SMPR2 & ADC_SMPR2_SMP1_1)
        and     (mock.SMPR2 & ADC_SMPR2_SMP1_2);
 
-   TADC::setSampleTime<1>(TADC::SampleTime::_3CLK);
+   TADC::set<1>(TADC::SampleTime::_3CLK);
    good &= not (mock.SMPR2 & ADC_SMPR2_SMP1_0)
        and not (mock.SMPR2 & ADC_SMPR2_SMP1_1)
        and not (mock.SMPR2 & ADC_SMPR2_SMP1_2);
 
-   TADC::setSampleTime<2>(TADC::SampleTime::_56CLK);
+   TADC::set<2>(TADC::SampleTime::_56CLK);
    good &=     (mock.SMPR2 & ADC_SMPR2_SMP2_0)
        and     (mock.SMPR2 & ADC_SMPR2_SMP2_1)
        and not (mock.SMPR2 & ADC_SMPR2_SMP2_2);
 
-   TADC::setSampleTime<10>(TADC::SampleTime::_112CLK);
+   TADC::set<10>(TADC::SampleTime::_112CLK);
    good &=     (mock.SMPR1 & ADC_SMPR1_SMP10_0)
        and not (mock.SMPR1 & ADC_SMPR1_SMP10_1)
        and     (mock.SMPR1 & ADC_SMPR1_SMP10_2);
 
-   TADC::setSampleTime<11>(TADC::SampleTime::_144CLK);
+   TADC::set<11>(TADC::SampleTime::_144CLK);
    good &= not (mock.SMPR1 & ADC_SMPR1_SMP11_0)
        and     (mock.SMPR1 & ADC_SMPR1_SMP11_1)
        and     (mock.SMPR1 & ADC_SMPR1_SMP11_2);
 
-   TADC::setSampleTime<12>(TADC::SampleTime::_480CLK);
+   TADC::set<12>(TADC::SampleTime::_480CLK);
    good &=     (mock.SMPR1 & ADC_SMPR1_SMP12_0)
        and     (mock.SMPR1 & ADC_SMPR1_SMP12_1)
        and     (mock.SMPR1 & ADC_SMPR1_SMP12_2);
 
-   TADC::setSampleTime<18>(TADC::SampleTime::Default);
+   TADC::set<18>(TADC::SampleTime::Default);
    good &=     (mock.SMPR1 & ADC_SMPR1_SMP12_0)
        and     (mock.SMPR1 & ADC_SMPR1_SMP12_1)
        and     (mock.SMPR1 & ADC_SMPR1_SMP12_2);
 
-   // TADC::setSampleTime<19>(TADC::SampleTime::Default); // ошибка компиляции
+   // TADC::set<19>(TADC::SampleTime::Default); // ошибка компиляции
 
    return good;
 }

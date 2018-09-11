@@ -42,26 +42,29 @@ struct CR_bits {
 
 struct CFGR1_bits {
    enum Resolution { _12bits = 0b00, _10bits, _8bits, _6bits }; 
-   enum Trigger { _0 = 0b000, _1, _2, _3, _4, _5, _6, _7 };
-   enum TriggerEn { Disable = 0b00, RisingEdge, FallingEdge, BothEdge };
-   enum DMAmode { OneShot = 0b0, Circular };
+   enum Trigger    { _0 = 0b000, _1, _2, _3, _4, _5, _6, _7 };
+   enum TriggerEn  { Disable = 0b00, RisingEdge, FallingEdge, BothEdge };
+   enum DMAmode    { OneShot = 0b0, Circular };
+   enum Align      { right = 0b0, left };
    bool       DMAEN   :1; // Bit 0 DMAEN: Direct memory access enable
    DMAmode    DMACFG  :1; // Bit 1 DMACFG: Direct memory access configuration
    uint32_t   SCANDIR :1; // Bit 2 SCANDIR: Scan sequence direction
    Resolution RES     :2; // Bit 4:3 RES[1:0]: Data resolution
+   Align      ALIGN   :1; // Bit 5 ALIGN: Data alignment  
    Trigger    EXTSEL  :3; // Bits 8:6 EXTSEL[2:0]: External trigger selection
+   uint32_t   res1    :1; // Bit 9 Reserved, must be kept at reset value.
    TriggerEn  EXTEN   :2; // Bits 11:10 EXTEN[1:0]: External trigger enable and polarity selection
    uint32_t   OVRMOD  :1; // Bit 12 OVRMOD: Overrun management mode
    bool       CONT    :1; // Bit 13 CONT: Single / continuous conversion mode
    bool       WAIT    :1; // Bit 14 WAIT: Wait conversion mode
    bool       AUTOFF  :1; // Bit 15 AUTOFF: Auto-off mode
    bool       DISCEN  :1; // Bit 16 DISCEN: Discontinuous mode
-   uint32_t   res1    :5; // Bits 21:17 Reserved, must be kept at reset value.
+   uint32_t   res2    :5; // Bits 21:17 Reserved, must be kept at reset value.
    uint32_t   AWDSGL  :1; // Bit 22 AWDSGL: Enable the watchdog on a single channel or on all channels
    bool       AWDEN   :1; // Bit 23 AWDEN: Analog watchdog enable
-   uint32_t   res2    :2; // Bits 25:24 Reserved, must be kept at reset value.
+   uint32_t   res3    :2; // Bits 25:24 Reserved, must be kept at reset value.
    uint32_t   AWDCH   :5; // Bits 30:26 AWDCH[4:0]: Analog watchdog channel selection
-   uint32_t   res3    :1; // Bit 31 Reserved, must be kept at reset value.
+   uint32_t   res4    :1; // Bit 31 Reserved, must be kept at reset value.
 };
 
 
@@ -112,3 +115,70 @@ struct CHSELR_bits {
 };
 
 } // namespace ADC_detail {
+
+
+
+template<uint32_t adr>
+struct ADC_t {
+  __IO ADC_detail::SR_bits     ISR;     // interrupt and status register,        offset: 0x00
+  __IO ADC_detail::IER_bits    IER;     // interrupt enable register,            offset: 0x04
+  __IO ADC_detail::CR_bits     CR;      // control register,                     offset: 0x08
+  __IO ADC_detail::CFGR1_bits  CFGR1;   // configuration register 1,             offset: 0x0C
+  __IO ADC_detail::CFGR2_bits  CFGR2;   // configuration register 2,             offset: 0x10
+  __IO ADC_detail::SMPR_bits   SMPR;    // sampling time register,               offset: 0x14
+       uint32_t                RES1[2]; // Reserved,                                     0x18
+  __IO ADC_detail::TR_bits     TR;      // analog watchdog 1 threshold register, offset: 0x20
+       uint32_t                RES2;    // Reserved,                                     0x24
+  __IO ADC_detail::CHSELR_bits CHSELR;  // group regular sequencer register,     offset: 0x28
+       uint32_t                RES[5];  // Reserved,                                     0x2C
+  __IO uint32_t                DR;      // group regular data register,          offset: 0x40
+   ADC_t() = delete; 
+   static constexpr uint32_t Base = adr; 
+};
+
+
+template <uint32_t adr, class Pointer = Pointer<ADC_t<adr>>>
+class template_ADC
+{
+public:
+   using periph_type = ADC_t<adr>;
+   using CMSIS_type  = std::remove_pointer_t<decltype(ADC1)>;
+   using this_type   = template_ADC<adr,Pointer>;
+   using Channels    = DMA_ral::Channels;
+   using SampleTime  = ADC_detail::SMPR_bits::SampleTime;
+   using Clock       = ADC_detail::CFGR2_bits::Clock;
+   using Resolution  = ADC_detail::CFGR1_bits::Resolution;
+   using DMAmode     = ADC_detail::CFGR1_bits::DMAmode;
+   using DefaultStream = typename ADC_detail::DefaultStream_t<template_ADC>;
+
+   static void clockEnable()       { RCC::template clockEnable<template_ADC>(); }
+   static void enable();
+   static void disable();
+   static bool is_disable()        { return Pointer::get()->CR.ADDIS; }
+   static void start()             { Pointer::get()->CR.ADSTART  = true; }
+   static void DMAenable()         { Pointer::get()->CFGR1.DMAEN = true; }
+   static void setCircularDMA()    { Pointer::get()->CFGR1.DMACFG = DMAmode::Circular; }
+   static void setContinuousMode() { Pointer::get()->CFGR1.CONT = true; }
+   static void set (Clock v)       { Pointer::get()->CFGR2.CKMODE = v; }
+   static void set (Resolution v)  { Pointer::get()->CFGR1.RES = v; }
+   static void set (SampleTime v)  { Pointer::get()->SMPR.SMP = v; }
+   static bool is_ready()          { return Pointer::get()->ISR.ADRDY; }
+   static void setBusy()           { Pointer::get()->ISR.ADRDY = true; }
+   static void stop()              { Pointer::get()->CR.ADSTP  = true; }
+   static bool is_stoping()        { return Pointer::get()->CR.ADSTP; }
+   static size_t getDataAdr()      { return reinterpret_cast<size_t>(&(Pointer::get()->DR)); }
+   template<uint8_t> static void setChannel();
+
+   template <class PIN> static constexpr uint8_t channel();
+   template <class PIN> static constexpr bool PINenabled();
+   template <class DMA> static constexpr bool DMAenabled();
+
+};
+
+
+#define CMSIS_ADC1 ADC1
+#undef ADC1
+using ADC1 = template_ADC<ADC1_BASE>;
+
+#include "adc_periph_src.h"
+

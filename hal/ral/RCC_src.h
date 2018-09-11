@@ -3,7 +3,7 @@
 #include <type_traits>
 #include "DMA.h"
 #include "GPIO.h"
-#include "ADC.h"
+#include "adc_periph.h"
 #include "USART.h"
 #include "SPI.h"
 

@@ -129,14 +129,14 @@ init(Clock clock, Resolution resolution, SampleTime sampleTime)
    (PIN::template configure <PinConf_t::AnalogInput> () , ...);
 
    ADC_::clockEnable();
-   ADC_::setClock (clock);
-   ADC_::setResolution (resolution);
+   ADC_::set (clock);
+   ADC_::set (resolution);
    #if defined(STM32F0)
-       ADC_::setSampleTime (sampleTime);
-      (ADC_::setChannel (ADC_ral::ADCchannel<ADC_,PIN>()) , ...);
+       ADC_::set (sampleTime);
+      (ADC_::template setChannel <ADC_::template channel<PIN>()>() , ...);
    #elif defined(STM32F4)
-      (ADC_::template setSampleTime<ADC_::template ADCchannel<PIN>()> (sampleTime) , ...);
-      (ADC_::template setRegularSequenceOrder<position_v<PIN,PIN...>,ADC_::template ADCchannel<PIN>()>(), ...);
+      (ADC_::template set<ADC_::template channel<PIN>()> (sampleTime) , ...);
+      (ADC_::template setRegularSequenceOrder<position_v<PIN,PIN...>,ADC_::template channel<PIN>()>(), ...);
        ADC_::template setRegularSequenceLength<sizeof...(PIN)>();
        ADC_::setScanMode();
    #endif

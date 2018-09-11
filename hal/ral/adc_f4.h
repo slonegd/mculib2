@@ -129,4 +129,81 @@ struct SQR_bits {
 
 } // namespace ADC_detail {
 
+
+
+template<uint32_t adr>
+struct ADC_t {
+   __IO ADC_detail::SR_bits   SR;    // status register,                         offset: 0x00
+   __IO ADC_detail::CR1_bits  CR1;   // control register 1,                      offset: 0x04
+   __IO ADC_detail::CR2_bits  CR2;   // control register 2,                      offset: 0x08
+   __IO ADC_detail::SMPR_bits SMPR;  // sample time register 1, 2                offset: 0x0C
+   __IO uint32_t              JOFR1; // injected channel data offset register 1, offset: 0x14
+   __IO uint32_t              JOFR2; // injected channel data offset register 2, offset: 0x18
+   __IO uint32_t              JOFR3; // injected channel data offset register 3, offset: 0x1C
+   __IO uint32_t              JOFR4; // injected channel data offset register 4, offset: 0x20
+   __IO uint32_t              HTR;   // watchdog higher threshold register,      offset: 0x24
+   __IO uint32_t              LTR;   // watchdog lower threshold register,       offset: 0x28
+   __IO ADC_detail::SQR_bits  SQR;   // regular sequence register 1, 2, 3        offset: 0x2C
+   __IO uint32_t              JSQR;  // injected sequence register,              offset: 0x38
+   __IO uint32_t              JDR1;  // injected data register 1,                offset: 0x3C
+   __IO uint32_t              JDR2;  // injected data register 2,                offset: 0x40
+   __IO uint32_t              JDR3;  // injected data register 3,                offset: 0x44
+   __IO uint32_t              JDR4;  // injected data register 4,                offset: 0x48
+   __IO uint32_t              DR;    // regular data register,                   offset: 0x4C
+   ADC_t() = delete; 
+   static constexpr uint32_t Base = adr;
+};
+
+
+
+
+template <uint32_t adr, class Pointer = Pointer<ADC_t<adr>>>
+class template_ADC
+{
+public:
+   using periph_type = ADC_t<adr>;
+   using CMSIS_type  = std::remove_pointer_t<decltype(ADC1)>;
+   using this_type   = template_ADC<adr,Pointer>;
+   using Channels    = DMA_ral::Channels;
+   using SampleTime  = ADC_detail::SMPR_bits::SampleTime;
+   using Clock       = ADC_ral::Clock;
+   using Resolution  = ADC_detail::CR1_bits::Resolution;
+   using DefaultStream = typename ADC_detail::DefaultStream_t<template_ADC>;
+
+   static void   clockEnable()       { RCC::template clockEnable<template_ADC>();              }
+   static void   enable()            { Pointer::get()->CR2.ADON    = true;                     }
+   static void   disable()           { Pointer::get()->CR2.ADON    = false;                    }
+   static bool   is_disable()        { return not Pointer::get()->CR2.ADON;                    }
+   static void   start()             { Pointer::get()->CR2.SWSTART = true;                     }
+   static void   DMAenable()         { Pointer::get()->CR2.DMA     = true;                     }
+   static void   setCircularDMA()    { Pointer::get()->CR2.DDS     = true;                     }
+   static void   setContinuousMode() { Pointer::get()->CR2.CONT    = true;                     }
+   static void   set (Clock v)       { ADCC::setClock (v);                                     }
+   static void   set (Resolution v)  { Pointer::get()->CR1.RES     = v;                        }
+   static void   setScanMode()       { Pointer::get()->CR1.SCAN    = true;                     }
+   static size_t getDataAdr()        { return reinterpret_cast<size_t>(&(Pointer::get()->DR)); }
    
+   template <size_t>          static void setRegularSequenceLength();
+   template <uint8_t channel> static void set (SampleTime);
+   template <size_t order, uint8_t channel> // order (1 - 16)
+   static void setRegularSequenceOrder();
+
+   static constexpr Channels DMAchannel();
+   template <class PIN> static constexpr uint8_t channel();
+   template <class PIN> static constexpr bool PINenabled();
+   template <class DMA> static constexpr bool DMAenabled();
+};
+
+
+#define CMSIS_ADC1 ADC1
+#undef ADC1
+using ADC1 = template_ADC<ADC1_BASE>;
+#define CMSIS_ADC2 ADC2
+#undef ADC2
+using ADC2 = template_ADC<ADC2_BASE>;
+#define CMSIS_ADC3 ADC3
+#undef ADC3
+using ADC3 = template_ADC<ADC3_BASE>;
+
+
+#include "adc_periph_src.h"

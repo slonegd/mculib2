@@ -8,7 +8,7 @@
 
 #include <algorithm>
 #include <iterator>
-#include "ADC.h"
+#include "adc_periph.h"
 #include "DMA.h"
 #include "interrupt.h"
 #include "pins_variadic.h"
@@ -46,7 +46,7 @@ public:
       uint32_t div = 1, // div - частное для вычисления среднего
       Clock clock = Clock::PCLKdiv4,
       Resolution resolution = Resolution::_12bits,
-      SampleTime sampleTime = SampleTime::_480CLK
+      SampleTime sampleTime = SampleTime::Default
    );
    ADCaverageFull& withMultipler    (uint32_t);
    ADCaverageFull& withDivider      (uint32_t);
