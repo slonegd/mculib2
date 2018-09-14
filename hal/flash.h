@@ -16,12 +16,12 @@
 
 #include <stdbool.h>
 #include <string.h>
-#include "FLASH.h"
+#include "flash_periph.h"
 #include "timers.h"
 
 
 // для STM32F0 sector на самом деле page из refmanual
-template <class DATA, uint8_t sector>
+template <class DATA, FLASH::Sector sector>
 class Flash : public DATA
 {
 public:
@@ -30,15 +30,11 @@ public:
    Flash (DATA d)
    {
       static_assert (
-         SectorAddr != 0,
-         "Недопустимый сектор памяти"
-      );
-      static_assert (
          sizeof(DATA) < 255,
          "Размер сохраняемой структуры не может превышать 255 байт"
       );
-      FLASH::endOfProgInterruptEn(); // уже не помню зачем это
-      if ( !readFromFlash() ) {
+      // FLASH::endOfProgInterruptEn(); // уже не помню зачем это
+      if ( not readFromFlash() ) {
          memcpy (this, &d, sizeof(DATA));
       }
    }
@@ -48,26 +44,12 @@ public:
 
 private:
    static constexpr uint8_t QtyBytes = sizeof(DATA);
-#if defined(STM32F405xx)
-   static constexpr uint32_t SectorAddr =
-      sector == 1  ? 0x08004000 :
-      sector == 2  ? 0x08008000 :
-      sector == 3  ? 0x0800C000 :
-      sector == 4  ? 0x08010000 :
-      sector == 5  ? 0x08020000 :
-      sector == 6  ? 0x08040000 :
-      sector == 7  ? 0x08060000 :
-      sector == 8  ? 0x08080000 :
-      sector == 9  ? 0x080A0000 :
-      sector == 10 ? 0x080C0000 :
-      sector == 11 ? 0x080E0000 : 0;
+#if defined(STM32F4)
    static constexpr int32_t SectorSize =
       sector > 0 && sector < 4  ? 16*1024 :
       sector == 4               ? 64*1024 :
       sector > 4 && sector < 12 ? 128*1024 : 0;
-#elif defined(STM32F030x6)
-   static constexpr uint32_t SectorAddr =
-      sector > 0 && sector < 31 ? 0x08000000 + 1024*sector : 0;
+#elif defined(STM32F0)
    static constexpr int32_t SectorSize =
       sector > 0 && sector < 31 ? 1024 : 0;
 #endif
@@ -84,7 +66,7 @@ private:
       Pair     data[SectorSize/2];
       uint16_t word[SectorSize/2];
    };
-   volatile Flash_t& flash = *(Flash_t*)SectorAddr ;
+   volatile Flash_t& flash = *(Flash_t*)FLASH::address<sector>() ;
 
    // возвращает true, если данные прочитаны
    // false, если нет или данные не полные
@@ -111,7 +93,7 @@ private:
 
 
 
-template <class Data, uint8_t sector>
+template <class Data, FLASH::Sector sector>
 bool Flash<Data,sector>::readFromFlash ()
 {
    // обнуляем буфер перед заполнением
@@ -161,7 +143,7 @@ bool Flash<Data,sector>::readFromFlash ()
 
 
 
-template <class Data, uint8_t sector>
+template <class Data, FLASH::Sector sector>
 void Flash<Data,sector>::tick()
 {
    // реализация автоматом
@@ -193,11 +175,11 @@ void Flash<Data,sector>::tick()
       break;
 
    case StartWrite:
-      if ( !FLASH::isBusy() and FLASH::isLock() ) {
+      if ( !FLASH::is_busy() and FLASH::is_lock() ) {
          FLASH::unlock();
          FLASH::setProgMode();
-         #if defined(STM32F405xx)
-            FLASH::setProgSize (FLASH::ProgSize::x16);
+         #if defined(STM32F4)
+            FLASH::set<FLASH::ProgSize::x16>();
          #endif
          dataWrite = original[byteN];
          flash.word[flashOffset] = (uint16_t)dataWrite << 8 | byteN;
@@ -206,7 +188,7 @@ void Flash<Data,sector>::tick()
       break;
 
    case CheckWrite:
-      if ( FLASH::isEndOfProg() ) {
+      if ( FLASH::is_endOfProg() ) {
          FLASH::clearEndOfProgFlag();
          FLASH::lock();
          copy[byteN] = dataWrite;
@@ -219,19 +201,15 @@ void Flash<Data,sector>::tick()
       break;
 
    case Errase:
-      if ( !FLASH::isBusy() and FLASH::isLock() ) {
+      if ( not FLASH::is_busy() and FLASH::is_lock() ) {
          FLASH::unlock();
-         #if defined(STM32F405xx)
-            FLASH::template startEraseSector<sector>();
-         #elif defined(STM32F030x6)
-            FLASH::template startEraseSector<SectorAddr>();
-         #endif
+         FLASH::template startErase<sector>();
          state = CheckErase;
       }
       break;
 
    case CheckErase:
-      if ( FLASH::isEndOfProg() ) {
+      if ( FLASH::is_endOfProg() ) {
          FLASH::clearEndOfProgFlag();
          FLASH::lock();
          // проверка, что стёрли

@@ -38,8 +38,7 @@ struct FlashData {
    uint16_t d1;
    uint16_t d2;
 };
-const uint8_t flashSector = 2;
-auto flash = Flash<FlashData, flashSector> ( {
+auto flash = Flash<FlashData, FLASH::Sector::_2> ( {
    .d1 = 1,
    .d2 = 3
 } );
@@ -109,7 +108,7 @@ ADCaverage<ADC1,PA0> adc;
 // эта функция вызываеться первой в startup файле
 extern "C" void CLKinit (void)
 {
-   FLASH::setLatency (FLASH::Latency::_5);
+   FLASH::set (FLASH::Latency::_5);
    RCC::HSEon();
    RCC::waitHSEready();
    RCC::setAHBprescaler (RCC_ral::AHBprescaler::AHBnotdiv);

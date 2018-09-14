@@ -29,8 +29,7 @@ struct FlashData {
    uint16_t d1;
    uint16_t d2;
 };
-const uint8_t flashSector = 10;
-auto flash = Flash<FlashData, flashSector> ( {
+auto flash = Flash<FlashData, FLASH::Sector::_10> ( {
    .d1 = 1,
    .d2 = 3
 } );
@@ -108,7 +107,7 @@ ADCaverageSized<bufferSize, ADC1, PA0> current;
 extern "C" void CLKinit (void)
 {
    // FLASH->ACR |= FLASH_ACR_PRFTBE;
-   FLASH::setLatency (FLASH::Latency::_1);
+   FLASH::set (FLASH::Latency::_1);
 
    RCC::setAHBprescaler (RCC_ral::AHBprescaler::AHBnotdiv);
    RCC::setAPBprecsaler (RCC_ral::APBprescaler::APBnotdiv);

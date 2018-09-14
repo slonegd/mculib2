@@ -23,7 +23,7 @@ flash_hal переделать так, чтобы можно было сохра
    [done] adc
    dma
    dma_stream
-   flash
+   [done] flash
    gpio
    rcc
    spi

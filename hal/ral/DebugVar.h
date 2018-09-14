@@ -1,7 +1,6 @@
 #pragma once
 
    #include "RCC.h"
-   #include "FLASH.h"
    #include "GPIO.h"
    #include "DMA.h"
    #include "TIM.h"
@@ -21,7 +20,6 @@ __IO auto GPIOB_d  = create<PB>();
 __IO auto GPIOC_d  = create<PC>();
 __IO auto GPIOD_d  = create<PD>();
 __IO auto GPIOF_d  = create<PF>();
-__IO auto FLASH_d  = FLASH ::create();
 __IO auto USART1_d = create<USART1>();
 MAKE_VAR(DMA1);
 MAKE_VAR(TIM1);
@@ -66,7 +64,6 @@ MAKE_VAR(TIM3);
 inline void makeDebugVar (void)
 {
     RCC_d->doSome();
-    FLASH_d->doSome();
     USART1_d->doSome();
     GPIOA_d->doSome();
     GPIOB_d->doSome();

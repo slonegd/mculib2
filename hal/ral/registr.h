@@ -15,9 +15,21 @@
 #include <type_traits>
 #include <cstddef>
 
+#if defined(TEST)
+#include <thread>
+#endif
+
 template<class Periph> struct Pointer {
    static auto get() { return reinterpret_cast<Periph*>(Periph::Base); }
 };
+
+#if defined(TEST)
+    #define SLEEP(ms) std::this_thread::sleep_for(std::chrono::milliseconds(ms))
+#else
+    #define SLEEP(ms)
+#endif
+
+#define IF_TEST_WAIT_MS(ms) SLEEP(ms) 
 
 template<class Bits>
 struct BitsRegistr {

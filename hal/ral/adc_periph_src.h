@@ -11,7 +11,7 @@
 //       00       00   00
 //       00       0000000
 ///////////////////////////////////////////////////////////////////////////////
-#if defined(STM32F405xx) || defined(STM32F030x6)
+#if defined(STM32F4) or defined(STM32F0)
 
 #endif
 
@@ -25,7 +25,7 @@
 //       00
 ///////////////////////////////////////////////////////////////////////////////
 
-#if defined(STM32F405xx)
+#if defined(STM32F4)
 
 
 namespace ADC_detail {
@@ -179,7 +179,7 @@ constexpr typename template_ADC<adr,Pointer>::Channels template_ADC<adr,Pointer>
 //  00   00
 //  0000000
 ///////////////////////////////////////////////////////////////////////////////
-#elif defined(STM32F030x6)
+#elif defined(STM32F0)
 
 
 template <uint32_t adr, class Pointer>
