@@ -170,6 +170,11 @@ static_assert (TFLASH::address<TFLASH::Sector::_29>() == 0x08007400);
 static_assert (TFLASH::address<TFLASH::Sector::_30>() == 0x08007800);
 static_assert (TFLASH::address<TFLASH::Sector::_31>() == 0x08007C00);
 
+static_assert (TFLASH::size<TFLASH::Sector::_0>()  == 1024);
+static_assert (TFLASH::size<TFLASH::Sector::_1>()  == 1024);
+// ...
+static_assert (TFLASH::size<TFLASH::Sector::_30>() == 1024);
+static_assert (TFLASH::size<TFLASH::Sector::_31>() == 1024);
 
 
 

@@ -6,7 +6,7 @@
 			"name": "test",
 			"type": "cppdbg",
 			"request": "launch",
-			"program": "${workspaceFolder}/tests/build/flash_f0",
+			"program": "${workspaceFolder}/tests/build/flash",
 			"args": [],
 			"stopAtEntry": false,
 			"cwd": "${workspaceFolder}",

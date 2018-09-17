@@ -41,6 +41,13 @@ constexpr uint32_t template_FLASH<Pointer>::address()
    return 0x08000000 + 1024 * s;
 }
 
+template<class Pointer>
+template <typename template_FLASH<Pointer>::Sector>
+constexpr int32_t template_FLASH<Pointer>::size()
+{
+   return 1024;
+}
+
 
 
 
@@ -95,6 +102,16 @@ constexpr uint32_t template_FLASH<Pointer>::address()
       s == Sector::_9  ? 0x080A0000 :
       s == Sector::_10 ? 0x080C0000 :
                          0x080E0000; // s == Sector::_11
+}
+
+template<class Pointer>
+template <typename template_FLASH<Pointer>::Sector s>
+constexpr int32_t template_FLASH<Pointer>::size()
+{
+   return 
+      s >= 0 and s < 4  ?  16*1024 :
+      s == 4            ?  64*1024 :
+      s > 4 and s <= 11 ? 128*1024 : 0;
 }
 
 #endif

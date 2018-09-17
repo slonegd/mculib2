@@ -21,13 +21,13 @@
 
 
 // для STM32F0 sector на самом деле page из refmanual
-template <class DATA, FLASH::Sector sector>
-class Flash : public DATA
+template <class DATA, class FLASH, typename FLASH::Sector sector>
+class Flash_impl : public DATA
 {
 public:
    // конструктор принимает значения, которые необходимо записать
    // при первой прошивке (по умолчанию)
-   Flash (DATA d)
+   Flash_impl (DATA d)
    {
       static_assert (
          sizeof(DATA) < 255,
@@ -44,15 +44,6 @@ public:
 
 private:
    static constexpr uint8_t QtyBytes = sizeof(DATA);
-#if defined(STM32F4)
-   static constexpr int32_t SectorSize =
-      sector > 0 && sector < 4  ? 16*1024 :
-      sector == 4               ? 64*1024 :
-      sector > 4 && sector < 12 ? 128*1024 : 0;
-#elif defined(STM32F0)
-   static constexpr int32_t SectorSize =
-      sector > 0 && sector < 31 ? 1024 : 0;
-#endif
 
    uint8_t copy[QtyBytes];
    uint8_t* original = (uint8_t*)this;
@@ -63,10 +54,10 @@ private:
       uint8_t value;
    };
    union Flash_t {
-      Pair     data[SectorSize/2];
-      uint16_t word[SectorSize/2];
+      Pair     data[FLASH::template size<sector>()/2];
+      uint16_t word[FLASH::template size<sector>()/2];
    };
-   volatile Flash_t& flash = *(Flash_t*)FLASH::address<sector>() ;
+   volatile Flash_t& flash = *(Flash_t*)FLASH::template address<sector>() ;
 
    // возвращает true, если данные прочитаны
    // false, если нет или данные не полные
@@ -80,21 +71,24 @@ private:
    class FlashUpdater : TickSubscriber
    {
    public:
-      FlashUpdater (Flash<DATA,sector>* parent) : parent(parent)
+      FlashUpdater (Flash_impl<DATA,FLASH,sector>* parent) : parent(parent)
       {
           subscribe();
       }
    private:
-      Flash<DATA,sector>* parent;
+      Flash_impl<DATA,FLASH,sector>* parent;
       void notify() override { parent->tick(); }
    } flashUpdater {this};
    void tick();
 };
 
+template<class Data, typename FLASH::Sector sector>
+using Flash = Flash_impl<Data,FLASH,sector>;
 
 
-template <class Data, FLASH::Sector sector>
-bool Flash<Data,sector>::readFromFlash ()
+
+template <class Data, class FLASH, typename FLASH::Sector sector>
+bool Flash_impl<Data,FLASH,sector>::readFromFlash ()
 {
    // обнуляем буфер перед заполнением
    memset (copy, 0xFF, QtyBytes);
@@ -102,7 +96,7 @@ bool Flash<Data,sector>::readFromFlash ()
    // чтение данных в копию data в виде массива
    flashOffset = -1;
    bool indExist[QtyBytes] = {false};
-   for (uint32_t i = 0; i < SectorSize; i++) {
+   for (auto i {0}; i < FLASH::template size<sector>(); i++) {
       uint8_t index;
       index = flash.data[i].key;
       if ( index < QtyBytes) {
@@ -121,7 +115,7 @@ bool Flash<Data,sector>::readFromFlash ()
    }
 
    // проверка остальной части сектора флэш
-   for (uint32_t i = flashOffset; i < SectorSize; i++) {
+   for (auto i {flashOffset}; i < FLASH::template size<sector>(); i++) {
       if (flash.word[i] != 0xFFFF) {
          needErase = true;
          return false;    
@@ -143,8 +137,8 @@ bool Flash<Data,sector>::readFromFlash ()
 
 
 
-template <class Data, FLASH::Sector sector>
-void Flash<Data,sector>::tick()
+template <class Data, class FLASH, typename FLASH::Sector sector>
+void Flash_impl<Data,FLASH,sector>::tick()
 {
    // реализация автоматом
    enum State {
@@ -179,7 +173,7 @@ void Flash<Data,sector>::tick()
          FLASH::unlock();
          FLASH::setProgMode();
          #if defined(STM32F4)
-            FLASH::set<FLASH::ProgSize::x16>();
+            FLASH::template set<FLASH::ProgSize::x16>();
          #endif
          dataWrite = original[byteN];
          flash.word[flashOffset] = (uint16_t)dataWrite << 8 | byteN;
@@ -193,7 +187,7 @@ void Flash<Data,sector>::tick()
          FLASH::lock();
          copy[byteN] = dataWrite;
          flashOffset++;
-         if ( flashOffset >= SectorSize ) {
+         if ( flashOffset >= FLASH::template size<sector>() ) {
             needErase = true;
          }
          state = CheckChanges;
@@ -214,7 +208,7 @@ void Flash<Data,sector>::tick()
          FLASH::lock();
          // проверка, что стёрли
          bool tmp = true;
-         for (uint32_t i = 0; i < SectorSize / 2; i++) {
+         for (uint32_t i = 0; i < FLASH::template size<sector>() / 2; i++) {
             tmp &= (flash.word[i] == 0xFFFF);
          }
          if (tmp) {

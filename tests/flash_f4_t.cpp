@@ -198,7 +198,18 @@ static_assert (TFLASH::address<TFLASH::Sector::_9>()  == 0x080A0000);
 static_assert (TFLASH::address<TFLASH::Sector::_10>() == 0x080C0000);
 static_assert (TFLASH::address<TFLASH::Sector::_11>() == 0x080E0000);
 
-
+static_assert (TFLASH::size<TFLASH::Sector::_0>()  ==  16 * 1024);
+static_assert (TFLASH::size<TFLASH::Sector::_1>()  ==  16 * 1024);
+static_assert (TFLASH::size<TFLASH::Sector::_2>()  ==  16 * 1024);
+static_assert (TFLASH::size<TFLASH::Sector::_3>()  ==  16 * 1024);
+static_assert (TFLASH::size<TFLASH::Sector::_4>()  ==  64 * 1024);
+static_assert (TFLASH::size<TFLASH::Sector::_5>()  == 128 * 1024);
+static_assert (TFLASH::size<TFLASH::Sector::_6>()  == 128 * 1024);
+static_assert (TFLASH::size<TFLASH::Sector::_7>()  == 128 * 1024);
+static_assert (TFLASH::size<TFLASH::Sector::_8>()  == 128 * 1024);
+static_assert (TFLASH::size<TFLASH::Sector::_9>()  == 128 * 1024);
+static_assert (TFLASH::size<TFLASH::Sector::_10>() == 128 * 1024);
+static_assert (TFLASH::size<TFLASH::Sector::_11>() == 128 * 1024);
 
 
 int main()
