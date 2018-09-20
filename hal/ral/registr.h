@@ -31,6 +31,14 @@ template<class Periph> struct Pointer {
 
 #define IF_TEST_WAIT_MS(ms) SLEEP(ms) 
 
+
+
+
+
+
+
+
+// OLD
 template<class Bits>
 struct BitsRegistr {
    union {

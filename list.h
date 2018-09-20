@@ -69,9 +69,13 @@ void List<T>::remove (T* p)
       last = p->prev;
       last->next = nullptr;
       if (not last) first = nullptr;
+   } else {                         // если единственный 
+      first = nullptr;
+      last  = nullptr;
    }
    p->prev = nullptr;
    p->next = nullptr;
+
 }
 
 

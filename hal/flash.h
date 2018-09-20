@@ -16,26 +16,30 @@
 
 #include <stdbool.h>
 #include <string.h>
+#include <algorithm>
 #include "flash_periph.h"
 #include "timers.h"
 
 
 // для STM32F0 sector на самом деле page из refmanual
-template <class DATA, class FLASH, typename FLASH::Sector sector>
-class Flash_impl : public DATA
+template <class Data, class FLASH_, typename FLASH_::Sector sector>
+class Flash_impl : public Data
 {
 public:
    // конструктор принимает значения, которые необходимо записать
    // при первой прошивке (по умолчанию)
-   Flash_impl (DATA d)
+   Flash_impl (Data d)
    {
       static_assert (
-         sizeof(DATA) < 255,
+         sizeof(Data) < 255,
          "Размер сохраняемой структуры не может превышать 255 байт"
       );
-      // FLASH::endOfProgInterruptEn(); // уже не помню зачем это
+      // FLASH_::endOfProgInterruptEn(); // уже не помню зачем это
+      #if defined(STM32F4)
+         FLASH_::template set<FLASH_::ProgSize::x16>();
+      #endif
       if ( not readFromFlash() ) {
-         memcpy (this, &d, sizeof(DATA));
+         memcpy (this, &d, sizeof(Data));
       }
    }
 
@@ -43,9 +47,7 @@ public:
 
 
 private:
-   static constexpr uint8_t QtyBytes = sizeof(DATA);
-
-   uint8_t copy[QtyBytes];
+   uint8_t copy[sizeof(Data)];
    uint8_t* original = (uint8_t*)this;
    int32_t flashOffset;
    bool needErase;
@@ -54,14 +56,16 @@ private:
       uint8_t value;
    };
    union Flash_t {
-      Pair     data[FLASH::template size<sector>()/2];
-      uint16_t word[FLASH::template size<sector>()/2];
+      Pair     data[FLASH_::template size<sector>()/2];
+      uint16_t word[FLASH_::template size<sector>()/2];
    };
-   volatile Flash_t& flash = *(Flash_t*)FLASH::template address<sector>() ;
+//    volatile Flash_t& flash = *(Flash_t*)FLASH_::template address<sector>();
+   Flash_t* flash = (Flash_t*)FLASH_::template address<sector>();
 
    // возвращает true, если данные прочитаны
    // false, если нет или данные не полные
    bool readFromFlash();
+   void tick();
 
 
 
@@ -71,15 +75,13 @@ private:
    class FlashUpdater : TickSubscriber
    {
    public:
-      FlashUpdater (Flash_impl<DATA,FLASH,sector>* parent) : parent(parent)
-      {
-          subscribe();
-      }
+    using Parent = Flash_impl<Data,FLASH_,sector>;
+      FlashUpdater (Parent* parent) : parent(parent) { subscribe(); }
+      ~FlashUpdater() { unsubscribe(); }
    private:
-      Flash_impl<DATA,FLASH,sector>* parent;
+      Parent* parent;
       void notify() override { parent->tick(); }
    } flashUpdater {this};
-   void tick();
 };
 
 template<class Data, typename FLASH::Sector sector>
@@ -87,23 +89,22 @@ using Flash = Flash_impl<Data,FLASH,sector>;
 
 
 
-template <class Data, class FLASH, typename FLASH::Sector sector>
-bool Flash_impl<Data,FLASH,sector>::readFromFlash ()
+template <class Data, class FLASH_, typename FLASH_::Sector sector>
+bool Flash_impl<Data,FLASH_,sector>::readFromFlash ()
 {
    // обнуляем буфер перед заполнением
-   memset (copy, 0xFF, QtyBytes);
+   memset (copy, 0xFF, sizeof(copy));
  
    // чтение данных в копию data в виде массива
    flashOffset = -1;
-   bool indExist[QtyBytes] = {false};
-   for (auto i {0}; i < FLASH::template size<sector>(); i++) {
-      uint8_t index;
-      index = flash.data[i].key;
-      if ( index < QtyBytes) {
-         copy[index] = flash.data[i].value;
+   bool indExist[sizeof(Data)] {};
+   for (auto& pair : flash->data) {
+      flashOffset++;
+      auto index {pair.key};
+      if (index < sizeof(Data)) {
+         copy[index] = pair.value;
          indExist[index] = true;
       } else if (index == 0xFF) {
-         flashOffset = i;
          break;
       }
    }
@@ -115,20 +116,20 @@ bool Flash_impl<Data,FLASH,sector>::readFromFlash ()
    }
 
    // проверка остальной части сектора флэш
-   for (auto i {flashOffset}; i < FLASH::template size<sector>(); i++) {
-      if (flash.word[i] != 0xFFFF) {
-         needErase = true;
-         return false;    
-      }
+   if (not std::all_of (
+              std::begin(flash->word) + flashOffset
+            , std::end(flash->word)
+            , [](auto& word) { return word == 0xFFFF; }
+           )
+   ) {
+      needErase = true;
+      return false;
    }
 
+
    // проверка, что все данные прочитаны
-   bool tmp = true;
-   for (uint8_t i = 0; i < QtyBytes; i++) {
-      tmp &= indExist[i];
-   }
-   if (tmp) {
-      memcpy (original, copy, QtyBytes);
+   if (std::all_of (std::begin(indExist), std::end(indExist), [](auto& v) { return v; })) {
+      memcpy (original, copy, sizeof(copy));
       return true;
    } else {
       return false;
@@ -137,8 +138,8 @@ bool Flash_impl<Data,FLASH,sector>::readFromFlash ()
 
 
 
-template <class Data, class FLASH, typename FLASH::Sector sector>
-void Flash_impl<Data,FLASH,sector>::tick()
+template <class Data, class FLASH_, typename FLASH_::Sector sector>
+void Flash_impl<Data,FLASH_,sector>::tick()
 {
    // реализация автоматом
    enum State {
@@ -159,63 +160,51 @@ void Flash_impl<Data,FLASH,sector>::tick()
          state = Errase;
       } else if (original[byteN] == copy[byteN]) {
          byteN++;
-         if (byteN == QtyBytes) {
+         if (byteN == sizeof(Data)) {
             byteN = 0;
          }
       } else {
-         FLASH::lock();
          state = StartWrite;
       }
       break;
 
    case StartWrite:
-      if ( !FLASH::is_busy() and FLASH::is_lock() ) {
-         FLASH::unlock();
-         FLASH::setProgMode();
-         #if defined(STM32F4)
-            FLASH::template set<FLASH::ProgSize::x16>();
-         #endif
+      if ( not FLASH_::is_busy() and FLASH_::is_lock() ) {
+         FLASH_::unlock();
+         FLASH_::setProgMode();
          dataWrite = original[byteN];
-         flash.word[flashOffset] = (uint16_t)dataWrite << 8 | byteN;
+         flash->word[flashOffset] = (uint16_t)dataWrite << 8 | byteN;
          state = CheckWrite;
       }
       break;
 
    case CheckWrite:
-      if ( FLASH::is_endOfProg() ) {
-         FLASH::clearEndOfProgFlag();
-         FLASH::lock();
+      if ( FLASH_::is_endOfProg() ) {
+         FLASH_::clearEndOfProgFlag();
+         FLASH_::lock();
          copy[byteN] = dataWrite;
          flashOffset++;
-         if ( flashOffset >= FLASH::template size<sector>() ) {
+         if ( static_cast<size_t>(flashOffset) > sizeof(Flash_t) / sizeof(Pair) )
             needErase = true;
-         }
          state = CheckChanges;
       }
       break;
 
    case Errase:
-      if ( not FLASH::is_busy() and FLASH::is_lock() ) {
-         FLASH::unlock();
-         FLASH::template startErase<sector>();
+      if ( not FLASH_::is_busy() and FLASH_::is_lock() ) {
+         FLASH_::unlock();
+         FLASH_::template startErase<sector>();
          state = CheckErase;
       }
       break;
 
    case CheckErase:
-      if ( FLASH::is_endOfProg() ) {
-         FLASH::clearEndOfProgFlag();
-         FLASH::lock();
-         // проверка, что стёрли
-         bool tmp = true;
-         for (uint32_t i = 0; i < FLASH::template size<sector>() / 2; i++) {
-            tmp &= (flash.word[i] == 0xFFFF);
-         }
-         if (tmp) {
-            needErase = false;
-            memset (copy, 0xFF, QtyBytes);
-            flashOffset = 0;
-         }
+      if ( FLASH_::is_endOfProg() ) {
+         FLASH_::clearEndOfProgFlag();
+         FLASH_::lock();
+         needErase = false;
+         memset (copy, 0xFF, sizeof(copy));
+         flashOffset = 0;
          state = CheckChanges;
       }
       break;

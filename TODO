@@ -8,7 +8,8 @@
 [done] отладить zoomer и tim для STM32F0
 [done] отладить buttons
 [done] в adc_ral использовать std::is_same по аналогии с TIM
-flash_hal переделать так, чтобы можно было сохранять в несколько страниц
+flash переделать так, чтобы можно было сохранять в несколько страниц
+flash переделать так, чтоб убрать уязвимость при стирании
 [done] разнести реализацию методов от их объявления
 [done] отладка, inputCounter для 4 серии
 [done] encoder задать правильный static_assert
@@ -31,4 +32,26 @@ flash_hal переделать так, чтобы можно было сохра
    tim
    usart
 при рефакторинге избавляться от заглавных букв в именах файлов (см adc_periph)
+постепенно переводить на тестируемость не переферийны классы
+   adc
+   encoder
+   [done] flash
+   input_counter
+   pin
+   pin_variadic
+   pwm
+   spi
+   usart
+   buttons
+   buzzer
+   const_chain
+   crc
+   list
+   meta
+   modbus_slave
+   NTC_table
+   pinlist
+   ring_buffer
+   seven_segment_indicator
+   timers
 
