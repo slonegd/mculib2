@@ -75,6 +75,37 @@ public:
 
 };
 
+class NullPin
+{
+public:
+
+   using Mode = GPIO_ral::Mode_t;
+   using OutType = GPIO_ral::OutType_t;
+   using OutSpeed = GPIO_ral::OutSpeed_t;
+   using PullResistor = GPIO_ral::PullResistor_t;
+   using AF = GPIO_ral::AF;
+
+   inline static void configure (Mode mode,
+                           OutType type,
+                           OutSpeed speed,
+                           PullResistor res){}
+   template<PinConf_t pinConf>
+   static void configure() {}
+   template<AF af>
+   static void configureAltFunction(){}
+   template <AF func> static void SetAltFunc(){}
+
+   static void set()          {}
+   static void clear()        {}
+   static void toggle()       {}
+   static void set(bool b)    {}
+   static bool isSet()        {return false;}
+   static bool isClear()      {return false;}
+   static void waitForSet()   {}
+   static void waitForClear() {}
+
+};
+
 using PA0 = Pin_t<PA, 0>;
 using PA1 = Pin_t<PA, 1>;
 using PA2 = Pin_t<PA, 2>;
