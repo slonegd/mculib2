@@ -26,62 +26,59 @@ template <class Data, class FLASH_, typename FLASH_::Sector sector>
 class Flash_impl : public Data
 {
 public:
-   // конструктор принимает значения, которые необходимо записать
-   // при первой прошивке (по умолчанию)
-   Flash_impl (Data d)
+   Flash_impl ()
    {
       static_assert (
          sizeof(Data) < 255,
-         "Размер сохраняемой структуры не может превышать 255 байт"
+         "Размер сохраняемой структуры должен быть менее 255 байт"
       );
       // FLASH_::endOfProgInterruptEn(); // уже не помню зачем это
       #if defined(STM32F4)
          FLASH_::template set<FLASH_::ProgSize::x16>();
       #endif
-      if ( not readFromFlash() ) {
-         memcpy (this, &d, sizeof(Data));
-      }
+      if (not readFromFlash())
+         Flash_impl {Data{}};
    }
+   Flash_impl (Data d) : Data{d} {}
 
-   
 
 
 private:
    uint8_t copy[sizeof(Data)];
    uint8_t* original = (uint8_t*)this;
-   int32_t flashOffset;
-   bool needErase;
+   int32_t flashOffset {-1};
+   bool needErase {false};
    struct Pair {
-      uint8_t key; 
+      uint8_t offset; 
       uint8_t value;
    };
    union Flash_t {
       Pair     data[FLASH_::template size<sector>()/2];
       uint16_t word[FLASH_::template size<sector>()/2];
    };
-//    volatile Flash_t& flash = *(Flash_t*)FLASH_::template address<sector>();
+//    volatile Flash_t* flash = (Flash_t*)FLASH_::template address<sector>();
    Flash_t* flash = (Flash_t*)FLASH_::template address<sector>();
 
    // возвращает true, если данные прочитаны
    // false, если нет или данные не полные
    bool readFromFlash();
-   void tick();
+   void notify();
 
 
 
-   /// пришлось делать эту структуру, потому что
-   /// основная при наследовании ItickSubscribed затирала базовый класс
-   /// почему так и не выяснил
+   /// пришлось делать эту структуру, потому что 
+   /// при наследовании TickSubscriber появлялся указатель
+   /// на виртуальную таблицу, который всё портил в работе с this
    class FlashUpdater : TickSubscriber
    {
    public:
-    using Parent = Flash_impl<Data,FLASH_,sector>;
-      FlashUpdater (Parent* parent) : parent(parent) { subscribe(); }
+      using Parent = Flash_impl<Data,FLASH_,sector>;
+      FlashUpdater (Parent& parent) : parent(parent) { subscribe(); }
       ~FlashUpdater() { unsubscribe(); }
    private:
-      Parent* parent;
-      void notify() override { parent->tick(); }
-   } flashUpdater {this};
+      Parent& parent;
+      void notify() override { parent.notify(); }
+   } flashUpdater {*this};
 };
 
 template<class Data, typename FLASH::Sector sector>
@@ -100,26 +97,19 @@ bool Flash_impl<Data,FLASH_,sector>::readFromFlash ()
    bool indExist[sizeof(Data)] {};
    for (auto& pair : flash->data) {
       flashOffset++;
-      auto index {pair.key};
-      if (index < sizeof(Data)) {
-         copy[index] = pair.value;
-         indExist[index] = true;
-      } else if (index == 0xFF) {
+      if (pair.offset < sizeof(Data)) {
+         copy[pair.offset] = pair.value;
+         indExist[pair.offset] = true;
+      } else if (pair.offset == 0xFF) {
          break;
       }
-   }
-
-   // проверка есть ли ещё место
-   if ( flashOffset == -1) {
-      needErase = true;
-      return false;    
    }
 
    // проверка остальной части сектора флэш
    if (not std::all_of (
               std::begin(flash->word) + flashOffset
             , std::end(flash->word)
-            , [](auto& word) { return word == 0xFFFF; }
+            , [](auto& word){ return word == 0xFFFF; }
            )
    ) {
       needErase = true;
@@ -128,7 +118,7 @@ bool Flash_impl<Data,FLASH_,sector>::readFromFlash ()
 
 
    // проверка, что все данные прочитаны
-   if (std::all_of (std::begin(indExist), std::end(indExist), [](auto& v) { return v; })) {
+   if (std::all_of (std::begin(indExist), std::end(indExist), [](auto& v){return v;})) {
       memcpy (original, copy, sizeof(copy));
       return true;
    } else {
@@ -139,7 +129,7 @@ bool Flash_impl<Data,FLASH_,sector>::readFromFlash ()
 
 
 template <class Data, class FLASH_, typename FLASH_::Sector sector>
-void Flash_impl<Data,FLASH_,sector>::tick()
+void Flash_impl<Data,FLASH_,sector>::notify()
 {
    // реализация автоматом
    enum State {

@@ -32,17 +32,17 @@ struct FlashMock {
    template<Sector> static void startErase() { erase(); erase_ = true; }
 };
 
-struct FlashData {
+struct Data {
    uint16_t d1 {1};
    uint16_t d2 {2};
 };
-using Flash_t = Flash_impl<FlashData, FlashMock, FlashMock::Sector::_0>;
+using Flash_t = Flash_impl<Data, FlashMock, FlashMock::Sector::_0>;
 
 
 bool ctor()
 {
    erase();
-   Flash_t flash { FlashData{} };
+   Flash_t flash {};
    auto qty {100};
    while (qty--)
       tickUpdater.notify();
@@ -55,7 +55,7 @@ bool ctor()
 
 bool change()
 {
-   Flash_t flash { FlashData{} };
+   Flash_t flash {};
    flash.d1 = 0x0301;
    auto qty {100};
    while (qty--)
@@ -70,7 +70,7 @@ bool change()
 
 bool ctor_after_change()
 {
-   Flash_t flash { FlashData{} };
+   Flash_t flash {};
    return flash.d1 == 0x0301 and flash.d2 == 2;
 }
 
@@ -78,7 +78,7 @@ bool ctor_after_change()
 bool end_of_sector()
 {
    {
-      Flash_t flash { FlashData{} };
+      Flash_t flash {};
       auto qty {size_};
       while (qty--) {
          flash.d2++;
@@ -88,7 +88,7 @@ bool end_of_sector()
       }
    } // отключили питание
 
-   Flash_t test { FlashData{} };
+   Flash_t test {};
    return test.d1 == 0x0301 and test.d2 == 22;
 }
 
@@ -98,7 +98,7 @@ bool off_when_erase()
    bool good {true};
    {
       erase();
-      Flash_t flash { FlashData{} };
+      Flash_t flash {};
       auto ms {100};
       while (ms--)
          tickUpdater.notify();
@@ -112,7 +112,7 @@ bool off_when_erase()
       good &= (flash.d1 == 8);
    } // off
 
-   Flash_t flash { FlashData{} };
+   Flash_t flash {};
 
    return good and flash.d1 == 1;
 }
@@ -120,18 +120,18 @@ bool off_when_erase()
 bool new_data()
 {
    {
-      Flash_t flash { FlashData{} };
+      Flash_t flash {};
       flash.d2 = 100;
       auto ms {100};
       while (ms--)
          tickUpdater.notify();
    }
-   struct NewFlashData {
+   struct NewData {
       uint16_t d1 {1};
       uint16_t d2 {2};
       uint16_t d3 {0};
    };
-   Flash_impl<NewFlashData, FlashMock, FlashMock::Sector::_0> flash { NewFlashData{} };
+   Flash_impl<NewData, FlashMock, FlashMock::Sector::_0> flash { NewData{} };
    auto ms {100};
    while (ms--)
       tickUpdater.notify();

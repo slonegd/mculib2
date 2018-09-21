@@ -13,5 +13,8 @@ struct Publisher : private List<Subscriber>
    void subscribe  (Subscriber* p) { push_back(p); }
    void unsubscribe(Subscriber* p) { remove(p);    }
    // ссылка, чтобы не копировал каждый subscriber из *this
-   void notify() { for (auto& subscriber : *this) subscriber.notify(); }
+   void notify() {
+      for (auto& subscriber : *this)
+         subscriber.notify();
+      }
 };

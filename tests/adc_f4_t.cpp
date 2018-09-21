@@ -136,9 +136,9 @@ bool setSampleTime()
        and     (mock.SMPR1 & ADC_SMPR1_SMP12_2);
 
    TADC::set<18>(TADC::SampleTime::Default);
-   good &=     (mock.SMPR1 & ADC_SMPR1_SMP12_0)
-       and     (mock.SMPR1 & ADC_SMPR1_SMP12_1)
-       and     (mock.SMPR1 & ADC_SMPR1_SMP12_2);
+   good &=     (mock.SMPR1 & ADC_SMPR1_SMP18_0)
+       and     (mock.SMPR1 & ADC_SMPR1_SMP18_1)
+       and     (mock.SMPR1 & ADC_SMPR1_SMP18_2);
 
    // TADC::set<19>(TADC::SampleTime::Default); // ошибка компиляции
 
