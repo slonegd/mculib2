@@ -118,9 +118,9 @@ void template_ADC<adr,Pointer>::set (SampleTime v)
    else if constexpr (channel == 13) Pointer::get()->SMPR.SMP13 = v;
    else if constexpr (channel == 14) Pointer::get()->SMPR.SMP14 = v;
    else if constexpr (channel == 15) Pointer::get()->SMPR.SMP15 = v;
-   else if constexpr (channel == 16) Pointer::get()->SMPR.SMP15 = v;
-   else if constexpr (channel == 17) Pointer::get()->SMPR.SMP15 = v;
-   else if constexpr (channel == 18) Pointer::get()->SMPR.SMP15 = v;
+   else if constexpr (channel == 16) Pointer::get()->SMPR.SMP16 = v;
+   else if constexpr (channel == 17) Pointer::get()->SMPR.SMP17 = v;
+   else if constexpr (channel == 18) Pointer::get()->SMPR.SMP18 = v;
 }
 
 

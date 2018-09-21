@@ -40,16 +40,15 @@ bool disable()
    return true;
 }
 
-bool is_disable_1()
+bool is_disable()
 {
+   bool good {true};
    mock.CR = 0;
-   return not TADC::is_disable();
-}
-
-bool is_disable_2()
-{
+   good &= not TADC::is_disable();
    mock.CR |= ADC_CR_ADDIS_Msk;
-   return TADC::is_disable();
+   good &= TADC::is_disable();
+
+   return good;
 }
 
 bool start()
@@ -288,33 +287,47 @@ bool setChannel()
 
 }
 
-static_assert ( std::is_same_v <ADC1::DefaultStream, DMA1channel1> );
+bool DefaultStream()
+{
+    return std::is_same_v <ADC1::DefaultStream, DMA1channel1>;
+}
 
-static_assert ( ADC1::channel<PA0>() == 0  );
-static_assert ( ADC1::channel<PA1>() == 1  );
-static_assert ( ADC1::channel<PA2>() == 2  );
-static_assert ( ADC1::channel<PA3>() == 3  );
-static_assert ( ADC1::channel<PA4>() == 4  );
-static_assert ( ADC1::channel<PA5>() == 5  );
-static_assert ( ADC1::channel<PA6>() == 6  );
-static_assert ( ADC1::channel<PA7>() == 7  );
-static_assert ( ADC1::channel<PB0>() == 8  );
-static_assert ( ADC1::channel<PB1>() == 9  );
-static_assert ( ADC1::channel<PC0>() == 10 );
-static_assert ( ADC1::channel<PC1>() == 11 );
-static_assert ( ADC1::channel<PC2>() == 12 );
-static_assert ( ADC1::channel<PC3>() == 13 );
-static_assert ( ADC1::channel<PC4>() == 14 );
-static_assert ( ADC1::channel<PC5>() == 15 );
+bool channel()
+{
+    return
+            ADC1::channel<PA0>() == 0  
+        and ADC1::channel<PA1>() == 1  
+        and ADC1::channel<PA2>() == 2  
+        and ADC1::channel<PA3>() == 3  
+        and ADC1::channel<PA4>() == 4  
+        and ADC1::channel<PA5>() == 5  
+        and ADC1::channel<PA6>() == 6  
+        and ADC1::channel<PA7>() == 7  
+        and ADC1::channel<PB0>() == 8  
+        and ADC1::channel<PB1>() == 9  
+        and ADC1::channel<PC0>() == 10 
+        and ADC1::channel<PC1>() == 11 
+        and ADC1::channel<PC2>() == 12 
+        and ADC1::channel<PC3>() == 13 
+        and ADC1::channel<PC4>() == 14 
+        and ADC1::channel<PC5>() == 15 
 
-static_assert ( ADC1::channel<PC6>() == 255 );
+        and ADC1::channel<PC6>() == 255;
+}
 
-static_assert ( ADC1::PINenabled<PC5>() );
-static_assert ( not ADC1::PINenabled<PC6>() );
+bool PINenabled()
+{
+    return      ADC1::PINenabled<PC5>()
+        and not ADC1::PINenabled<PC6>();
+}
+
+bool DMAenabled()
+{
+    return      ADC1::DMAenabled<DMA1channel1>()
+        and not ADC1::DMAenabled<DMA1channel2>();
+}
 
 
-static_assert ( ADC1::DMAenabled<DMA1channel1>() );
-static_assert ( not ADC1::DMAenabled<DMA1channel2>() );
 
 
 
@@ -323,23 +336,29 @@ int main()
    std::cout << '\n'
              << "Тесты класса ADC для STM32F0:" << std::endl;
 
-   // \033[32mТЕКСТ\033[0m - для цвета
-   std::cout << "ADC::enable                  " << (enable()                  ? "\033[32mпрошёл\033[0m" : "\033[31mпровален\033[0m") << std::endl;
-   std::cout << "ADC::disable                 " << (disable()                 ? "\033[32mпрошёл\033[0m" : "\033[31mпровален\033[0m") << std::endl;
-   std::cout << "ADC::is_disable_1            " << (is_disable_1()            ? "\033[32mпрошёл\033[0m" : "\033[31mпровален\033[0m") << std::endl;
-   std::cout << "ADC::is_disable_2            " << (is_disable_2()            ? "\033[32mпрошёл\033[0m" : "\033[31mпровален\033[0m") << std::endl;
-   std::cout << "ADC::start                   " << (start()                   ? "\033[32mпрошёл\033[0m" : "\033[31mпровален\033[0m") << std::endl;
-   std::cout << "ADC::DMAenable               " << (DMAenable()               ? "\033[32mпрошёл\033[0m" : "\033[31mпровален\033[0m") << std::endl;
-   std::cout << "ADC::setCircularDMA          " << (setCircularDMA()          ? "\033[32mпрошёл\033[0m" : "\033[31mпровален\033[0m") << std::endl;
-   std::cout << "ADC::setContinuousMode       " << (setContinuousMode()       ? "\033[32mпрошёл\033[0m" : "\033[31mпровален\033[0m") << std::endl;
-   std::cout << "ADC::setClock                " << (setClock()                ? "\033[32mпрошёл\033[0m" : "\033[31mпровален\033[0m") << std::endl;
-   std::cout << "ADC::setResolution           " << (setResolution()           ? "\033[32mпрошёл\033[0m" : "\033[31mпровален\033[0m") << std::endl;
-   std::cout << "ADC::setSampleTime           " << (setSampleTime()           ? "\033[32mпрошёл\033[0m" : "\033[31mпровален\033[0m") << std::endl;
-   std::cout << "ADC::is_ready                " << (is_ready()                ? "\033[32mпрошёл\033[0m" : "\033[31mпровален\033[0m") << std::endl;
-   std::cout << "ADC::setBusy                 " << (setBusy()                 ? "\033[32mпрошёл\033[0m" : "\033[31mпровален\033[0m") << std::endl;
-   std::cout << "ADC::stop                    " << (stop()                    ? "\033[32mпрошёл\033[0m" : "\033[31mпровален\033[0m") << std::endl;
-   std::cout << "ADC::is_stoping              " << (is_stoping()              ? "\033[32mпрошёл\033[0m" : "\033[31mпровален\033[0m") << std::endl;
-   std::cout << "ADC::getDataAdr              " << (getDataAdr()              ? "\033[32mпрошёл\033[0m" : "\033[31mпровален\033[0m") << std::endl;
-   std::cout << "ADC::setChannel              " << (setChannel()              ? "\033[32mпрошёл\033[0m" : "\033[31mпровален\033[0m") << std::endl;
+   auto test = [](auto s, auto f){
+      std::cout << s << (f() ? "\033[32mпрошёл\033[0m" : "\033[31mпровален\033[0m") << std::endl;
+   };
+
+   test ("ADC::enable                  ", enable);
+   test ("ADC::disable                 ", disable);
+   test ("ADC::is_disable              ", is_disable);
+   test ("ADC::start                   ", start);
+   test ("ADC::DMAenable               ", DMAenable);
+   test ("ADC::setCircularDMA          ", setCircularDMA);
+   test ("ADC::setContinuousMode       ", setContinuousMode);
+   test ("ADC::setClock                ", setClock);
+   test ("ADC::setResolution           ", setResolution);
+   test ("ADC::setSampleTime           ", setSampleTime);
+   test ("ADC::is_ready                ", is_ready);
+   test ("ADC::setBusy                 ", setBusy);
+   test ("ADC::stop                    ", stop);
+   test ("ADC::is_stoping              ", is_stoping);
+   test ("ADC::getDataAdr              ", getDataAdr);
+   test ("ADC::setChannel              ", setChannel);
+   test ("ADC::DefaultStream           ", DefaultStream);
+   test ("ADC::channel                 ", channel);
+   test ("ADC::PINenabled              ", PINenabled);
+   test ("ADC::DMAenabled              ", DMAenabled);
    std::cout << std::endl;
 }

@@ -30,16 +30,15 @@ bool disable()
    return (mock.CR2 & ADC_CR2_ADON_Msk) == 0; 
 }
 
-bool is_disable_1()
+bool is_disable()
 {
+   bool good {true};
    mock.CR2 = 0;
-   return TADC::is_disable(); 
-}
-
-bool is_disable_2()
-{
+   good &= TADC::is_disable();
    mock.CR2 |= ADC_CR2_ADON_Msk;
-   return not TADC::is_disable();
+   good &= not TADC::is_disable();
+
+   return good; 
 }
 
 bool start()
@@ -90,89 +89,6 @@ bool getDataAdr()
    return TADC::getDataAdr() == reinterpret_cast<size_t>(&mock.DR);
 }
 
-static_assert ( std::is_same_v <ADC1::DefaultStream, DMA2stream0> );
-static_assert ( std::is_same_v <ADC2::DefaultStream, DMA2stream2> );
-static_assert ( std::is_same_v <ADC3::DefaultStream, DMA2stream1> );
-
-static_assert ( ADC1::DMAenabled<DMA2stream0>() );
-static_assert ( ADC1::DMAenabled<DMA2stream4>() );
-static_assert ( not ADC1::DMAenabled<DMA2stream1>() );
-static_assert ( not ADC1::DMAenabled<DMA1stream0>() );
-
-static_assert ( ADC2::DMAenabled<DMA2stream2>() );
-static_assert ( ADC2::DMAenabled<DMA2stream3>() );
-static_assert ( not ADC2::DMAenabled<DMA2stream0>() );
-static_assert ( not ADC2::DMAenabled<DMA1stream2>() );
-
-static_assert ( ADC3::DMAenabled<DMA2stream0>() );
-static_assert ( ADC3::DMAenabled<DMA2stream1>() );
-static_assert ( not ADC3::DMAenabled<DMA2stream2>() );
-static_assert ( not ADC3::DMAenabled<DMA1stream0>() );
-
-static_assert ( ADC1::channel<PA0>() == 0  );
-static_assert ( ADC1::channel<PA1>() == 1  );
-static_assert ( ADC1::channel<PA2>() == 2  );
-static_assert ( ADC1::channel<PA3>() == 3  );
-static_assert ( ADC1::channel<PA4>() == 4  );
-static_assert ( ADC1::channel<PA5>() == 5  );
-static_assert ( ADC1::channel<PA6>() == 6  );
-static_assert ( ADC1::channel<PA7>() == 7  );
-static_assert ( ADC1::channel<PB0>() == 8  );
-static_assert ( ADC1::channel<PB1>() == 9  );
-static_assert ( ADC1::channel<PC0>() == 10 );
-static_assert ( ADC1::channel<PC1>() == 11 );
-static_assert ( ADC1::channel<PC2>() == 12 );
-static_assert ( ADC1::channel<PC3>() == 13 );
-static_assert ( ADC1::channel<PC4>() == 14 );
-static_assert ( ADC1::channel<PC5>() == 15 );
-
-static_assert ( ADC2::channel<PA0>() == 0  );
-static_assert ( ADC2::channel<PA1>() == 1  );
-static_assert ( ADC2::channel<PA2>() == 2  );
-static_assert ( ADC2::channel<PA3>() == 3  );
-static_assert ( ADC2::channel<PA4>() == 4  );
-static_assert ( ADC2::channel<PA5>() == 5  );
-static_assert ( ADC2::channel<PA6>() == 6  );
-static_assert ( ADC2::channel<PA7>() == 7  );
-static_assert ( ADC2::channel<PB0>() == 8  );
-static_assert ( ADC2::channel<PB1>() == 9  );
-static_assert ( ADC2::channel<PC0>() == 10 );
-static_assert ( ADC2::channel<PC1>() == 11 );
-static_assert ( ADC2::channel<PC2>() == 12 );
-static_assert ( ADC2::channel<PC3>() == 13 );
-static_assert ( ADC2::channel<PC4>() == 14 );
-static_assert ( ADC2::channel<PC5>() == 15 );
-
-static_assert ( ADC3::channel<PA0>() == 0  );
-static_assert ( ADC3::channel<PA1>() == 1  );
-static_assert ( ADC3::channel<PA2>() == 2  );
-static_assert ( ADC3::channel<PA3>() == 3  );
-static_assert ( ADC3::channel<PF6>() == 4  );
-static_assert ( ADC3::channel<PF7>() == 5  );
-static_assert ( ADC3::channel<PF8>() == 6  );
-static_assert ( ADC3::channel<PF9>() == 7  );
-static_assert ( ADC3::channel<PF10>()== 8  );
-static_assert ( ADC3::channel<PF3>() == 9  );
-static_assert ( ADC3::channel<PC0>() == 10 );
-static_assert ( ADC3::channel<PC1>() == 11 );
-static_assert ( ADC3::channel<PC2>() == 12 );
-static_assert ( ADC3::channel<PC3>() == 13 );
-static_assert ( ADC3::channel<PF4>() == 14 );
-static_assert ( ADC3::channel<PF5>() == 15 );
-
-static_assert ( ADC1::channel<PC6>() == 255 );
-static_assert ( ADC2::channel<PA8>() == 255 );
-static_assert ( ADC3::channel<PA4>() == 255 );
-
-static_assert ( ADC1::PINenabled<PA0>() );
-static_assert ( not ADC1::PINenabled<PC6>() );
-
-static_assert ( ADC2::PINenabled<PB0>() );
-static_assert ( not ADC2::PINenabled<PA8>() );
-
-static_assert ( ADC3::PINenabled<PF5>() );
-static_assert ( not ADC3::PINenabled<PA4>() );
-
 bool setSampleTime()
 {
    bool good {true};
@@ -220,9 +136,9 @@ bool setSampleTime()
        and     (mock.SMPR1 & ADC_SMPR1_SMP12_2);
 
    TADC::set<18>(TADC::SampleTime::Default);
-   good &=     (mock.SMPR1 & ADC_SMPR1_SMP12_0)
-       and     (mock.SMPR1 & ADC_SMPR1_SMP12_1)
-       and     (mock.SMPR1 & ADC_SMPR1_SMP12_2);
+   good &=     (mock.SMPR1 & ADC_SMPR1_SMP18_0)
+       and     (mock.SMPR1 & ADC_SMPR1_SMP18_1)
+       and     (mock.SMPR1 & ADC_SMPR1_SMP18_2);
 
    // TADC::set<19>(TADC::SampleTime::Default); // ошибка компиляции
 
@@ -314,31 +230,131 @@ bool setScanMode()
    return mock.CR1 & ADC_CR1_SCAN_Msk;
 }
 
-static_assert ( ADC1::DMAchannel() == ADC1::Channels::_0 );
-static_assert ( ADC2::DMAchannel() == ADC1::Channels::_1 );
-static_assert ( ADC3::DMAchannel() == ADC1::Channels::_2 );
-static_assert ( TADC::DMAchannel() == ADC1::Channels::_0 );
+bool DefaultStream()
+{
+   return std::is_same_v <ADC1::DefaultStream, DMA2stream0>
+      and std::is_same_v <ADC2::DefaultStream, DMA2stream2>
+      and std::is_same_v <ADC3::DefaultStream, DMA2stream1>;
+}
+
+bool DMAenabled()
+{
+   return     ADC1::DMAenabled<DMA2stream0>()
+      and     ADC1::DMAenabled<DMA2stream4>()
+      and not ADC1::DMAenabled<DMA2stream1>()
+      and not ADC1::DMAenabled<DMA1stream0>()
+      and     ADC2::DMAenabled<DMA2stream2>()
+      and     ADC2::DMAenabled<DMA2stream3>()
+      and not ADC2::DMAenabled<DMA2stream0>()
+      and not ADC2::DMAenabled<DMA1stream2>()
+      and     ADC3::DMAenabled<DMA2stream0>()
+      and     ADC3::DMAenabled<DMA2stream1>()
+      and not ADC3::DMAenabled<DMA2stream2>()
+      and not ADC3::DMAenabled<DMA1stream0>();
+}
+
+bool channel()
+{
+   return ADC1::channel<PA0>() == 0
+      and ADC1::channel<PA1>() == 1
+      and ADC1::channel<PA2>() == 2
+      and ADC1::channel<PA3>() == 3
+      and ADC1::channel<PA4>() == 4
+      and ADC1::channel<PA5>() == 5
+      and ADC1::channel<PA6>() == 6
+      and ADC1::channel<PA7>() == 7
+      and ADC1::channel<PB0>() == 8
+      and ADC1::channel<PB1>() == 9
+      and ADC1::channel<PC0>() == 10
+      and ADC1::channel<PC1>() == 11
+      and ADC1::channel<PC2>() == 12
+      and ADC1::channel<PC3>() == 13
+      and ADC1::channel<PC4>() == 14
+      and ADC1::channel<PC5>() == 15
+      and ADC1::channel<PC6>() == 255
+
+      and ADC2::channel<PA0>() == 0
+      and ADC2::channel<PA1>() == 1
+      and ADC2::channel<PA2>() == 2
+      and ADC2::channel<PA3>() == 3
+      and ADC2::channel<PA4>() == 4
+      and ADC2::channel<PA5>() == 5
+      and ADC2::channel<PA6>() == 6
+      and ADC2::channel<PA7>() == 7
+      and ADC2::channel<PB0>() == 8
+      and ADC2::channel<PB1>() == 9
+      and ADC2::channel<PC0>() == 10
+      and ADC2::channel<PC1>() == 11
+      and ADC2::channel<PC2>() == 12
+      and ADC2::channel<PC3>() == 13
+      and ADC2::channel<PC4>() == 14
+      and ADC2::channel<PC5>() == 15
+      and ADC2::channel<PA8>() == 255
+
+      and ADC3::channel<PA0>() == 0
+      and ADC3::channel<PA1>() == 1
+      and ADC3::channel<PA2>() == 2
+      and ADC3::channel<PA3>() == 3
+      and ADC3::channel<PF6>() == 4
+      and ADC3::channel<PF7>() == 5
+      and ADC3::channel<PF8>() == 6
+      and ADC3::channel<PF9>() == 7
+      and ADC3::channel<PF10>()== 8
+      and ADC3::channel<PF3>() == 9
+      and ADC3::channel<PC0>() == 10
+      and ADC3::channel<PC1>() == 11
+      and ADC3::channel<PC2>() == 12
+      and ADC3::channel<PC3>() == 13
+      and ADC3::channel<PF4>() == 14
+      and ADC3::channel<PF5>() == 15
+      and ADC3::channel<PA4>() == 255;
+}
+
+bool PINenabled()
+{
+   return     ADC1::PINenabled<PA0>()
+      and not ADC1::PINenabled<PC6>()
+      and     ADC2::PINenabled<PB0>()
+      and not ADC2::PINenabled<PA8>()
+      and     ADC3::PINenabled<PF5>()
+      and not ADC3::PINenabled<PA4>();
+}
+
+bool DMAchannel()
+{
+   return ADC1::DMAchannel() == ADC1::Channels::_0
+      and ADC2::DMAchannel() == ADC1::Channels::_1
+      and ADC3::DMAchannel() == ADC1::Channels::_2
+      and TADC::DMAchannel() == ADC1::Channels::_0;
+}
+
 
 
 
 int main()
 {
-   std::cout << '\n' << "Тесты класса ADC для STM32F4:" << std::endl;
+   std::cout << '\n'
+             << "Тесты класса ADC для STM32F4:" << std::endl;
 
-   // \033[32mТЕКСТ\033[0m - для цвета
-   std::cout << "ADC::enable                  " << (enable()                  ? "\033[32mпрошёл\033[0m" : "\033[31mпровален\033[0m") << std::endl;
-   std::cout << "ADC::disable                 " << (disable()                 ? "\033[32mпрошёл\033[0m" : "\033[31mпровален\033[0m") << std::endl;
-   std::cout << "ADC::is_disable_1            " << (is_disable_1()            ? "\033[32mпрошёл\033[0m" : "\033[31mпровален\033[0m") << std::endl;
-   std::cout << "ADC::is_disable_2            " << (is_disable_2()            ? "\033[32mпрошёл\033[0m" : "\033[31mпровален\033[0m") << std::endl;
-   std::cout << "ADC::start                   " << (start()                   ? "\033[32mпрошёл\033[0m" : "\033[31mпровален\033[0m") << std::endl;
-   std::cout << "ADC::DMAenable               " << (DMAenable()               ? "\033[32mпрошёл\033[0m" : "\033[31mпровален\033[0m") << std::endl;
-   std::cout << "ADC::setCircularDMA          " << (setCircularDMA()          ? "\033[32mпрошёл\033[0m" : "\033[31mпровален\033[0m") << std::endl;
-   std::cout << "ADC::setContinuousMode       " << (setContinuousMode()       ? "\033[32mпрошёл\033[0m" : "\033[31mпровален\033[0m") << std::endl;
-   std::cout << "ADC::setResolution           " << (setResolution()           ? "\033[32mпрошёл\033[0m" : "\033[31mпровален\033[0m") << std::endl;
-   std::cout << "ADC::getDataAdr              " << (getDataAdr()              ? "\033[32mпрошёл\033[0m" : "\033[31mпровален\033[0m") << std::endl;
-   std::cout << "ADC::setSampleTime           " << (setSampleTime()           ? "\033[32mпрошёл\033[0m" : "\033[31mпровален\033[0m") << std::endl;
-   std::cout << "ADC::setRegularSequenceOrder " << (setRegularSequenceOrder() ? "\033[32mпрошёл\033[0m" : "\033[31mпровален\033[0m") << std::endl;
-   std::cout << "ADC::setScanMode             " << (setScanMode()             ? "\033[32mпрошёл\033[0m" : "\033[31mпровален\033[0m") << std::endl;
+   auto test = [](auto s, auto f){
+      std::cout << s << (f() ? "\033[32mпрошёл\033[0m" : "\033[31mпровален\033[0m") << std::endl;
+   };
+
+   test ("ADC::enable                  ", enable);
+   test ("ADC::disable                 ", disable);
+   test ("ADC::is_disable              ", is_disable);
+   test ("ADC::start                   ", start);
+   test ("ADC::DMAenable               ", DMAenable);
+   test ("ADC::setCircularDMA          ", setCircularDMA);
+   test ("ADC::setContinuousMode       ", setContinuousMode);
+   test ("ADC::setResolution           ", setResolution);
+   test ("ADC::getDataAdr              ", getDataAdr);
+   test ("ADC::setSampleTime           ", setSampleTime);
+   test ("ADC::setRegularSequenceOrder ", setRegularSequenceOrder);
+   test ("ADC::setScanMode             ", setScanMode);
+   test ("ADC::DefaultStream           ", DefaultStream);
+   test ("ADC::channel                 ", channel);
+   test ("ADC::PINenabled              ", PINenabled);
+   test ("ADC::DMAenabled              ", DMAenabled);
    std::cout << std::endl;
 }
-
