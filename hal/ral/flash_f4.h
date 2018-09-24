@@ -94,6 +94,7 @@ struct template_FLASH
 
    template<Sector> static constexpr uint32_t address();
    template<Sector> static constexpr int32_t  size();
+   template<Sector> static constexpr Sector   next();
 };
 
 

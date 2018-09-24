@@ -131,7 +131,7 @@ bool new_data()
       uint16_t d2 {2};
       uint16_t d3 {0};
    };
-   Flash_impl<NewData, FlashMock, FlashMock::Sector::_0> flash { NewData{} };
+   Flash_impl<NewData, FlashMock, FlashMock::Sector::_0> flash {};
    auto ms {100};
    while (ms--)
       tickUpdater.notify();

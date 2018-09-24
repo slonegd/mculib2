@@ -114,4 +114,11 @@ constexpr int32_t template_FLASH<Pointer>::size()
       s > 4 and s <= 11 ? 128*1024 : 0;
 }
 
+template<class Pointer>
+template <typename template_FLASH<Pointer>::Sector s>
+constexpr typename template_FLASH<Pointer>::Sector template_FLASH<Pointer>::next()
+{
+   return s + 1;
+}
+
 #endif
