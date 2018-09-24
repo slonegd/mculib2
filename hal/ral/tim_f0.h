@@ -21,17 +21,17 @@ struct CR1_bits {
 struct CR2_bits {
    uint32_t CCPC  :1;  // Bit  0  CCPC: Capture/compare preloaded control
    uint32_t res1  :1;  // Bit  1  Reserved, must be kept at reset value.
-   uint32_t CCUS  :1   // Bit  2  CCUS: Capture/compare control update selection
+   uint32_t CCUS  :1;  // Bit  2  CCUS: Capture/compare control update selection
    uint32_t CCDS  :1;  // Bit  3  CCDS: Capture/compare DMA selection
    uint32_t MMS   :3;  // Bits 6:4 MMS[2:0]: Master mode selection
    uint32_t TI1S  :1;  // Bit  7  TI1S: TI1 selection
-   uint32_t OIS1  :1   // Bit  8  OIS1: Output Idle state 1 (OC1 output)
-   uint32_t OIS1N :1   // Bit  9  OIS1N: Output Idle state 1 (OC1N output)
-   uint32_t OIS2  :1   // Bit  10 OIS2: Output Idle state 2 (OC2 output)
-   uint32_t OIS2N :1   // Bit  11 OIS2N: Output Idle state 2 (OC2N output)
-   uint32_t OIS3  :1   // Bit  12 OIS3: Output Idle state 3 (OC3 output)
-   uint32_t OIS3N :1   // Bit  13 OIS3N: Output Idle state 3 (OC3N output)
-   uint32_t OIS4  :1   // Bit  14 OIS4: Output Idle state 4 (OC4 output)
+   uint32_t OIS1  :1;  // Bit  8  OIS1: Output Idle state 1 (OC1 output)
+   uint32_t OIS1N :1;  // Bit  9  OIS1N: Output Idle state 1 (OC1N output)
+   uint32_t OIS2  :1;  // Bit  10 OIS2: Output Idle state 2 (OC2 output)
+   uint32_t OIS2N :1;  // Bit  11 OIS2N: Output Idle state 2 (OC2N output)
+   uint32_t OIS3  :1;  // Bit  12 OIS3: Output Idle state 3 (OC3 output)
+   uint32_t OIS3N :1;  // Bit  13 OIS3N: Output Idle state 3 (OC3N output)
+   uint32_t OIS4  :1;  // Bit  14 OIS4: Output Idle state 4 (OC4 output)
    uint32_t res2  :17; // Bits 31:15 Reserved, must be kept at reset value.
 };
 
@@ -69,11 +69,11 @@ struct DIER_bits {
    uint32_t res4  :17; // Bit 15 Reserved, must be kept at reset value.
 };
 
-struct Output_b {
+enum SelectionCompareMode { Output = 0b00, Input, InputALT, InputTRC }; 
+
+struct Output_bits {
    enum CompareMode { Off = 0b000, ActiveOnMatch, InactiveOnMatch, ToggleOnMatch,
-   ForceInactive, ForceActive, PWMmode, InvertedPWMmode
-   };
-   enum SelectionCompareMode { Output, InputTIFirst, InputTISecond, InputTRC };  
+   ForceInactive, ForceActive, PWMmode, InvertedPWMmode };
    SelectionCompareMode CC1S     :2; // Bits 1:0 CC1S: Capture/Compare 1 selection
    bool                 OC1FE    :1; // Bit 2 OC1FE: Output compare 1 fast enable
    bool                 OC1PE    :1; // Bit 3 OC1PE: Output compare 1 preload enable
@@ -98,8 +98,7 @@ struct Output_b {
    uint32_t             res2     :16;
 };
 
-struct Intput_b {
-   enum SelectionCompareMode { Output, InputTIFirst, InputTISecond, InputTRC };  
+struct Input_bits { 
    SelectionCompareMode CC1S     :2; // Bits 1:0 CC1S: Capture/Compare 1 selection
    uint32_t             IC1PSC   :2; // Bits 3:2 IC1PSC: Input capture 1 prescaler
    uint32_t             IC1F     :4; // Bits 7:4 IC1F[3:0]: Input capture 1 filter
@@ -117,11 +116,10 @@ struct Intput_b {
 
 };
 
-struct CCMR_b {
+struct CCMR_bits {
    union {
-      Output_b output;
-      Input_b input;
-      uint32_t reg;
+      Output_bits output;
+      Input_bits input;
    };
 };
 
@@ -146,7 +144,9 @@ struct CCER_bits {
    uint32_t CC3NP :1; // Bit 11 CC3NP: Capture/Compare 3 complementary output polarity
    bool     CC4E  :1; // Bit 12 CC4E:  Capture/Compare 4 output enable
    uint32_t CC4P  :1; // Bit 13 CC4P:  Capture/Compare 4 output polarity
-   uint32_t res5  :18;
+   bool     CC4NE :1;
+   uint32_t CC4NP :1;
+   uint32_t res5  :16;
 };
 
 struct BDTR_bits {
@@ -178,12 +178,12 @@ struct TIM_t {
    __IO TIM_detail::DIER_bits  DIER; //DMA/interrupt enable register,          offset: 0x0C
    __IO uint32_t SR;                 //status register,                        offset: 0x10
    __IO uint32_t EGR;                //event generation register,              offset: 0x14
-   __IO TIM_detail::CCMR_bits CCMR;  //capture/compare mode register 1,        offset: 0x18
+   __IO TIM_detail::CCMR_bits CCMR;  //capture/compare mode register,          offset: 0x18
    __IO TIM_detail::CCER_bits CCER;  //capture/compare enable register,        offset: 0x20
    __IO uint32_t CNT;                //counter register,                       offset: 0x24
    __IO uint32_t PSC;                //prescaler register,                     offset: 0x28
    __IO uint32_t ARR;                //auto-reload register,                   offset: 0x2C
-   __IO uint32_t RCR;                //repetition counter register,           offset: 0x30
+   __IO uint32_t RCR;                //repetition counter register,            offset: 0x30
    __IO uint32_t CCR1;               //capture/compare register 1,             offset: 0x34
    __IO uint32_t CCR2;               //capture/compare register 2,             offset: 0x38
    __IO uint32_t CCR3;               //capture/compare register 3,             offset: 0x3C
@@ -198,7 +198,7 @@ struct TIM_t {
 
 
 
-template <uint32_t adr, class Pointer = Pointer<TIM_t<adr>>
+template <uint32_t adr, class Pointer = Pointer<TIM_t<adr>>>
 class template_TIM
 {
 public:
@@ -210,8 +210,11 @@ public:
    using SlaveMode            = TIM_detail::SMCR_bits::SlaveMode;
    using Trigger              = TIM_detail::SMCR_bits::Trigger;
    using ExtTriggerPolarity   = TIM_detail::SMCR_bits::ExtTriggerPolarity;
-   using CompareMode          = TIM_detail::CCMR_bits::CompareMode;
-   using SelectionCompareMode = TIM_detail::CCMR_bits::SelectionCompareMode;
+   using CompareMode          = TIM_detail::Output_bits::CompareMode;
+   using SelectionCompareMode = TIM_detail::SelectionCompareMode;
+   using Polarity             = TIM_detail::CCER_bits::Polarity;
+
+   enum Channel {_1 = 1, _2, _3, _4};
 
    static void     counterEnable()                {Pointer::get()->CR1.CEN = true;}
    static void     counterDisable()               {Pointer::get()->CR1.CEN = false;}
@@ -226,21 +229,24 @@ public:
    static void     setPrescaller (uint16_t v)     {Pointer::get()->PSC = v;}
    static void     mainOutputEnable()             {Pointer::get()->BDTR.MOE = true;}
 
-   template<uint8_t channel>      static void preloadEnable  ();
-   template<uint8_t channel>      static void preloadDisable ();
-   template<uint8_t channel>      static void compareEnable  ();
-   template<uint8_t channel>      static void compareDisable ();
-   template<uint8_t channel>      static void compareToggle  ();
-   template<uint8_t channel>      static bool isCompareEnable();
-   template<uint8_t channel>      static void setCompareValue(uint32_t v);
+   template<Channel channel>      static void preloadEnable  ();
+   template<Channel channel>      static void preloadDisable ();
+   template<Channel channel>      static void compareEnable  ();
+   template<Channel channel>      static void compareDisable ();
+   template<Channel channel>      static void compareToggle  ();
+   template<Channel channel>      static bool isCompareEnable();
+   template<Channel channel>      static void setCompareValue(uint32_t v);
    template<SlaveMode v>          static void set(){Pointer::get()->SMCR.SMS = v;}
    template<Trigger v>            static void set(){Pointer::get()->SMCR.TS  = v;}
    template<OnePulseMode v>       static void set(){Pointer::get()->CR1.OPM  = v;}
    template<ExtTriggerPolarity v> static void set(){Pointer::get()->SMCR.ETP = v;}
 
-   template<SelectionCompareMode v, uint8_t channel> static void selectCompareMode();
-   template<CompareMode v,          uint8_t channel> static void set();
-   template<Polarity v,             uint8_t channel> static void set();
+   template<SelectionCompareMode v, Channel channel> static void selectCompareMode();
+   template<CompareMode v,          Channel channel> static void set();
+   template<Polarity v,             Channel channel> static void set();
+
+   template <class PIN> static constexpr Channel channel();
+   template <class PIN> static constexpr GPIO_ral::AF AltFunc();
 };
 
 #define CMSIS_TIM1  TIM1
@@ -256,18 +262,13 @@ public:
 using TIM1 = template_TIM<TIM1_BASE>;
 #undef TIM3
 using TIM3 = template_TIM<TIM3_BASE>;
-#undef TIM6
-using TIM6 = template_TIM<TIM6_BASE>;
-#undef TIM7
-using TIM7 = template_TIM<TIM7_BASE>;
 #undef TIM14
 using TIM14 = template_TIM<TIM14_BASE>;
-#undef TIM15
-using TIM15 = template_TIM<TIM15_BASE>;
 #undef TIM16
 using TIM16 = template_TIM<TIM16_BASE>;
 #undef TIM17
 using TIM17 = template_TIM<TIM17_BASE>;
 
 #include "tim_periph_src.h"
+
 
