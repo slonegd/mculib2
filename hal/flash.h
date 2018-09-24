@@ -1,17 +1,3 @@
-/** шаблонный класс сохранения данных во flash
- *  при инициализации необходимо указать
- *      структуру, которая будет сохраняться
- *      сектор флеша, куда записывать
- *  Размер структуры не более 255 байт, поскольку кодируються во флеше
- *  в виде двух байт, один данные, второй их индекс в байтовом массиве
- * 
- *  Перед работой с данными, их надо сначала прочитать, и если результат
- *  отрицательный, то инициировать значениями по умолчанию
- * 
- *  Для обновления изменённых данных периодически вызывать update
- * 
- *////////////////////////////////////////////////////////////////////////////
-  
 #pragma once
 
 #include <stdbool.h>
@@ -23,29 +9,15 @@
 
 // для STM32F0 sector на самом деле page из refmanual
 template <class Data, class FLASH_, typename FLASH_::Sector sector>
-class Flash_impl : public Data
+class Flash_impl : public Data, private TickSubscriber
 {
 public:
-   Flash_impl ()
-   {
-      static_assert (
-         sizeof(Data) < 255,
-         "Размер сохраняемой структуры должен быть менее 255 байт"
-      );
-      // FLASH_::endOfProgInterruptEn(); // уже не помню зачем это
-      #if defined(STM32F4)
-         FLASH_::template set<FLASH_::ProgSize::x16>();
-      #endif
-      if (not readFromFlash())
-         Flash_impl {Data{}};
-   }
-   Flash_impl (Data d) : Data{d} {}
-
-
+    Flash_impl();
+   ~Flash_impl() { unsubscribe(); }
 
 private:
+   uint8_t* original = reinterpret_cast<uint8_t*>(static_cast<Data*>(this));
    uint8_t copy[sizeof(Data)];
-   uint8_t* original = (uint8_t*)this;
    int32_t flashOffset {-1};
    bool needErase {false};
    struct Pair {
@@ -53,49 +25,71 @@ private:
       uint8_t value;
    };
    union Flash_t {
-      Pair     data[FLASH_::template size<sector>()/2];
+      Pair     pair[FLASH_::template size<sector>()/2];
       uint16_t word[FLASH_::template size<sector>()/2];
    };
-//    volatile Flash_t* flash = (Flash_t*)FLASH_::template address<sector>();
+   // volatile Flash_t* flash = (Flash_t*)FLASH_::template address<sector>();
    Flash_t* flash = (Flash_t*)FLASH_::template address<sector>();
+   // Flash_t* flash2 = (Flash_t*)FLASH_::template address<FLASH_::template next<sector>()>();
 
+   Flash_impl (Data d) : Data{d} {}
    // возвращает true, если данные прочитаны
    // false, если нет или данные не полные
    bool readFromFlash();
-   void notify();
-
-
-
-   /// пришлось делать эту структуру, потому что 
-   /// при наследовании TickSubscriber появлялся указатель
-   /// на виртуальную таблицу, который всё портил в работе с this
-   class FlashUpdater : TickSubscriber
-   {
-   public:
-      using Parent = Flash_impl<Data,FLASH_,sector>;
-      FlashUpdater (Parent& parent) : parent(parent) { subscribe(); }
-      ~FlashUpdater() { unsubscribe(); }
-   private:
-      Parent& parent;
-      void notify() override { parent.notify(); }
-   } flashUpdater {*this};
+   void notify() override;
 };
 
+
+/// алиасинг для более быстрой записи
 template<class Data, typename FLASH::Sector sector>
 using Flash = Flash_impl<Data,FLASH,sector>;
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 template <class Data, class FLASH_, typename FLASH_::Sector sector>
-bool Flash_impl<Data,FLASH_,sector>::readFromFlash ()
+Flash_impl<Data,FLASH_,sector>::Flash_impl()
+{
+   static_assert (
+      sizeof(Data) < 255,
+      "Размер сохраняемой структуры должен быть менее 255 байт"
+   );
+   static_assert (
+      std::is_trivially_copyable_v<Data>,
+      "Можно сохранять только тривиально копируемую структуру"
+   );
+   // FLASH_::endOfProgInterruptEn(); // уже не помню зачем это
+   #if defined(STM32F4)
+      FLASH_::template set<FLASH_::ProgSize::x16>();
+   #endif
+   if (not readFromFlash())
+      Flash_impl {Data{}};
+   subscribe();
+}
+
+
+
+template <class Data, class FLASH_, typename FLASH_::Sector sector>
+bool Flash_impl<Data,FLASH_,sector>::readFromFlash()
 {
    // обнуляем буфер перед заполнением
    memset (copy, 0xFF, sizeof(copy));
- 
+
    // чтение данных в копию data в виде массива
    flashOffset = -1;
    bool indExist[sizeof(Data)] {};
-   for (auto& pair : flash->data) {
+   for (auto& pair : flash->pair) {
       flashOffset++;
       if (pair.offset < sizeof(Data)) {
          copy[pair.offset] = pair.value;
@@ -115,7 +109,6 @@ bool Flash_impl<Data,FLASH_,sector>::readFromFlash ()
       needErase = true;
       return false;
    }
-
 
    // проверка, что все данные прочитаны
    if (std::all_of (std::begin(indExist), std::end(indExist), [](auto& v){return v;})) {
