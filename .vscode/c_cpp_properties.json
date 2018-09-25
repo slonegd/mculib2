@@ -41,13 +41,15 @@
                 "${workspaceFolder}/hal",
                 "${workspaceFolder}/hal/ral",
                 "${workspaceFolder}/loki",
-                "${workspaceFolder}/STMF4_files",
-                "${workspaceFolder}/STMF4_files/CMSIS",
+                "${workspaceFolder}/STM32F4_files",
+                "${workspaceFolder}/STM32F4_files/CMSIS",
                 "${workspaceFolder}/test_F0",
-                "${workspaceFolder}/STM32F0_files"
+                "${workspaceFolder}/STM32F0_files",
+                "${workspaceFolder}/STM32F0_files/CMSIS"
             ],
             "defines": [
-                "STM32F030x6"
+                "STM32F030x6",
+                "STM32F405xx"
             ],
             "intelliSenseMode": "clang-x64",
             "browse": {
@@ -64,8 +66,10 @@
                     "${workspaceFolder}/hal",
                     "${workspaceFolder}/hal/ral",
                     "${workspaceFolder}/loki",
-                    "${workspaceFolder}/STMF0_files",
-                    "${workspaceFolder}/STMF0_files/CMSIS",
+                    "${workspaceFolder}/STM32F0_files",
+                    "${workspaceFolder}/STM32F0_files/CMSIS",
+                    "${workspaceFolder}/STM32F4_files",
+                    "${workspaceFolder}/STM32F4_files/CMSIS",
                     "${workspaceFolder}/test_F0"
                 ],
                 "limitSymbolsToIncludedHeaders": true,

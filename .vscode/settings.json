@@ -65,8 +65,8 @@
         "-I./hal",
         "-I./hal/ral",
         "-I./loki",
-        "-I./STMF4_files",
-        "-I./STMF4_files/CMSIS",
+        "-I./STM32F4_files",
+        "-I./STM32F4_files/CMSIS",
         "-I./test_F4"
 	],
     // Показывать значения переменных в редакторе во время отладки

@@ -225,6 +225,40 @@ using PG12 = Pin_t<PG, 12>;
 using PG13 = Pin_t<PG, 13>;
 using PG14 = Pin_t<PG, 14>;
 using PG15 = Pin_t<PG, 15>;
+
+using PH0 = Pin_t<PH, 0>;
+using PH1 = Pin_t<PH, 1>;
+using PH2 = Pin_t<PH, 2>;
+using PH3 = Pin_t<PH, 3>;
+using PH4 = Pin_t<PH, 4>;
+using PH5 = Pin_t<PH, 5>;
+using PH6 = Pin_t<PH, 6>;
+using PH7 = Pin_t<PH, 7>;
+using PH8 = Pin_t<PH, 8>;
+using PH9 = Pin_t<PH, 9>;
+using PH10 = Pin_t<PH, 10>;
+using PH11 = Pin_t<PH, 11>;
+using PH12 = Pin_t<PH, 12>;
+using PH13 = Pin_t<PH, 13>;
+using PH14 = Pin_t<PH, 14>;
+using PH15 = Pin_t<PH, 15>;
+
+using PI0 = Pin_t<PI, 0>;
+using PI1 = Pin_t<PI, 1>;
+using PI2 = Pin_t<PI, 2>;
+using PI3 = Pin_t<PI, 3>;
+using PI4 = Pin_t<PI, 4>;
+using PI5 = Pin_t<PI, 5>;
+using PI6 = Pin_t<PI, 6>;
+using PI7 = Pin_t<PI, 7>;
+using PI8 = Pin_t<PI, 8>;
+using PI9 = Pin_t<PI, 9>;
+using PI10 = Pin_t<PI, 10>;
+using PI11 = Pin_t<PI, 11>;
+using PI12 = Pin_t<PI, 12>;
+using PI13 = Pin_t<PI, 13>;
+using PI14 = Pin_t<PI, 14>;
+using PI15 = Pin_t<PI, 15>;
 #endif
 
 

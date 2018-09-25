@@ -15,7 +15,7 @@ struct CR1_bits {
    uint32_t     CMS  :2;  // Bits 6:5 CMS: Center-aligned mode selection
    bool         ARPE :1;  // Bit  7 ARPE: Auto-reload preload enable
    uint32_t     CKD  :2;  // Bits 9:8 CKD: Clock division
-   uint32_t     res  :6;  // Bits 15:10 Reserved, must be kept at reset value.
+   uint32_t     res  :22; // Bits 31:10 Reserved, must be kept at reset value.
 };
 
 struct CR2_bits {
@@ -40,7 +40,7 @@ struct SMCR_bits {
    enum Trigger { _0 = 0b000, _1, _2, _3, TI1edge, FiltrTI1, FiltrTI2, External };
    enum SlaveMode { SMDisabled = 0b000, Encoder1, Encoder2, Encoder3, Reset, Gated, TriggerMode, ExternalClock };
    SlaveMode          SMS  :3; // Bits 2:0 SMS: Slave mode selection
-   uint32_t           OCCS :1; // Bit 3 OCCS: OCREF clear selection.
+   uint32_t           res  :1; // Bit 3 Reserved
    Trigger            TS   :3; // Bits 6:4 TS[2:0]: Trigger selection
    uint32_t           MSM  :1; // Bit 7 MSM: Master/slave mode
    uint32_t           ETF  :4; // Bits 11:8 ETF[3:0]: External trigger filter
@@ -123,7 +123,6 @@ struct CCMR_bits {
    };
 };
 
-
 struct CCER_bits {
    /// CC1P и CC1NP в CCERbits без смещения
    enum  Polarity {rising, falling, both};
@@ -143,7 +142,7 @@ struct CCER_bits {
    uint32_t CC4P  :1; // Bit 13 CC4P:  Capture/Compare 4 output polarity
    bool     CC4NE :1;
    uint32_t CC4NP :1;
-   uint32_t res   :16;
+   uint32_t res5  :16;
 };
 
 struct BDTR_bits {
@@ -247,23 +246,43 @@ public:
 };
 
 #define CMSIS_TIM1  TIM1
+#define CMSIS_TIM2  TIM2
 #define CMSIS_TIM3  TIM3
+#define CMSIS_TIM4  TIM4
+#define CMSIS_TIM5  TIM5
+#define CMSIS_TIM8  TIM8
+#define CMSIS_TIM9  TIM9
+#define CMSIS_TIM10 TIM10
+#define CMSIS_TIM11 TIM11
+#define CMSIS_TIM12 TIM12
+#define CMSIS_TIM13 TIM13
 #define CMSIS_TIM14 TIM14
-#define CMSIS_TIM15 TIM15
-#define CMSIS_TIM16 TIM16
-#define CMSIS_TIM17 TIM17
 
 #undef TIM1
 using TIM1 = template_TIM<TIM1_BASE>;
+#undef TIM2
+using TIM2 = template_TIM<TIM2_BASE>;
 #undef TIM3
 using TIM3 = template_TIM<TIM3_BASE>;
+#undef TIM4
+using TIM4 = template_TIM<TIM4_BASE>;
+#undef TIM5
+using TIM5 = template_TIM<TIM5_BASE>;
+#undef TIM8
+using TIM8 = template_TIM<TIM8_BASE>;
+#undef TIM9
+using TIM9 = template_TIM<TIM9_BASE>;
+#undef TIM10
+using TIM10 = template_TIM<TIM10_BASE>;
+#undef TIM11
+using TIM11 = template_TIM<TIM11_BASE>;
+#undef TIM12
+using TIM12 = template_TIM<TIM12_BASE>;
+#undef TIM13
+using TIM13 = template_TIM<TIM13_BASE>;
 #undef TIM14
 using TIM14 = template_TIM<TIM14_BASE>;
-#undef TIM16
-using TIM16 = template_TIM<TIM16_BASE>;
-#undef TIM17
-using TIM17 = template_TIM<TIM17_BASE>;
 
 #include "tim_periph_src.h"
 
-
+// TIM_TypeDef;
