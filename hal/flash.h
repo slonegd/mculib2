@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include <algorithm>
+#include <iterator>
 #include "flash_periph.h"
 #include "timers.h"
 

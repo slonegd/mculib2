@@ -21,6 +21,7 @@
 // PIN - выводы микроконтроллера, с которого преобразование
 // bufSize - размер буфера в word (2 байта)
 // DMA_ - поток ДМА (параметр опционный)
+// https://stackoverflow.com/questions/32169249/how-can-i-arbitrarily-sort-a-tuples-types
 template <
    class ADC_,
    uint16_t bufSize = 16,
@@ -64,6 +65,8 @@ public:
 
    void computeSum();
    void computeAvg();
+
+   void start() { if (not ADC_::is_enable()) { ADC_::enable(); ADC_::start(); } }
    
 
 private:
@@ -73,8 +76,8 @@ private:
       ADC_::disable();
       computeSum();
       computeAvg();
-      ADC_::enable();
-      ADC_::start();
+      // ADC_::enable();
+      // ADC_::start();
    }
   //  static constexpr int8_t channel = ADC_ral::ADCchannel<ADC_,PIN>();
 };
@@ -112,6 +115,7 @@ public:
 
    template <class PIN_>
    auto get() { return buffer[position_v<PIN_, PIN...> - 1].getAvg(); }
+   void start() { adc.start(); }
    
 private:
    void interrupt() override

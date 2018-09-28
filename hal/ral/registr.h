@@ -21,6 +21,12 @@
 
 template<class Periph> struct Pointer {
    static auto get() { return reinterpret_cast<Periph*>(Periph::Base); }
+   static decltype(auto) make()
+   {
+    //    volatile auto p = reinterpret_cast<volatile Periph*>(Periph::Base);
+    //    p->do_nothing();
+       return reinterpret_cast<volatile Periph*>(Periph::Base);
+   }
 };
 
 #if defined(TEST)

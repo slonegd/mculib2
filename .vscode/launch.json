@@ -7,7 +7,7 @@
 			"name": "test",
 			"type": "cppdbg",
 			"request": "launch",
-			"program": "${workspaceFolder}/tests/build/tim_f0",
+			"program": "${workspaceFolder}/tests/build/adc_f0",
 			"args": [],
 			"stopAtEntry": false,
 			"cwd": "${workspaceFolder}",
