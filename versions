@@ -1,3 +1,7 @@
+v2.054 оформил encoder_ and encoder_t;
+       в tim_f0 and tim_f0_t добавлены методы setCounter, setCompare, 
+       compareInterruptEnable, compareInterruptDisable, clearInterruptFlags;
+
 v2.053 tim_f4 + tim_f4_t, в классе Pin_t описаны PH и PI (pin.h)
 
 v2.052 tim_f0_t

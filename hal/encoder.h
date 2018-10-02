@@ -13,13 +13,6 @@ struct Encoder
 };
 
 
-
-
-
-
-
-
-
 template<class TIM_, class PinA, class PinB, bool inverted>
 Encoder<TIM_,PinA,PinB,inverted>::Encoder()
 {
