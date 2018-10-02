@@ -198,7 +198,7 @@ void template_ADC<adr,Pointer>::disable()
    stop();
    while ( is_stoping() ) { }
    Pointer::get()->CR.ADDIS = true;
-   while ( not is_disable() ) { }
+   while ( is_enable() ) { }
 }
 
 

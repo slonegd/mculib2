@@ -46,12 +46,13 @@ struct CFGR1_bits {
    enum TriggerEn  { Disable = 0b00, RisingEdge, FallingEdge, BothEdge };
    enum DMAmode    { OneShot = 0b0, Circular };
    enum Align      { right = 0b0, left };
+   // какой-то адский глюк, не принимает Trigger (EXTSEL), считает его размер более 3 бит
    bool       DMAEN   :1; // Bit 0 DMAEN: Direct memory access enable
    DMAmode    DMACFG  :1; // Bit 1 DMACFG: Direct memory access configuration
    uint32_t   SCANDIR :1; // Bit 2 SCANDIR: Scan sequence direction
    Resolution RES     :2; // Bit 4:3 RES[1:0]: Data resolution
    Align      ALIGN   :1; // Bit 5 ALIGN: Data alignment  
-   Trigger    EXTSEL  :3; // Bits 8:6 EXTSEL[2:0]: External trigger selection
+   uint32_t   EXTSEL  :3; // Bits 8:6 EXTSEL[2:0]: External trigger selection
    uint32_t   res1    :1; // Bit 9 Reserved, must be kept at reset value.
    TriggerEn  EXTEN   :2; // Bits 11:10 EXTEN[1:0]: External trigger enable and polarity selection
    uint32_t   OVRMOD  :1; // Bit 12 OVRMOD: Overrun management mode
@@ -134,6 +135,7 @@ struct ADC_t {
   __IO uint32_t                DR;      // group regular data register,          offset: 0x40
    ADC_t() = delete; 
    static constexpr uint32_t Base = adr; 
+   void do_nothing() { ISR.res1 = 0; }
 };
 
 
@@ -154,7 +156,7 @@ public:
    static void clockEnable()       { RCC::template clockEnable<template_ADC>(); }
    static void enable();
    static void disable();
-   static bool is_disable()        { return Pointer::get()->CR.ADDIS; }
+   static bool is_enable()        { return Pointer::get()->CR.ADEN; }
    static void start()             { Pointer::get()->CR.ADSTART  = true; }
    static void DMAenable()         { Pointer::get()->CFGR1.DMAEN = true; }
    static void setCircularDMA()    { Pointer::get()->CFGR1.DMACFG = DMAmode::Circular; }

@@ -222,6 +222,8 @@ bool setChannel()
    bool good {true};
    mock.CHSELR = 0;
    TADC::setChannel<0>();
+   volatile auto t = offsetof(decltype(mock),CHSELR); 
+   volatile auto t2 = offsetof(TADC::periph_type,CHSELR); 
    good &=     (mock.CHSELR & ADC_CHSELR_CHSEL0_Msk)
        and not (mock.CHSELR & ADC_CHSELR_CHSEL1_Msk)
        and not (mock.CHSELR & ADC_CHSELR_CHSEL2_Msk)

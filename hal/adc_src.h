@@ -160,8 +160,8 @@ init(Clock clock, Resolution resolution, SampleTime sampleTime)
    #endif
    DMA_::Configure (conf);
    DMA_::Enable();
-   ADC_::enable();
-   ADC_::start();
+//    ADC_::enable();
+//    ADC_::start();
 }
 
 
