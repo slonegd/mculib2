@@ -503,6 +503,16 @@ constexpr typename GPIO_ral::AF template_TIM<adr,Pointer>::AltFunc()
 
 }
 
+template <uint32_t adr, class Pointer>
+constexpr IRQn_Type template_TIM<adr, Pointer>::IRQn()
+{
+   if      constexpr (std::is_same_v<template_TIM,TIM1> ) return TIM1_CC_IRQn;
+   else if constexpr (std::is_same_v<template_TIM,TIM3> ) return TIM3_IRQn;
+   else if constexpr (std::is_same_v<template_TIM,TIM14>) return TIM14_IRQn;
+   else if constexpr (std::is_same_v<template_TIM,TIM16>) return TIM16_IRQn;
+   else if constexpr (std::is_same_v<template_TIM,TIM17>) return TIM17_IRQn;
+}
+
 #endif
 
 

@@ -3,7 +3,7 @@
    #include "RCC.h"
    #include "GPIO.h"
    #include "DMA.h"
-   #include "TIM.h"
+   #include "tim_periph.h"
    #include "SysTick.h"
 #if defined(STM32F030x6)
    #include "SPI.h"
@@ -72,8 +72,6 @@ inline void makeDebugVar (void)
    //  GPIOD_d->doSome();
     GPIOF_d->doSome();
     DMA1_d->makeDebugVar();
-    TIM1_d->makeDebugVar();
-    TIM3_d->makeDebugVar();
 #if defined(STM32F030x6)
     SPI1_d->doSome();
     DMA1channel1_d->makeDebugVar();

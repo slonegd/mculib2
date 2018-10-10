@@ -224,6 +224,7 @@ public:
    static void     setAutoReloadValue (uint16_t v){Pointer::get()->ARR = v;}
    static void     setPrescaller (uint16_t v)     {Pointer::get()->PSC = v;}
    static void     mainOutputEnable()             {Pointer::get()->BDTR.MOE = true;}
+   static void     clearInterruptFlags()          {true;}
 
    template<Channel channel>      static void preloadEnable  ();
    template<Channel channel>      static void preloadDisable ();
@@ -250,6 +251,8 @@ public:
 #define CMSIS_TIM3  TIM3
 #define CMSIS_TIM4  TIM4
 #define CMSIS_TIM5  TIM5
+#define CMSIS_TIM6  TIM6
+#define CMSIS_TIM7  TIM7
 #define CMSIS_TIM8  TIM8
 #define CMSIS_TIM9  TIM9
 #define CMSIS_TIM10 TIM10
@@ -268,6 +271,10 @@ using TIM3 = template_TIM<TIM3_BASE>;
 using TIM4 = template_TIM<TIM4_BASE>;
 #undef TIM5
 using TIM5 = template_TIM<TIM5_BASE>;
+#undef TIM6
+using TIM6 = template_TIM<TIM6_BASE>;
+#undef TIM7
+using TIM7 = template_TIM<TIM7_BASE>;
 #undef TIM8
 using TIM8 = template_TIM<TIM8_BASE>;
 #undef TIM9

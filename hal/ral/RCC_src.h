@@ -6,6 +6,7 @@
 #include "adc_periph.h"
 #include "USART.h"
 #include "SPI.h"
+#include "tim_periph.h"
 
 #if defined(STM32F405xx) or defined(STM32F030x6)
 
@@ -364,6 +365,11 @@ template<> void RCC::clockEnable<DMA1>()
 {
    SET (AHBen(), DMAEN);
    while (IS_CLEAR (AHBen(), DMAEN)) { }
+}
+template<> void RCC::clockEnable<TIM1>()
+{
+   SET (APB2en(), TIM1EN);
+   while (IS_CLEAR (APB2en(), TIM1EN)) { }
 }
 
 

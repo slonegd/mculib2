@@ -181,7 +181,7 @@ struct TIM_t {
    __IO uint32_t PSC;                //prescaler register,                     offset: 0x28
    __IO uint32_t ARR;                //auto-reload register,                   offset: 0x2C
    __IO uint32_t RCR;                //repetition counter register,            offset: 0x30
-   __IO uint32_t CCR1;               //capture/compare register 1,             offset: 0x34
+   __IO uint32_t CCR1;             //capture/compare registers 1-4,          offset: 0x34
    __IO uint32_t CCR2;               //capture/compare register 2,             offset: 0x38
    __IO uint32_t CCR3;               //capture/compare register 3,             offset: 0x3C
    __IO uint32_t CCR4;               //capture/compare register 4,             offset: 0x40
@@ -211,6 +211,7 @@ public:
    using SelectionCompareMode = TIM_detail::SelectionCompareMode;
    using Polarity             = TIM_detail::CCER_bits::Polarity;
 
+   static const uint32_t Base = adr;
    enum Channel {_1 = 1, _2, _3, _4};
 
    static void     counterEnable()                {Pointer::get()->CR1.CEN = true;}
@@ -220,11 +221,16 @@ public:
    static void     clockEnable()                  {RCC::template clockEnable<template_TIM>();}
    static uint16_t getCounter()                   {return Pointer::get()->CNT;}
    static void     clearCounter()                 {Pointer::get()-> CNT = 0;}
+   static void     setCounter(uint16_t v)         {Pointer::get()-> CNT = v;}
+   static void     setCompare(uint16_t v)         {Pointer::get()-> CCR1 = v;}
    static void     externalClockEnable()          {Pointer::get()->SMCR.ECE = true;}
    static void     externalClockDisable()         {Pointer::get()->SMCR.ECE = false;}
    static void     setAutoReloadValue (uint16_t v){Pointer::get()->ARR = v;}
    static void     setPrescaller (uint16_t v)     {Pointer::get()->PSC = v;}
    static void     mainOutputEnable()             {Pointer::get()->BDTR.MOE = true;}
+   static void     compareInterruptEnable ()      {Pointer::get()->DIER.CC1IE = true;}
+   static void     compareInterruptDisable()      {Pointer::get()->DIER.CC1IE = false;}
+   static void     clearInterruptFlags()          {}
 
    template<Channel channel>      static void preloadEnable  ();
    template<Channel channel>      static void preloadDisable ();
@@ -242,6 +248,7 @@ public:
    template<CompareMode v,          Channel channel> static void set();
    template<Polarity v,             Channel channel> static void set();
 
+   static constexpr IRQn_Type IRQn();
    template <class PIN> static constexpr Channel channel();
    template <class PIN> static constexpr GPIO_ral::AF AltFunc();
 };

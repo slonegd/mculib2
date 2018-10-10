@@ -63,6 +63,18 @@ bool clearCounter()
    return mock.CNT == 0;
 }
 
+bool counter()
+{
+    TTIM::counter(0xFFFF);
+    return mock.CNT == 0xFFFF;
+}
+
+bool compare()
+{
+    TTIM::compare(0xFFFF);
+    return mock.CCR1 == 0xFFFF;
+}
+
 bool externalClockEnable()
 {
    mock.SMCR = 0;
@@ -96,6 +108,26 @@ bool mainOutputEnable()
    return mock.BDTR & TIM_BDTR_MOE_Msk;
 }
 
+bool compareInterruptEnable()
+{
+   mock.DIER = 0;
+
+   bool good {true};
+   TTIM::compareInterruptEnable();
+   good &= bool (mock.DIER & TIM_DIER_CC1IE_Msk);
+   return good;
+}
+
+bool compareInterruptDisable()
+{
+   mock.DIER = 0;
+
+   bool good {true};
+   TTIM::compareInterruptDisable();
+   good &= not bool (mock.DIER & TIM_DIER_CC1IE_Msk);
+   return good;
+}
+
 bool preloadEnable()
 {
    mock.CCMR1 = 0;
@@ -120,13 +152,13 @@ bool preloadDisable()
 
    bool good {true};
    TTIM::preloadDisable<TTIM::Channel::_1>();
-   good &= not (mock.CCR1 & TIM_CCMR1_OC1PE_Msk);
+   good &= not (mock.CCMR1 & TIM_CCMR1_OC1PE_Msk);
    TTIM::preloadDisable<TTIM::Channel::_2>();
-   good &= not (mock.CCR1 & TIM_CCMR1_OC2PE_Msk);
+   good &= not (mock.CCMR1 & TIM_CCMR1_OC2PE_Msk);
    TTIM::preloadDisable<TTIM::Channel::_3>();
-   good &= not (mock.CCR2 & TIM_CCMR2_OC3PE_Msk);
+   good &= not (mock.CCMR2 & TIM_CCMR2_OC3PE_Msk);
    TTIM::preloadDisable<TTIM::Channel::_4>();
-   good &= not (mock.CCR2 & TIM_CCMR2_OC4PE_Msk);
+   good &= not (mock.CCMR2 & TIM_CCMR2_OC4PE_Msk);
    return good;
 }
 
@@ -648,33 +680,36 @@ int main()
    };
 
   
-   test ("TIM::counterEnable         ", counterEnable);
-   test ("TIM::counterDisable        ", counterDisable);
-   test ("TIM::isCount               ", isCount);
-   test ("TIM::autoReloadEnable      ", autoReloadEnable);
-   test ("TIM::getCounter            ", getCounter);
-   test ("TIM::clearCounter          ", clearCounter);
-   test ("TIM::externalClockEnable   ", externalClockEnable);
-   test ("TIM::externalClockDisable  ", externalClockDisable);
-   test ("TIM::setAutoReloadValue    ", setAutoReloadValue);
-   test ("TIM::setPrescaller         ", setPrescaller);
-   test ("TIM::mainOutputEnable      ", mainOutputEnable);
-   test ("TIM::preloadEnable         ", preloadEnable);
-   test ("TIM::preloadDisable        ", preloadDisable);
-   test ("TIM::compareEnable         ", compareEnable);
-   test ("TIM::compareDisable        ", compareDisable);
-   test ("TIM::compareToggle         ", compareToggle);
-   test ("TIM::isCompareEnable       ", isCompareEnable);
-   test ("TIM::setCompareValue       ", setCompareValue);
-   test ("TIM::setSlaveMode          ", setSlaveMode);
-   test ("TIM::setTrigger            ", setTrigger);
-   test ("TIM::setOnePulseMode       ", setOnePulseMode);
-   test ("TIM::setExtTriggerPolarity ", setExtTriggerPolarity);
-   test ("TIM::selectCompareMode     ", selectCompareMode);
-   test ("TIM::setCompareMode        ", setCompareMode);
-   test ("TIM::setPolarity           ", setPolarity);
-   test ("TIM::channel               ", channel);
-   test ("TIM::AltFunc               ", AltFunc);
-   
+   test ("TIM::counterEnable           ", counterEnable);
+   test ("TIM::counterDisable          ", counterDisable);
+   test ("TIM::isCount                 ", isCount);
+   test ("TIM::autoReloadEnable        ", autoReloadEnable);
+   test ("TIM::getCounter              ", getCounter);
+   test ("TIM::clearCounter            ", clearCounter);
+   test ("TIM::counter                 ", counter);
+   test ("TIM::compare                 ", compare);
+   test ("TIM::externalClockEnable     ", externalClockEnable);
+   test ("TIM::externalClockDisable    ", externalClockDisable);
+   test ("TIM::setAutoReloadValue      ", setAutoReloadValue);
+   test ("TIM::setPrescaller           ", setPrescaller);
+   test ("TIM::mainOutputEnable        ", mainOutputEnable);
+   test ("TIM::compareInterruptEnable  ", compareInterruptEnable);
+   test ("TIM::compareInterruptDisable ", compareInterruptDisable);
+   test ("TIM::preloadEnable           ", preloadEnable);
+   test ("TIM::preloadDisable          ", preloadDisable);
+   test ("TIM::compareEnable           ", compareEnable);
+   test ("TIM::compareDisable          ", compareDisable);
+   test ("TIM::compareToggle           ", compareToggle);
+   test ("TIM::isCompareEnable         ", isCompareEnable);
+   test ("TIM::setCompareValue         ", setCompareValue);
+   test ("TIM::setSlaveMode            ", setSlaveMode);
+   test ("TIM::setTrigger              ", setTrigger);
+   test ("TIM::setOnePulseMode         ", setOnePulseMode);
+   test ("TIM::setExtTriggerPolarity   ", setExtTriggerPolarity);
+   test ("TIM::selectCompareMode       ", selectCompareMode);
+   test ("TIM::setCompareMode          ", setCompareMode);
+   test ("TIM::setPolarity             ", setPolarity);
+   test ("TIM::channel                 ", channel);
+   test ("TIM::AltFunc                 ", AltFunc);
    std::cout << std::endl;
 }
