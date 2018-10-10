@@ -23,23 +23,22 @@
 			]
 		},
 		{ 
-			"name": "(gdb) Attach",
+			"name": "f0",
 			"type": "cppdbg",
 			"request": "launch",
-		// slonegd note
-		// "miDebuggerPath": "/home/slonegd/opt/gcc-arm-none-eabi-6-2017-q1-update/bin/arm-none-eabi-gdb",
-         	// phobos
-         	"miDebuggerPath": "/home/users/dvk/code/gcc-arm-none-eabi-7-2018-q2-update/bin/arm-none-eabi-gdb",
-		// deimos
-		//   "miDebuggerPath": "/home/peltikhin/code/gcc-arm-none-eabi-7-2017-q4-major/bin/arm-none-eabi-gdb",		
-		// work note
-         	// "miDebuggerPath": "/home/ap/Code/gcc-arm-none-eabi-6-2017-q2-update/bin/arm-none-eabi-gdb",
-		// home
-		// "miDebuggerPath": "/home/slonegd/Code/gcc-arm-none-eabi-6-2017-q2-update/bin/arm-none-eabi-gdb",
-		//	"program": "${workspaceRoot}/build/STM32FX_DISCOVERY.elf",
+         "miDebuggerPath": "arm-none-eabi-gdb",
 			"program": "${workspaceRoot}/build/STM32F0_DISCOVERY.elf",
 			"miDebuggerServerAddress": "localhost:4242",
-		   
+			"MIMode": "gdb",
+			"cwd": "${workspaceRoot}"
+		},
+		{ 
+			"name": "f4",
+			"type": "cppdbg",
+			"request": "launch",
+         "miDebuggerPath": "arm-none-eabi-gdb",
+			"program": "${workspaceRoot}/build/STM32F4_DISCOVERY.elf",
+			"miDebuggerServerAddress": "localhost:4242",
 			"MIMode": "gdb",
 			"cwd": "${workspaceRoot}"
 		}

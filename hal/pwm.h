@@ -6,7 +6,7 @@
 #include "literals.h"
 
 
-template <class TIM_, class Pin_, uint16_t maxFill = 1000_from1000>
+template <class TIM_, class Pin_, uint16_t maxFill = 500_from1000>
 class PWM
 {
 public:
@@ -170,7 +170,7 @@ PWM<TIM_,Pin_,maxFill>::FillRatio::operator uint16_t()
 template <class TIM_, class Pin_, uint16_t maxFill>
 typename PWM<TIM_,Pin_,maxFill>::FillRatio& PWM<TIM_,Pin_,maxFill>::FillRatio::operator= (uint16_t val)
 {
-   if ( (val != fillRatio) and (val >= 0) and (val <= maxFill) ) {
+   if ( (val != fillRatio) and (val > 0) and (val <= maxFill) ) {
       fillRatio = val;
       update();
    }

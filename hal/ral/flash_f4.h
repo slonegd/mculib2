@@ -48,7 +48,6 @@ struct CRbits {
    bool     ERRIE :1; // Bit 25 ERRIE: Error interrupt enable
    uint32_t res4  :5; // Bits 30:26 Reserved, must be kept cleared.
    bool LOCK      :1; // Bit 31 LOCK: Lock
-
 };
 
 } // namespace FLASH_detail {
@@ -65,7 +64,8 @@ struct FLASH_t {
    __IO uint32_t              OPTCR;   // option control register ,  offset: 0x14
    __IO uint32_t              OPTCR1;  // option control register 1, offset: 0x18
    FLASH_t() = delete;
-   static constexpr uint32_t Base = FLASH_R_BASE; 
+   static constexpr uint32_t Base = FLASH_R_BASE;
+   static auto& make() { return *reinterpret_cast<FLASH_t*>(Base); } 
 };
 
 

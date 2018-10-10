@@ -70,7 +70,7 @@ Flash_impl<Data,FLASH_,sector>::Flash_impl()
       std::is_trivially_copyable_v<Data>,
       "Можно сохранять только тривиально копируемую структуру"
    );
-   // FLASH_::endOfProgInterruptEn(); // уже не помню зачем это
+  //  FLASH_::endOfProgInterruptEn(); // уже не помню зачем это
    #if defined(STM32F4)
       FLASH_::template set<FLASH_::ProgSize::x16>();
    #endif
