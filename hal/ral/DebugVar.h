@@ -22,8 +22,6 @@ __IO auto GPIOD_d  = create<PD>();
 __IO auto GPIOF_d  = create<PF>();
 __IO auto USART1_d = create<USART1>();
 MAKE_VAR(DMA1);
-MAKE_VAR(TIM1);
-MAKE_VAR(TIM3);
 #if defined(STM32F030x6)
    __IO auto SPI1_d = SPI1::create();
    MAKE_VAR(DMA1channel1);
@@ -33,10 +31,6 @@ MAKE_VAR(TIM3);
    MAKE_VAR(DMA1channel5);
 #elif defined(STM32F405xx)
     __IO auto GPIOE_d = create<PE>();
-    MAKE_VAR(TIM2);
-    MAKE_VAR(TIM4);
-    MAKE_VAR(TIM5);
-    MAKE_VAR(TIM8);
     __IO auto USART2_d = create<USART2>();
     __IO auto USART3_d = create<USART3>();
     __IO auto USART6_d = create<USART6>();
@@ -81,10 +75,6 @@ inline void makeDebugVar (void)
     DMA1channel5_d->makeDebugVar();
 #elif defined(STM32F405xx)
     GPIOE_d->doSome();
-    TIM2_d->makeDebugVar();
-    TIM4_d->makeDebugVar();
-    TIM5_d->makeDebugVar();
-    TIM8_d->makeDebugVar();
     USART2_d->doSome();
     USART3_d->doSome();
     USART6_d->doSome();

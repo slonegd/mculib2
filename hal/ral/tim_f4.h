@@ -224,7 +224,7 @@ public:
    static void     setAutoReloadValue (uint16_t v){Pointer::get()->ARR = v;}
    static void     setPrescaller (uint16_t v)     {Pointer::get()->PSC = v;}
    static void     mainOutputEnable()             {Pointer::get()->BDTR.MOE = true;}
-   static void     clearInterruptFlags()          {true;}
+   static void     clearInterruptFlags()          {}
 
    template<Channel channel>      static void preloadEnable  ();
    template<Channel channel>      static void preloadDisable ();

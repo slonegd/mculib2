@@ -288,6 +288,29 @@ template<> void RCC::clockEnable<USART6alt26>()
    while (IS_CLEAR (APB2en(), USART6EN)) { }
 }
 
+template<> void RCC::clockEnable<TIM3>()
+{
+   SET (APB1en(), TIM3EN);
+   while (IS_CLEAR (APB1en(), TIM3EN)) { }
+}
+
+template<> void RCC::clockEnable<TIM8>()
+{
+   SET (APB2en(), TIM8EN);
+   while (IS_CLEAR (APB2en(), TIM8EN)) { }
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -371,6 +394,7 @@ template<> void RCC::clockEnable<TIM1>()
    SET (APB2en(), TIM1EN);
    while (IS_CLEAR (APB2en(), TIM1EN)) { }
 }
+
 
 
 #endif
