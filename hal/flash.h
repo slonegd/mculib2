@@ -70,7 +70,7 @@ Flash_impl<Data,FLASH_,sector>::Flash_impl()
       std::is_trivially_copyable_v<Data>,
       "Можно сохранять только тривиально копируемую структуру"
    );
-  //  FLASH_::endOfProgInterruptEn(); // уже не помню зачем это
+   FLASH_::lock();
    if (not readFromFlash())
       Flash_impl {Data{}};
    subscribe();
@@ -155,7 +155,9 @@ void Flash_impl<Data,FLASH_,sector>::notify()
          FLASH_::setProgMode();
          #if defined(STM32F4)
             FLASH_::template set<FLASH_::ProgSize::x16>();
+            FLASH_::endOfProgInterruptEn(); // уже не помню зачем это
          #endif
+
          dataWrite = original[byteN];
          flash->word[flashOffset] = (uint16_t)dataWrite << 8 | byteN;
          state = CheckWrite;

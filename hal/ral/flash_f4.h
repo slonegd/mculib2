@@ -88,7 +88,7 @@ struct template_FLASH
    static void clearEndOfProgFlag()       { Pointer::get()->SR.EOP      = true; }
    static bool is_busy()                  { return Pointer::get()->SR.BSY;      }
    template<ProgSize v> static void set() { Pointer::get()->CR.PSIZE    = v;    }
-   // static void endOfProgInterruptEn();
+   static void endOfProgInterruptEn()     { Pointer::get()->CR.EOPIE    = true; }
 
    template <Sector> static void startErase();
 

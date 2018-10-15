@@ -114,7 +114,7 @@ public:
    operator ValueType() { return buffer[0].getAvg(); }
 
    template <class PIN_>
-   auto get() { return buffer[position_v<PIN_, PIN...> - 1].getAvg(); }
+   auto get() { auto i {position_v<PIN_, PIN...> - 1}; avg[i] = buffer[i].getAvg(); return avg[i]; }
   //  void start() { adc.start(); }
    
 private:
