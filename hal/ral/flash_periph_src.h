@@ -36,7 +36,7 @@ void template_FLASH<Pointer>::startErase()
 
 template<class Pointer>
 template <typename template_FLASH<Pointer>::Sector s>
-constexpr uint32_t template_FLASH<Pointer>::address()
+constexpr size_t template_FLASH<Pointer>::address()
 {
    return 0x08000000 + 1024 * s;
 }

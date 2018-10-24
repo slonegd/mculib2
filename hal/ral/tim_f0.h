@@ -181,7 +181,7 @@ struct TIM_t {
    __IO uint32_t PSC;                //prescaler register,                     offset: 0x28
    __IO uint32_t ARR;                //auto-reload register,                   offset: 0x2C
    __IO uint32_t RCR;                //repetition counter register,            offset: 0x30
-   __IO uint32_t CCR1;             //capture/compare registers 1-4,          offset: 0x34
+   __IO uint32_t CCR1;               //capture/compare registers 1-4,          offset: 0x34
    __IO uint32_t CCR2;               //capture/compare register 2,             offset: 0x38
    __IO uint32_t CCR3;               //capture/compare register 3,             offset: 0x3C
    __IO uint32_t CCR4;               //capture/compare register 4,             offset: 0x40

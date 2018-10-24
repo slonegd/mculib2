@@ -15,15 +15,16 @@ public:
    void subscribe(Interrupting* p) {Interrupt<TIM_>::subscribe(p);}
    void enableInterrupt ();
    void disableInterrupt();
-   void compare(int16_t);
-   int16_t operator=  (int16_t);
-   int16_t operator+  (int16_t);
-   int16_t operator-  (int16_t);
-   bool    operator>  (int16_t);
-   bool    operator<  (int16_t);
-   bool    operator>= (int16_t);
-   bool    operator<= (int16_t);
-           operator   int16_t();
+   void setCompare(int16_t);
+   int16_t operator=   (int16_t);
+   int16_t operator!=  (int16_t);
+   int16_t operator+   (int16_t);
+   int16_t operator-   (int16_t);
+   bool    operator>   (int16_t);
+   bool    operator<   (int16_t);
+   bool    operator>=  (int16_t);
+   bool    operator<=  (int16_t);
+           operator    int16_t();
 };
 
 template<class TIM_, class PinA, class PinB, bool inverted>
@@ -80,7 +81,7 @@ void Encoder<TIM_, PinA, PinB, inverted>::disableInterrupt()
 }
 
 template<class TIM_, class PinA, class PinB, bool inverted>
-void Encoder<TIM_, PinA, PinB, inverted>::compare(int16_t v)
+void Encoder<TIM_, PinA, PinB, inverted>::setCompare(int16_t v)
 {
    TIM_::setCompare(v);
 }
@@ -90,6 +91,12 @@ int16_t Encoder<TIM_, PinA, PinB, inverted>::operator= (int16_t v)
 {
    TIM_::setCounter(v);
    return v;
+}
+
+template<class TIM_, class PinA, class PinB, bool inverted>
+int16_t Encoder<TIM_, PinA, PinB, inverted>::operator!= (int16_t v)
+{
+   return static_cast<int16_t>(TIM_::getCounter()) != v;
 }
 
 template<class TIM_, class PinA, class PinB, bool inverted>

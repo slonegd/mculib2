@@ -34,7 +34,7 @@ struct MockPin
 };
 
 int16_t count {0};  // register CNT
-int16_t valueCompare{0}; // register CCR
+int16_t Compare{0}; // register CCR
 int IRQn_{0};
 bool interrupt_{false};
 bool clockEnable_{false};
@@ -51,7 +51,7 @@ struct MockTIM
    static void clearCounter  () {count = 0;}
    static void counterEnable () {counterEnable_ = true;}
    static void setCounter(int16_t v) {count = v;}
-   static void setCompare(int16_t v) {valueCompare = v;}
+   static void setCompare(int16_t v) {Compare = v;}
    static void compareInterruptEnable () {interrupt_ = true;}
    static void compareInterruptDisable() {interrupt_ = false;}
    template <Polarity v, int channel> static void set() {}
@@ -99,8 +99,8 @@ bool disableInterrupt()
 
 bool compare()
 {
-   encoder.compare(0xFFF);
-   return valueCompare == 0xFFF;
+   encoder.setCompare(0xFFF);
+   return Compare == 0xFFF;
 }
 
 bool operatorEqually()

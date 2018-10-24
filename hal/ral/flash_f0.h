@@ -85,7 +85,7 @@ struct template_FLASH
    /// параметр шаблона - адрес сектора (страницы)
    template <Sector> static void startErase();
 
-   template<Sector> static constexpr uint32_t address();
+   template<Sector> static constexpr size_t address();
    template<Sector> static constexpr int32_t  size();
 };
 
