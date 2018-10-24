@@ -128,7 +128,7 @@ PWM<TIM_,Pin_,maxFill>::Freq::operator uint16_t()
 template <class TIM_, class Pin_, uint16_t maxFill>
 typename PWM<TIM_,Pin_,maxFill>::Freq& PWM<TIM_,Pin_,maxFill>::Freq::operator= (uint16_t val)
 {
-   if ( (val != freq) and (val > minFreq) ) {
+   if ( (val != freq) and (val >= minFreq) ) {
       freq = val;
       up.countTo.update (F_CPU / freq - 1);
    }
