@@ -70,10 +70,7 @@ Flash_impl<Data,FLASH_,sector>::Flash_impl()
       std::is_trivially_copyable_v<Data>,
       "Можно сохранять только тривиально копируемую структуру"
    );
-   // FLASH_::endOfProgInterruptEn(); // уже не помню зачем это
-   #if defined(STM32F4)
-      FLASH_::template set<FLASH_::ProgSize::x16>();
-   #endif
+   FLASH_::lock();
    if (not readFromFlash())
       Flash_impl {Data{}};
    subscribe();
@@ -130,7 +127,7 @@ void Flash_impl<Data,FLASH_,sector>::notify()
       CheckChanges,
       StartWrite,
       CheckWrite,
-      Errase,
+      Erase,
       CheckErase
    };
    static State state = CheckChanges;
@@ -141,7 +138,7 @@ void Flash_impl<Data,FLASH_,sector>::notify()
 
    case CheckChanges:
       if (needErase) {
-         state = Errase;
+         state = Erase;
       } else if (original[byteN] == copy[byteN]) {
          byteN++;
          if (byteN == sizeof(Data)) {
@@ -156,6 +153,11 @@ void Flash_impl<Data,FLASH_,sector>::notify()
       if ( not FLASH_::is_busy() and FLASH_::is_lock() ) {
          FLASH_::unlock();
          FLASH_::setProgMode();
+         #if defined(STM32F4)
+            FLASH_::template set<FLASH_::ProgSize::x16>();
+            FLASH_::endOfProgInterruptEn(); // уже не помню зачем это
+         #endif
+
          dataWrite = original[byteN];
          flash->word[flashOffset] = (uint16_t)dataWrite << 8 | byteN;
          state = CheckWrite;
@@ -174,7 +176,7 @@ void Flash_impl<Data,FLASH_,sector>::notify()
       }
       break;
 
-   case Errase:
+   case Erase:
       if ( not FLASH_::is_busy() and FLASH_::is_lock() ) {
          FLASH_::unlock();
          FLASH_::template startErase<sector>();

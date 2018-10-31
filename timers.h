@@ -31,6 +31,8 @@ protected:
 class Timer : TickSubscriber
 {
 public:
+   Timer() = default;
+   Timer (uint32_t ms) { start(ms); }
    void     start   (uint32_t ms); /// запускает счёт с текущего значения счётчика, устанавливает время
    bool     event();   /// возвращает true, если таймер натикал и перезапускает его
    bool     done();    /// возвращает true, если таймер натикал и НЕ перезапускает его

@@ -12,8 +12,11 @@ volatile uint32_t N = 0;
 
 auto encoder = Encoder<TIM8, PC6, PC7>();
 
+volatile auto& flash_ = FLASH_t::make();
+
 int main(void)
 {
+   volatile auto t = sizeof (flash_.CR);
    // к этому моменту уже вызваны CLKinit (инициализация системных частот)
    // и конструкторы глобальных объектов из файла init.h
    makeDebugVar();

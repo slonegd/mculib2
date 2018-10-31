@@ -66,7 +66,7 @@ public:
    void computeSum();
    void computeAvg();
 
-   void start() { if (not ADC_::is_enable()) { ADC_::enable(); ADC_::start(); } }
+  //  void start() { if (not ADC_::is_enable()) { ADC_::enable(); ADC_::start(); } }
    
 
 private:
@@ -76,8 +76,8 @@ private:
       ADC_::disable();
       computeSum();
       computeAvg();
-      // ADC_::enable();
-      // ADC_::start();
+      ADC_::enable();
+      ADC_::start();
    }
   //  static constexpr int8_t channel = ADC_ral::ADCchannel<ADC_,PIN>();
 };
@@ -114,8 +114,8 @@ public:
    operator ValueType() { return buffer[0].getAvg(); }
 
    template <class PIN_>
-   auto get() { return buffer[position_v<PIN_, PIN...> - 1].getAvg(); }
-   void start() { adc.start(); }
+   auto get() { auto i {position_v<PIN_, PIN...> - 1}; avg[i] = buffer[i].getAvg(); return avg[i]; }
+  //  void start() { adc.start(); }
    
 private:
    void interrupt() override

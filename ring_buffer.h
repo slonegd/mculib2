@@ -20,7 +20,7 @@ public:
 template<int n, class T = uint32_t>
 class SumRingBuffer : private RingBuffer<n, T>
 {
-   T sum;
+   T sum {0};
 public:
    void pushAndCompute (T val) {
       sum -= this->data[this->index];

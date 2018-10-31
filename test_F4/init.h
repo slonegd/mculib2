@@ -35,13 +35,10 @@ Timer lcdTimer;
 
 // энергонезависимые данные
 struct FlashData {
-   uint16_t d1;
-   uint16_t d2;
+   uint16_t d1 {1};
+   uint16_t d2 {3};
 };
-auto flash = Flash<FlashData, FLASH::Sector::_2> ( {
-   .d1 = 1,
-   .d2 = 3
-} );
+Flash<FlashData, FLASH::Sector::_2> flash {};
 
 // шим
 using PWMout = Rled;

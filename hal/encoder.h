@@ -1,6 +1,6 @@
 #pragma once
 
-#include "TIM.h"
+#include "tim_periph.h"
 #include "pin.h"
 #include "pins_variadic.h"
 #include <type_traits>
@@ -16,8 +16,8 @@ struct Encoder
 template<class TIM_, class PinA, class PinB, bool inverted>
 Encoder<TIM_,PinA,PinB,inverted>::Encoder()
 {
-   constexpr auto pinAchannel = Channel<TIM_,PinA>();
-   constexpr auto pinBchannel = Channel<TIM_,PinB>();
+   constexpr auto pinAchannel = TIM_::template channel<PinA>();
+   constexpr auto pinBchannel = TIM_::template channel<PinB>();
    static_assert (
       pinAchannel == 1 or pinAchannel == 2,
       "PinA вывод контроллера не поддерживает функцию энкодера с этим таймером" 
@@ -31,17 +31,17 @@ Encoder<TIM_,PinA,PinB,inverted>::Encoder()
       "PinA и PinB не должны принадлежать одному каналу таймера" 
    );
 
-   constexpr auto altFuncPinA = AltFunc<TIM_,PinA>();
-   constexpr auto altFuncPinB = AltFunc<TIM_,PinB>();
+   constexpr auto altFuncPinA = TIM_::template AltFunc<PinA>();
+   constexpr auto altFuncPinB = TIM_::template AltFunc<PinB>();
    PinA::template configureAltFunction<altFuncPinA>();
    PinB::template configureAltFunction<altFuncPinB>();
   
    TIM_::clockEnable();
-   TIM_::template setSlaveMode<TIM_::SlaveMode::Encoder1>();
-   TIM_::template selectCompareMode<TIM_::SelectionCompareMode::InputTIFirst, pinAchannel>();
-   TIM_::template selectCompareMode<TIM_::SelectionCompareMode::InputTIFirst, pinBchannel>();
+   TIM_::template set<TIM_::SlaveMode::Encoder1>();
+   TIM_::template selectCompareMode<TIM_::SelectionCompareMode::Input, pinAchannel>();
+   TIM_::template selectCompareMode<TIM_::SelectionCompareMode::Input, pinBchannel>();
    if (inverted) {
-      TIM_::template setPolarity<TIM_::Polarity::falling, pinAchannel>();
+      TIM_::template set<TIM_::Polarity::falling, pinAchannel>();
    }
    TIM_::clearCounter();
    TIM_::counterEnable();

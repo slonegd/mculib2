@@ -1,12 +1,12 @@
 #pragma once
 
-#include "TIM.h"
+#include "tim_periph.h"
 
 #include "pin.h"
 #include "literals.h"
 
 
-template <class TIM_, class Pin_, uint16_t maxFill = 1000_from1000>
+template <class TIM_, class Pin_, uint16_t maxFill = 500_from1000>
 class PWM
 {
 public:
@@ -61,7 +61,7 @@ public:
    void outToggle()   { TIM_::template compareToggle  <channel>(); }
    bool isOutEnable() { return TIM_::template isCompareEnable<channel>(); }
 
-   static constexpr uint8_t  channel = Channel<TIM_,Pin_>();
+   static constexpr typename TIM_::Channel channel = TIM_::template channel<Pin_>();
    static constexpr uint32_t minFreq = F_CPU / 0xFFFF;
    
 };
@@ -94,10 +94,10 @@ PWM<TIM_,Pin_,maxFill>::PWM() : freq(*this), fillRatio(*this), countTo(*this)
                      Pin_::OutType::PushPull,
                      Pin_::OutSpeed::High,
                      Pin_::PullResistor::No);
-   Pin_::template SetAltFunc <AltFunc<TIM_,Pin_>()> ();
+   Pin_::template SetAltFunc <TIM_::template AltFunc<Pin_>()> ();
 
    TIM_::clockEnable();
-   TIM_::template setCompareMode <TIM_::CompareMode::PWMmode, channel> ();
+   TIM_::template set <TIM_::CompareMode::PWMmode, channel> ();
    TIM_::template preloadEnable <channel> ();
    TIM_::autoReloadEnable();
    TIM_::mainOutputEnable();
@@ -128,7 +128,7 @@ PWM<TIM_,Pin_,maxFill>::Freq::operator uint16_t()
 template <class TIM_, class Pin_, uint16_t maxFill>
 typename PWM<TIM_,Pin_,maxFill>::Freq& PWM<TIM_,Pin_,maxFill>::Freq::operator= (uint16_t val)
 {
-   if ( (val != freq) and (val > minFreq) ) {
+   if ( (val != freq) and (val >= minFreq) ) {
       freq = val;
       up.countTo.update (F_CPU / freq - 1);
    }
@@ -170,7 +170,7 @@ PWM<TIM_,Pin_,maxFill>::FillRatio::operator uint16_t()
 template <class TIM_, class Pin_, uint16_t maxFill>
 typename PWM<TIM_,Pin_,maxFill>::FillRatio& PWM<TIM_,Pin_,maxFill>::FillRatio::operator= (uint16_t val)
 {
-   if ( (val != fillRatio) and (val >= 0) and (val <= maxFill) ) {
+   if ( (val != fillRatio) and (val > 0) and (val <= maxFill) ) {
       fillRatio = val;
       update();
    }
