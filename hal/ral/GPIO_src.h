@@ -107,21 +107,21 @@ void GPIOx<adr>::setAltFunc()
 
 template<uint32_t adr>
 constexpr typename GPIOx<adr>::Mode_t GPIOx<adr>::getMode(PinConf_t val)
-{ return (Mode_t)val; }
+{ return static_cast<Mode_t>(static_cast<uint32_t>(val) & 0b11); }
 
 template<uint32_t adr>
 constexpr typename GPIOx<adr>::OutType_t GPIOx<adr>::getType(PinConf_t val)
-{ return static_cast<OutType_t>(static_cast<uint32_t>(val) >> 2); }
+{ return static_cast<OutType_t>((static_cast<uint32_t>(val) >> 2) & 0b1); }
 
 template<uint32_t adr>
 constexpr typename GPIOx<adr>::OutSpeed_t GPIOx<adr>::getSpeed(PinConf_t val)
-{ return static_cast<OutSpeed_t>(static_cast<uint32_t>(val) >> 3); }
+{ return static_cast<OutSpeed_t>((static_cast<uint32_t>(val) >> 3) & 0b11); }
 
 template<uint32_t adr>
 constexpr typename GPIOx<adr>::PullResistor_t GPIOx<adr>::getResistor(PinConf_t val)
-{ return static_cast<PullResistor_t>(static_cast<uint32_t>(val) >> 5); }
+{ return static_cast<PullResistor_t>((static_cast<uint32_t>(val) >> 5) & 0b11); }
 
 template<uint32_t adr>
 constexpr typename GPIOx<adr>::AF GPIOx<adr>::getAltFunc(PinConf_t val)
-{ return static_cast<AF>(static_cast<uint32_t>(val) >> 7); }
+{ return static_cast<AF>((static_cast<uint32_t>(val) >> 7) & 0b1111); }
 

@@ -39,7 +39,7 @@ public:
    static constexpr uint32_t Base = Adr;
 
    GPIOx() = delete;
-   void doSome() { BSRR.reg = 0; }
+   void doSome() volatile { BSRR.reg = 0; }
  
    static void       clockEnable();
    static uint16_t   read();                  
