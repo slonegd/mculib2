@@ -69,6 +69,27 @@ struct DIER_bits {
    uint32_t res   :17; // Bit 15 Reserved, must be kept at reset value.
 };
 
+
+struct SR_bits 
+{
+   bool UIF :1;
+   bool CC1IF :1;
+   bool CC2IF :1;
+   bool CC3IF :1;
+   bool CC4IF :1;
+   bool COMIF :1;
+   bool TIF   :1;
+   bool BIF   :1;
+   uint32_t   :1;
+   bool CC1OF :1;
+   bool CC2OF :1;
+   bool CC3OF :1;
+   bool CC4OF :1;
+   uint32_t   :3;
+};
+
+
+
 enum SelectionCompareMode { Output = 0b00, Input, InputALT, InputTRC }; 
 
 struct Output_bits {
@@ -128,21 +149,21 @@ struct CCER_bits {
    /// CC1P и CC1NP в CCERbits без смещения
    enum  Polarity {rising, falling, both};
    bool     CC1E  :1; // Bit 0 CC1E:   Capture/Compare 1 output enable
-   uint32_t CC1P  :1; // Bit 1 CC1P:   Capture/Compare 1 output Polarity
+   bool     CC1P  :1; // Bit 1 CC1P:   Capture/Compare 1 output Polarity
    bool     CC1NE :1; // Bit 2 CC1NE:  Capture/Compare 1 complementary output enable
-   uint32_t CC1NP :1; // Bit 3 CC1NP:  Capture/Compare 1 complementary output polarity
+   bool     CC1NP :1; // Bit 3 CC1NP:  Capture/Compare 1 complementary output polarity
    bool     CC2E  :1; // Bit 4 CC2E:   Capture/Compare 2 output enable
-   uint32_t CC2P  :1; // Bit 5 CC2P:   Capture/Compare 2 output polarity
+   bool     CC2P  :1; // Bit 5 CC2P:   Capture/Compare 2 output polarity
    bool     CC2NE :1; // Bit 6 CC2NE:  Capture/Compare 2 complementary output enable
-   uint32_t CC2NP :1; // Bit 7 CC2NP:  Capture/Compare 2 complementary output polarity
+   bool     CC2NP :1; // Bit 7 CC2NP:  Capture/Compare 2 complementary output polarity
    bool     CC3E  :1; // Bit 8 CC3E:   Capture/Compare 3 output enable
-   uint32_t CC3P  :1; // Bit 9 CC3P:   Capture/Compare 3 output polarity
+   bool     CC3P  :1; // Bit 9 CC3P:   Capture/Compare 3 output polarity
    bool     CC3NE :1; // Bit 10 CC3NE: Capture/Compare 3 complementary output enable
-   uint32_t CC3NP :1; // Bit 11 CC3NP: Capture/Compare 3 complementary output polarity
+   bool     CC3NP :1; // Bit 11 CC3NP: Capture/Compare 3 complementary output polarity
    bool     CC4E  :1; // Bit 12 CC4E:  Capture/Compare 4 output enable
-   uint32_t CC4P  :1; // Bit 13 CC4P:  Capture/Compare 4 output polarity
+   bool     CC4P  :1; // Bit 13 CC4P:  Capture/Compare 4 output polarity
    bool     CC4NE :1;
-   uint32_t CC4NP :1;
+   bool     CC4NP :1;
    uint32_t res   :16;
 };
 
@@ -173,7 +194,7 @@ struct TIM_t {
    __IO TIM_detail::CR2_bits   CR2;  //control register 2,                     offset: 0x04
    __IO TIM_detail::SMCR_bits  SMCR; //slave Mode Control register,            offset: 0x08
    __IO TIM_detail::DIER_bits  DIER; //DMA/interrupt enable register,          offset: 0x0C
-   __IO uint32_t SR;                 //status register,                        offset: 0x10
+   __IO TIM_detail::SR_bits  SR;   //status register,                        offset: 0x10
    __IO uint32_t EGR;                //event generation register,              offset: 0x14
    __IO TIM_detail::CCMR_bits CCMR;  //capture/compare mode register,          offset: 0x18
    __IO TIM_detail::CCER_bits CCER;  //capture/compare enable register,        offset: 0x20
@@ -191,6 +212,7 @@ struct TIM_t {
    __IO uint32_t OR;                 //option register,                        offset: 0x50
    TIM_t() = delete;
    static constexpr uint32_t Base = adr;
+   void doSome() volatile {OR = 0;}
 };
 
 
@@ -222,15 +244,15 @@ public:
    static uint16_t getCounter()                   {return Pointer::get()->CNT;}
    static void     clearCounter()                 {Pointer::get()-> CNT = 0;}
    static void     setCounter(uint16_t v)         {Pointer::get()-> CNT = v;}
-   static void     setCompare(uint16_t v)         {Pointer::get()-> CCR1 = v;}
+   static void     setCompare(uint16_t v)         {Pointer::get()-> CCR3 = v;}
    static void     externalClockEnable()          {Pointer::get()->SMCR.ECE = true;}
    static void     externalClockDisable()         {Pointer::get()->SMCR.ECE = false;}
    static void     setAutoReloadValue (uint16_t v){Pointer::get()->ARR = v;}
    static void     setPrescaller (uint16_t v)     {Pointer::get()->PSC = v;}
    static void     mainOutputEnable()             {Pointer::get()->BDTR.MOE = true;}
-   static void     compareInterruptEnable ()      {Pointer::get()->DIER.CC1IE = true;}
-   static void     compareInterruptDisable()      {Pointer::get()->DIER.CC1IE = false;}
-   static void     clearInterruptFlags()          {}
+   static void     compareInterruptEnable ()      {Pointer::get()->DIER.CC3IE = true;}
+   static void     compareInterruptDisable()      {Pointer::get()->DIER.CC3IE = false;}
+   static void     clearInterruptFlags()          {Pointer::get()->SR.CC3IF = false;}
 
    template<Channel channel>      static void preloadEnable  ();
    template<Channel channel>      static void preloadDisable ();
@@ -251,6 +273,7 @@ public:
    static constexpr IRQn_Type IRQn();
    template <class PIN> static constexpr Channel channel();
    template <class PIN> static constexpr GPIO_ral::AF AltFunc();
+
 };
 
 #define CMSIS_TIM1  TIM1

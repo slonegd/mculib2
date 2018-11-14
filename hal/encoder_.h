@@ -7,7 +7,7 @@
 #include <type_traits>
 
 template<class TIM_, class PinA, class PinB, bool inverted = false>
-class Encoder
+class Encoder : Interrupt<TIM_>
 {
 public:
    Encoder ();
@@ -51,13 +51,19 @@ Encoder<TIM_, PinA, PinB, inverted>::Encoder()
    PinB::template configureAltFunction<altFuncPinB>();
 
    TIM_::clockEnable();
+   TIM_::template compareEnable<TIM_::Channel::_3>();
+//    TIM_::template compareEnable<pinBchannel>();
    TIM_::template set<TIM_::SlaveMode::Encoder3>();
+   TIM_::template set<TIM_::CompareMode::ActiveOnMatch, TIM_::Channel::_3>();
+//    TIM_::template set<TIM_::CompareMode::ActiveOnMatch, pinBchannel>();
    TIM_::template selectCompareMode<TIM_::SelectionCompareMode::Input, pinAchannel>();
    TIM_::template selectCompareMode<TIM_::SelectionCompareMode::Input, pinBchannel>();
+
    if (inverted) {
       TIM_::template set<TIM_::Polarity::falling, pinAchannel>();
    }
    TIM_::clearCounter();
+//    TIM_::mainOutputEnable();
    TIM_::counterEnable();
 }
 

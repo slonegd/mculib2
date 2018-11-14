@@ -48,7 +48,7 @@ public:
       InRegs_t inRegsMax;
       uint16_t arInRegsMax[InRegQty];
    };
-
+   bool signed_[InRegQty] {false};
 
    MBslave ( UART& uart );
 
@@ -283,12 +283,20 @@ inline void MBslave<In,Out,UART>::operator() (function reaction)
 
          case Step::ValCheck:
             allGood = true;
-            for (uint16_t i = 0; i < RegQty; ++i) {
-               uint16_t reg;
-               reg = (uint16_t)uart.buffer[7 + 2*i] << 8 | uart.buffer[7 + 2*i + 1];
-               allGood &= reg >= arInRegsMin[i+LowAddr];
-               allGood &= reg <= arInRegsMax[i+LowAddr] or arInRegsMax[i+LowAddr] == 0;
-            }
+            
+               for (uint16_t i = 0; i < RegQty; ++i) {
+                  if (signed_[i+LowAddr]) {
+                     int16_t reg;
+                     reg = int16_t((uint16_t)uart.buffer[7 + 2*i] << 8 | uart.buffer[7 + 2*i + 1]);
+                     allGood &= (reg >= int16_t(arInRegsMin[i+LowAddr]));
+                     allGood &= (reg <= int16_t(arInRegsMax[i+LowAddr])) or (int16_t(arInRegsMax[i+LowAddr]) == 0);
+                  } else {
+                     uint16_t reg;
+                     reg = (uint16_t)uart.buffer[7 + 2*i] << 8 | uart.buffer[7 + 2*i + 1];
+                     allGood &= (reg >= arInRegsMin[i+LowAddr]);
+                     allGood &= (reg <= arInRegsMax[i+LowAddr]) or (arInRegsMax[i+LowAddr] == 0);
+                  }
+               }
             if (allGood) {
                for (uint8_t i = 0; i < RegQty; ++i)
                   arInRegs[LowAddr+i] = (uint16_t)uart.buffer[7 + 2*i] << 8 
