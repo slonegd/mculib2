@@ -23,6 +23,8 @@ class TickSubscriber : Subscriber
 protected:
    bool subscribed {false};
    void subscribe();
+   // void unsubscribe();
+public:
    void unsubscribe();
 };
 

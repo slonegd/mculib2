@@ -79,9 +79,21 @@ private:
 
 
 
-   using type = MBslave<InRegs_t,OutRegs_t,UART>;
+   using Parent = MBslave<InRegs_t,OutRegs_t,UART>;
 
    SUBSCRIBE_INTERRUPT(uart_ , typename UART::Periph_type, uartInterrupt);
+
+
+   struct uart__t : Interrupting { 
+      Parent& parent;
+      uart__t (Parent& parent) : parent(parent) {
+         parent.uart_interrupt.subscribe (this);
+         // Interrupt<typename UART::Periph_type>::subscribe (this);
+      }
+      void interrupt() override { parent.uartInterrupt(); } 
+   } uart_ {*this};
+
+
    SUBSCRIBE_INTERRUPT(dma_  , typename UART::DMAtx      , DMAinterrupt);
 
 
@@ -236,7 +248,7 @@ inline void MBslave<In,Out,UART>::operator() (function reaction)
          case Step::FuncCheck:
             LowAddr = (uint16_t)uart.buffer[2] << 8 | uart.buffer[3];
             RegQty  = (uint16_t)uart.buffer[4] << 8 | uart.buffer[5];
-            HighAddr = LowAddr + RegQty - 1;	
+            HighAddr = LowAddr + RegQty - 1;
             if (uart.buffer[1] == 3)
                step = Step::RegCheck03;
             else if (uart.buffer[1] == 16)

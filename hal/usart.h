@@ -180,7 +180,7 @@ void USART<USART_, bufSize, RX, TX, RTS, LED>::enableRX()
 
 
 template <class USART_, uint32_t bufSize, class RX, class TX, class RTS, class LED>
-uint32_t USART<USART_, bufSize, RX, TX, RTS, LED>::byteQtyRX()
+USART<USART_, bufSize, RX, TX, RTS, LED>::byteQtyRX()
 {
    return bufSize - DMArx::QtyTransactionsLeft();
 }
