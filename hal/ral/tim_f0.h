@@ -233,7 +233,7 @@ public:
    using CompareMode          = TIM_detail::Output_bits::CompareMode;
    using SelectionCompareMode = TIM_detail::SelectionCompareMode;
    using Polarity             = TIM_detail::CCER_bits::Polarity;
-   using Filter               = TIM_detail::Filter;
+   using Filter               = TIM_detail::Input_bitsFilter;
 
    static const uint32_t Base = adr;
    enum Channel {_1 = 1, _2, _3, _4};
