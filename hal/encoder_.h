@@ -58,7 +58,8 @@ Encoder<TIM_, PinA, PinB, inverted>::Encoder()
 //    TIM_::template set<TIM_::CompareMode::ActiveOnMatch, pinBchannel>();
    TIM_::template selectCompareMode<TIM_::SelectionCompareMode::Input, pinAchannel>();
    TIM_::template selectCompareMode<TIM_::SelectionCompareMode::Input, pinBchannel>();
-
+   TIM_::template filter<TIM_::Filter::_2>();
+   
    if (inverted) {
       TIM_::template set<TIM_::Polarity::falling, pinAchannel>();
    }
