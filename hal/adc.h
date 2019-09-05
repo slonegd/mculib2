@@ -127,8 +127,5 @@ private:
    }
 };
 
-buffer [position_v<PIN1, PIN...> - 1]
-         .pushAndCompute (adc.template get<PIN1>())
-
 
 #include "adc_src.h"
